@@ -15,8 +15,8 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: "Maison Aurea — Luxury Hair Atelier",
-  description: "An exclusive hair salon experience crafted with precision and elegance.",
+  title: "Salón del Bosque — Atelier Capilar",
+  description: "Una experiencia capilar única, rodeada de la calidez del bosque.",
 };
 
 export default function RootLayout({
