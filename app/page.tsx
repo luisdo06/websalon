@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
+import Image from "next/image";
 
 const C = {
   bg:       "#f5f0e8",
@@ -61,7 +62,7 @@ const PACKAGES = [
     price: "$19,800 total",
     priceNote: "Para hasta 150 invitados",
     highlight: "Perfecto para quienes traen su propio catering",
-    noIncluye: [] as string[],
+    noIncluye: ["Comida"] as string[],
     incluye: [
       "Renta de salón (8 hrs + 1 hr para retirarse)",
       "Mesas redondas + sillas Tiffany",
@@ -76,13 +77,21 @@ const PACKAGES = [
   },
 ] as const;
 
-/* ─── hook: reveal al scroll ─── */
+/* ─── hook: reveal al scroll con delay escalonado ─── */
 function useReveal() {
   const refs = useRef<HTMLElement[]>([]);
   useEffect(() => {
     const io = new IntersectionObserver(
-      (entries) => entries.forEach((e) => e.isIntersecting && e.target.classList.add("visible")),
-      { threshold: 0.08 }
+      (entries) => entries.forEach((e) => {
+        if (e.isIntersecting) {
+          const el = e.target as HTMLElement;
+          const idx = refs.current.indexOf(el);
+          const delay = 200 + idx * 80; /* espera a que la sección entre, luego cascada */
+          setTimeout(() => el.classList.add("visible"), delay);
+          io.unobserve(el);
+        }
+      }),
+      { threshold: 0.06 }
     );
     refs.current.forEach((el) => el && io.observe(el));
     return () => io.disconnect();
@@ -117,31 +126,32 @@ function useCounter(target: number, duration = 1800) {
   return { count, ref };
 }
 
-/* ─── SectionPhoto: panel izquierdo sticky con placeholder y degradado ─── */
-function SectionPhoto({ label, hint }: { label: string; hint: string }) {
+/* ─── SectionPhoto: panel izquierdo sticky con foto real o placeholder ─── */
+function SectionPhoto({ label, hint, src }: { label: string; hint: string; src?: string }) {
   return (
-    /* en móvil: altura fija arriba · en desktop: sticky altura completa */
-    <div className="relative h-64 md:h-screen md:sticky md:top-0 flex-shrink-0 md:w-1/2 overflow-hidden">
-      {/* fondo placeholder con patrón de puntos */}
-      <div className="absolute inset-0"
-        style={{ background: `linear-gradient(160deg, ${C.surface2} 0%, ${C.surface} 60%, ${C.bg} 100%)` }} />
-      <div className="absolute inset-0 pointer-events-none"
-        style={{ backgroundImage: `radial-gradient(${C.accent}18 1px, transparent 1px)`, backgroundSize: "28px 28px" }} />
-
-      {/* icono + etiqueta central */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 px-10 text-center">
-        <div className="w-14 h-14 rounded-full flex items-center justify-center"
-          style={{ border: `1px dashed ${C.accent}50`, background: `${C.accent}10` }}>
-          <span className="text-2xl" style={{ color: `${C.accent}70` }}>⬚</span>
-        </div>
-        <p className="text-sm font-light tracking-[0.12em]" style={{ color: `${C.text}bb` }}>{label}</p>
-        <p className="text-[10px] leading-relaxed max-w-[200px]" style={{ color: `${C.text}66` }}>{hint}</p>
-      </div>
-
-      {/* degradado horizontal: imagen → crema (en desktop) */}
+    <div className="relative h-64 md:h-auto md:self-stretch flex-shrink-0 md:w-1/2 overflow-hidden">
+      {src ? (
+        <Image src={src} alt={label} fill style={{ objectFit: "cover", objectPosition: "center" }} sizes="50vw" priority />
+      ) : (
+        <>
+          <div className="absolute inset-0"
+            style={{ background: `linear-gradient(160deg, ${C.surface2} 0%, ${C.surface} 60%, ${C.bg} 100%)` }} />
+          <div className="absolute inset-0 pointer-events-none"
+            style={{ backgroundImage: `radial-gradient(${C.accent}18 1px, transparent 1px)`, backgroundSize: "28px 28px" }} />
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 px-10 text-center">
+            <div className="w-14 h-14 rounded-full flex items-center justify-center"
+              style={{ border: `1px dashed ${C.accent}50`, background: `${C.accent}10` }}>
+              <span className="text-2xl" style={{ color: `${C.accent}70` }}>⬚</span>
+            </div>
+            <p className="text-sm font-light tracking-[0.12em]" style={{ color: `${C.text}bb` }}>{label}</p>
+            <p className="text-[10px] leading-relaxed max-w-[200px]" style={{ color: `${C.text}66` }}>{hint}</p>
+          </div>
+        </>
+      )}
+      {/* degradado horizontal → crema (desktop) */}
       <div className="absolute inset-0 pointer-events-none hidden md:block"
         style={{ background: `linear-gradient(to right, transparent 55%, ${C.bg} 92%)` }} />
-      {/* degradado vertical: imagen → crema (en móvil) */}
+      {/* degradado vertical → crema (móvil) */}
       <div className="absolute inset-0 pointer-events-none md:hidden"
         style={{ background: `linear-gradient(to bottom, transparent 50%, ${C.bg} 95%)` }} />
     </div>
@@ -150,14 +160,26 @@ function SectionPhoto({ label, hint }: { label: string; hint: string }) {
 
 /* ─── SplitSection: wrapper con imagen sticky izquierda + contenido derecha ─── */
 function SplitSection({
-  id, photoLabel, photoHint, children,
+  id, photoLabel, photoHint, photoSrc, children,
 }: {
-  id?: string; photoLabel: string; photoHint: string; children: React.ReactNode;
+  id?: string; photoLabel: string; photoHint: string; photoSrc?: string; children: React.ReactNode;
 }) {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { el.classList.add("in-view"); io.disconnect(); } },
+      { threshold: 0.06 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   return (
-    <section id={id} className="md:flex relative">
-      <SectionPhoto label={photoLabel} hint={photoHint} />
-      {/* contenido: en desktop ocupa la mitad derecha con fondo semitransparente */}
+    <section ref={sectionRef} id={id} className="md:flex md:items-stretch relative section-entrance">
+      <SectionPhoto label={photoLabel} hint={photoHint} src={photoSrc} />
       <div className="w-full md:w-1/2 relative"
         style={{ background: `${C.bg}ee`, backdropFilter: "blur(2px)" }}>
         {children}
@@ -166,70 +188,29 @@ function SplitSection({
   );
 }
 
-/* ─── CountdownTimer ─── */
-function CountdownTimer() {
-  const getNextSat = () => {
-    const now = new Date();
-    const daysUntilSat = now.getDay() === 6 ? 7 : (6 - now.getDay());
-    const t = new Date(now);
-    t.setDate(now.getDate() + daysUntilSat);
-    t.setHours(9, 0, 0, 0);
-    return t;
-  };
-  const calc = () => {
-    const diff = getNextSat().getTime() - Date.now();
-    if (diff <= 0) return { d: 0, h: 0, m: 0, s: 0 };
-    return {
-      d: Math.floor(diff / 86400000),
-      h: Math.floor((diff % 86400000) / 3600000),
-      m: Math.floor((diff % 3600000) / 60000),
-      s: Math.floor((diff % 60000) / 1000),
-    };
-  };
-  const [time, setTime] = useState(calc);
-  const [pulse, setPulse] = useState(false);
-  useEffect(() => {
-    const id = setInterval(() => { setTime(calc()); setPulse(true); setTimeout(() => setPulse(false), 300); }, 1000);
-    return () => clearInterval(id);
-  }, []);
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return (
-    <div className="flex flex-col items-center gap-3 mt-10">
-      <div className="flex items-end gap-3">
-        {[{ val: time.d, label: "días" }, { val: time.h, label: "horas" }, { val: time.m, label: "min" }, { val: time.s, label: "seg" }]
-          .map(({ val, label }, i) => (
-            <div key={label} className="flex items-end gap-3">
-              <div className="flex flex-col items-center">
-                <div className="w-14 h-14 flex items-center justify-center text-2xl font-light transition-all duration-300"
-                  style={{ fontFamily: "var(--font-display,serif)", background: C.surface, border: `1px solid ${C.accent}30`, color: C.text, transform: label === "seg" && pulse ? "scale(1.05)" : "scale(1)" }}>
-                  {pad(val)}
-                </div>
-                <span className="text-[8px] tracking-[0.3em] uppercase mt-1" style={{ color: `${C.text}80` }}>{label}</span>
-              </div>
-              {i < 3 && <span className="text-xl mb-3 font-light" style={{ color: `${C.accent}60` }}>:</span>}
-            </div>
-          ))}
-      </div>
-    </div>
-  );
-}
 
 /* ─── PhotoSlot: placeholder inline (galería interna) ─── */
-function PhotoSlot({ label, hint, wide = false }: { label: string; hint: string; wide?: boolean }) {
+function PhotoSlot({ label, hint, wide = false, src }: { label: string; hint: string; wide?: boolean; src?: string }) {
   return (
     <div className={`relative ${wide ? "aspect-[21/6]" : "aspect-[4/3]"} overflow-hidden group`}
       style={{ border: `1px dashed ${C.accent}35`, background: `linear-gradient(135deg, ${C.surface2}, ${C.surface})` }}>
-      <div className="absolute inset-0 pointer-events-none"
-        style={{ backgroundImage: `radial-gradient(${C.accent}12 1px, transparent 1px)`, backgroundSize: "20px 20px" }} />
-      {[["top-2 left-2","border-t border-l"],["top-2 right-2","border-t border-r"],
-        ["bottom-2 left-2","border-b border-l"],["bottom-2 right-2","border-b border-r"]].map(([p, cls]) => (
-        <div key={p} className={`absolute ${p} w-4 h-4 ${cls}`} style={{ borderColor: `${C.accent}45` }} />
-      ))}
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 px-4 text-center">
-        <span className="text-lg" style={{ color: `${C.accent}60` }}>⬚</span>
-        <p className="text-[10px]" style={{ color: `${C.text}99` }}>{label}</p>
-        <p className="text-[9px]" style={{ color: `${C.text}60` }}>{hint}</p>
-      </div>
+      {src ? (
+        <Image src={src} alt={label} fill style={{ objectFit: "cover", objectPosition: "center" }} sizes="25vw" />
+      ) : (
+        <>
+          <div className="absolute inset-0 pointer-events-none"
+            style={{ backgroundImage: `radial-gradient(${C.accent}12 1px, transparent 1px)`, backgroundSize: "20px 20px" }} />
+          {[["top-2 left-2","border-t border-l"],["top-2 right-2","border-t border-r"],
+            ["bottom-2 left-2","border-b border-l"],["bottom-2 right-2","border-b border-r"]].map(([p, cls]) => (
+            <div key={p} className={`absolute ${p} w-4 h-4 ${cls}`} style={{ borderColor: `${C.accent}45` }} />
+          ))}
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 px-4 text-center">
+            <span className="text-lg" style={{ color: `${C.accent}60` }}>⬚</span>
+            <p className="text-[10px]" style={{ color: `${C.text}99` }}>{label}</p>
+            <p className="text-[9px]" style={{ color: `${C.text}60` }}>{hint}</p>
+          </div>
+        </>
+      )}
     </div>
   );
 }
@@ -247,34 +228,6 @@ function AnimatedStat({ value, suffix, label }: { value: number; suffix: string;
   );
 }
 
-/* ─── ServiceCard expandible ─── */
-function ServiceCard({ s, index }: { s: Service; index: number }) {
-  const [open, setOpen] = useState(false);
-  return (
-    <button onClick={() => setOpen((o) => !o)}
-      className="section-reveal text-left p-6 relative group w-full transition-all duration-500"
-      style={{ background: open ? C.surface2 : C.surface, border: `1px solid ${C.accent}18`, transitionDelay: `${index * 60}ms` }}>
-      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-400 pointer-events-none"
-        style={{ background: `radial-gradient(ellipse at 50% 0%, ${C.accent}10 0%, transparent 70%)` }} />
-      <div className="absolute top-0 left-0 w-full h-px pointer-events-none transition-opacity duration-500"
-        style={{ background: `linear-gradient(90deg, transparent, ${C.accent}, transparent)`, opacity: open ? 1 : 0 }} />
-      <div className="flex items-start justify-between mb-2">
-        <p className="text-[9px] tracking-[0.4em] uppercase" style={{ color: `${C.accent}70` }}>{s.id}</p>
-        <span className="text-lg transition-transform duration-300" style={{ color: `${C.accent}80`, transform: open ? "rotate(45deg)" : "rotate(0deg)" }}>+</span>
-      </div>
-      <h3 className="text-lg font-light mb-1" style={{ fontFamily: "var(--font-display,serif)", color: C.text }}>{s.name}</h3>
-      <p className="text-sm leading-relaxed font-light" style={{ color: `${C.text}cc` }}>{s.desc}</p>
-      <div className="overflow-hidden transition-all duration-500"
-        style={{ maxHeight: open ? "100px" : "0px", opacity: open ? 1 : 0 }}>
-        <p className="text-xs leading-relaxed mt-3 font-light pt-3" style={{ color: `${C.amber}dd`, borderTop: `1px solid ${C.accent}18` }}>{s.detail}</p>
-      </div>
-      <div className="flex items-center justify-between mt-4">
-        <p className="text-xs tracking-[0.2em]" style={{ color: C.amber }}>{s.price}</p>
-        <span className="text-[9px] tracking-[0.2em] uppercase" style={{ color: open ? `${C.accent}80` : `${C.text}66` }}>{open ? "cerrar" : "ver más"}</span>
-      </div>
-    </button>
-  );
-}
 
 /* ─── TestimonialCard con typewriter ─── */
 function TestimonialCard({ t, delay }: { t: Testimonial; delay: number }) {
@@ -320,89 +273,327 @@ function TestimonialCard({ t, delay }: { t: Testimonial; delay: number }) {
 }
 
 /* ─── BookingForm con validación ─── */
-function BookingForm() {
-  const [form, setForm]     = useState({ nombre: "", email: "", telefono: "", servicio: "", mensaje: "" });
-  const [errors, setErrors] = useState<Partial<typeof form>>({});
-  const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
+/* ─── Calendario ─── */
+function Calendar({
+  selected, onSelect, blockedDates,
+}: {
+  selected: string; onSelect: (d: string) => void; blockedDates: string[];
+}) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const [year, setYear]   = useState(today.getFullYear());
+  const [month, setMonth] = useState(today.getMonth());
+
+  const firstDay  = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const MONTHS = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+  const DAYS   = ["Do","Lu","Ma","Mi","Ju","Vi","Sá"];
+
+  const pad2 = (n: number) => String(n).padStart(2, "0");
+  const toISO = (d: number) => `${year}-${pad2(month + 1)}-${pad2(d)}`;
+
+  const prevMonth = () => { if (month === 0) { setMonth(11); setYear(y => y - 1); } else setMonth(m => m - 1); };
+  const nextMonth = () => { if (month === 11) { setMonth(0); setYear(y => y + 1); } else setMonth(m => m + 1); };
+
+  const cells: (number | null)[] = [...Array(firstDay).fill(null), ...Array.from({ length: daysInMonth }, (_, i) => i + 1)];
+
+  return (
+    <div className="p-4" style={{ background: C.surface, border: `1px solid ${C.accent}20` }}>
+      {/* nav mes */}
+      <div className="flex items-center justify-between mb-4">
+        <button onClick={prevMonth} className="w-8 h-8 flex items-center justify-center text-sm transition-opacity hover:opacity-60"
+          style={{ color: C.accent }}>‹</button>
+        <p className="text-sm font-light tracking-[0.15em]" style={{ color: C.text }}>
+          {MONTHS[month]} {year}
+        </p>
+        <button onClick={nextMonth} className="w-8 h-8 flex items-center justify-center text-sm transition-opacity hover:opacity-60"
+          style={{ color: C.accent }}>›</button>
+      </div>
+
+      {/* días de semana */}
+      <div className="grid grid-cols-7 mb-2">
+        {DAYS.map(d => (
+          <div key={d} className="text-center text-[10px] tracking-[0.1em] py-1" style={{ color: `${C.text}66` }}>{d}</div>
+        ))}
+      </div>
+
+      {/* celdas */}
+      <div className="grid grid-cols-7 gap-0.5">
+        {cells.map((day, i) => {
+          if (!day) return <div key={`e-${i}`} />;
+          const iso      = toISO(day);
+          const date     = new Date(year, month, day);
+          const isPast   = date < today;
+          const isBlocked = blockedDates.includes(iso);
+          const isSelected = selected === iso;
+          const disabled = isPast || isBlocked;
+
+          let bg = "transparent";
+          let color = `${C.text}cc`;
+          let border = "transparent";
+
+          if (isSelected)       { bg = C.accent; color = C.bg; }
+          else if (isBlocked)   { bg = `${C.rust}15`; color = C.rust; border = `${C.rust}40`; }
+          else if (isPast)      { color = `${C.text}30`; }
+
+          return (
+            <button key={iso} disabled={disabled} onClick={() => onSelect(iso)}
+              className="aspect-square flex items-center justify-center text-xs font-light transition-all duration-150"
+              style={{ background: bg, color, border: `1px solid ${border}`,
+                cursor: disabled ? "not-allowed" : "pointer",
+                opacity: isPast ? 0.4 : 1 }}
+              onMouseEnter={(e) => { if (!disabled && !isSelected) (e.currentTarget as HTMLElement).style.background = `${C.accent}18`; }}
+              onMouseLeave={(e) => { if (!disabled && !isSelected) (e.currentTarget as HTMLElement).style.background = "transparent"; }}>
+              {day}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* leyenda */}
+      <div className="flex gap-4 mt-4 pt-3" style={{ borderTop: `1px solid ${C.accent}12` }}>
+        <div className="flex items-center gap-1.5">
+          <div className="w-3 h-3" style={{ background: C.accent }} />
+          <span className="text-[9px]" style={{ color: `${C.text}77` }}>Seleccionado</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <div className="w-3 h-3" style={{ background: `${C.rust}15`, border: `1px solid ${C.rust}40` }} />
+          <span className="text-[9px]" style={{ color: `${C.text}77` }}>Ocupado</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── BookingForm ─── */
+function BookingForm({ paqueteInicial }: { paqueteInicial: string }) {
+  const [form, setForm] = useState({
+    nombre: "", telefono: "", primeraVez: "",
+    evento: "", personas: "", paquete: "", fecha: "", fechaVisita: "",
+  });
+  const [errors, setErrors]       = useState<Partial<Record<keyof typeof form, string>>>({});
+  const [blockedDates, setBlocked] = useState<string[]>([]);
+  const [preview, setPreview]     = useState(false);
+
+  useEffect(() => {
+    if (paqueteInicial) {
+      setForm(f => ({ ...f, paquete: paqueteInicial }));
+      setErrors(er => ({ ...er, paquete: undefined }));
+    }
+  }, [paqueteInicial]);
+
+  useEffect(() => {
+    import("@/lib/supabase").then(({ supabase }) => {
+      supabase.from("blocked_dates").select("date").then(({ data }) => {
+        setBlocked((data ?? []).map((r: { date: string }) => r.date));
+      });
+    });
+  }, []);
+
+  const set = (k: keyof typeof form) => (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => { setForm(f => ({ ...f, [k]: e.target.value })); setErrors(er => ({ ...er, [k]: undefined })); };
+
   const validate = () => {
-    const e: Partial<typeof form> = {};
-    if (!form.nombre.trim()) e.nombre = "Requerido";
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = "Email inválido";
-    if (!form.telefono.trim()) e.telefono = "Requerido";
-    if (!form.servicio) e.servicio = "Selecciona un servicio";
+    const e: Partial<Record<keyof typeof form, string>> = {};
+    if (!form.nombre.trim())    e.nombre    = "Requerido";
+    if (!form.telefono.trim())  e.telefono  = "Requerido";
+    if (!form.primeraVez)       e.primeraVez = "Selecciona una opción";
+    if (form.primeraVez === "no" && !form.fechaVisita) e.fechaVisita = "Selecciona una fecha para tu visita";
+    if (!form.evento)           e.evento    = "Selecciona el tipo de evento";
+    if (!form.personas.trim())  e.personas  = "Requerido";
+    if (!form.paquete)          e.paquete   = "Selecciona un paquete";
+    if (!form.fecha)            e.fecha     = "Selecciona una fecha";
+    if (form.fecha && blockedDates.includes(form.fecha)) e.fecha = "Esta fecha ya está ocupada";
     return e;
   };
-  const handleChange = (k: keyof typeof form) =>
-    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-      setForm((f) => ({ ...f, [k]: e.target.value }));
-      if (errors[k]) setErrors((er) => ({ ...er, [k]: undefined }));
-    };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const errs = validate();
     if (Object.keys(errs).length) { setErrors(errs); return; }
-    setStatus("loading");
-    setTimeout(() => setStatus("success"), 1800);
+    setPreview(true);
   };
-  if (status === "success") return (
-    <div className="p-10 text-center" style={{ background: C.surface, border: `1px solid ${C.accent}25` }}>
-      <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4" style={{ border: `1px solid ${C.accent}` }}>
-        <span className="forest-text text-xl">✓</span>
+
+  const formatFecha = (iso: string) => {
+    if (!iso) return "";
+    const [y, m, d] = iso.split("-");
+    const months = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+    return `${parseInt(d)} de ${months[parseInt(m) - 1]} de ${y}`;
+  };
+
+  const whatsappMsg = () =>
+    `\u{1F331} *Solicitud de reserva - Salón del Bosque*\n\n` +
+    `\u{1F464} *Nombre:* ${form.nombre}\n` +
+    `\u{1F4DE} *Teléfono:* ${form.telefono}\n` +
+    `\u{1F4CD} *Visita:* ${form.primeraVez === "no" ? `Primera vez · Quiero conocer el salón el ${formatFecha(form.fechaVisita)}` : "Ya visitó el salón"}\n` +
+    `\u{1F389} *Evento:* ${form.evento} · ${form.personas} personas\n` +
+    `\u{1F4CB} *Paquete:* ${form.paquete}\n` +
+    `\u{1F4C5} *Fecha deseada:* ${formatFecha(form.fecha)}`;
+
+  const sendWhatsApp = () => {
+    const url = `https://wa.me/527225926512?text=${encodeURIComponent(whatsappMsg())}`;
+    window.open(url, "_blank");
+  };
+
+  const inputBase = "w-full bg-transparent px-4 py-3 text-sm font-light focus:outline-none border";
+
+  if (preview) return (
+    <div className="space-y-5">
+      <div className="p-6 space-y-3" style={{ background: C.surface, border: `1px solid ${C.accent}20` }}>
+        <p className="text-[10px] tracking-[0.35em] uppercase mb-4" style={{ color: C.accent }}>Vista previa del mensaje</p>
+        <pre className="text-sm font-light leading-relaxed whitespace-pre-wrap" style={{ color: C.text, fontFamily: "inherit" }}>
+          {whatsappMsg()}
+        </pre>
       </div>
-      <p className="forest-text text-2xl font-light mb-2" style={{ fontFamily: "var(--font-display,serif)" }}>¡Solicitud enviada!</p>
-      <p className="text-sm font-light" style={{ color: `${C.text}bb` }}>Te contactaremos en menos de 24 horas.</p>
+      <p className="text-xs font-light text-center" style={{ color: `${C.text}77` }}>
+        Revisa el mensaje y pulsa el botón para enviarlo por WhatsApp
+      </p>
+      <button onClick={sendWhatsApp}
+        className="w-full py-4 text-xs tracking-[0.3em] uppercase font-medium transition-opacity hover:opacity-85 flex items-center justify-center gap-3"
+        style={{ background: `linear-gradient(135deg, #25D366, #128C7E)`, color: "#fff" }}>
+        <span>📲</span> Enviar por WhatsApp
+      </button>
+      <button onClick={() => setPreview(false)}
+        className="w-full py-3 text-xs tracking-[0.2em] uppercase transition-opacity hover:opacity-70"
+        style={{ border: `1px solid ${C.accent}30`, color: `${C.text}88` }}>
+        ← Editar información
+      </button>
     </div>
   );
-  const base  = "w-full bg-transparent px-4 py-3 text-sm font-light focus:outline-none transition-colors duration-300 border";
-  const field = (k: keyof typeof form) => `${base} ${errors[k] ? "border-red-400/50" : ""}`;
+
   return (
-    <form onSubmit={handleSubmit} noValidate className="space-y-4">
-      {(["nombre", "email", "telefono"] as const).map((k) => (
-        <div key={k}>
-          <label className="block text-[10px] tracking-[0.3em] uppercase mb-2" style={{ color: `${C.accent}99` }}>
-            {k === "nombre" ? "Nombre completo" : k === "email" ? "Correo electrónico" : "Teléfono"}
-          </label>
-          <input type={k === "email" ? "email" : k === "telefono" ? "tel" : "text"}
-            value={form[k]} onChange={handleChange(k)}
-            placeholder={k === "nombre" ? "Tu nombre" : k === "email" ? "correo@ejemplo.com" : "722 592 6512"}
-            className={field(k)}
-            style={{ color: C.text, borderColor: errors[k] ? "rgba(248,113,113,0.5)" : `${C.accent}30`, caretColor: C.accent }} />
-          {errors[k] && <p className="text-[10px] mt-1 text-red-500/70">{errors[k]}</p>}
+    <form onSubmit={handleSubmit} noValidate className="space-y-5">
+      {/* nombre */}
+      <div>
+        <label className="block text-[10px] tracking-[0.3em] uppercase mb-2" style={{ color: `${C.accent}99` }}>Nombre completo</label>
+        <input type="text" value={form.nombre} onChange={set("nombre")} placeholder="Tu nombre completo"
+          className={inputBase}
+          style={{ color: C.text, borderColor: errors.nombre ? C.rust : `${C.accent}30`, caretColor: C.accent }} />
+        {errors.nombre && <p className="text-[10px] mt-1" style={{ color: C.rust }}>{errors.nombre}</p>}
+      </div>
+
+      {/* teléfono */}
+      <div>
+        <label className="block text-[10px] tracking-[0.3em] uppercase mb-2" style={{ color: `${C.accent}99` }}>Número de teléfono</label>
+        <input type="tel" value={form.telefono} onChange={set("telefono")} placeholder="722 123 4567"
+          className={inputBase}
+          style={{ color: C.text, borderColor: errors.telefono ? C.rust : `${C.accent}30`, caretColor: C.accent }} />
+        {errors.telefono && <p className="text-[10px] mt-1" style={{ color: C.rust }}>{errors.telefono}</p>}
+      </div>
+
+      {/* primera vez */}
+      <div>
+        <label className="block text-[10px] tracking-[0.3em] uppercase mb-2" style={{ color: `${C.accent}99` }}>¿Ya visitaste el salón?</label>
+        <div className="flex gap-3">
+          {[{ val: "no", label: "Primera visita" }, { val: "si", label: "Ya lo visité" }].map(({ val, label }) => (
+            <button type="button" key={val} onClick={() => { setForm(f => ({ ...f, primeraVez: val, fechaVisita: val === "si" ? "" : f.fechaVisita })); setErrors(er => ({ ...er, primeraVez: undefined, fechaVisita: undefined })); }}
+              className="flex-1 py-3 text-xs tracking-[0.15em] uppercase transition-all duration-200"
+              style={{
+                border: `1px solid ${form.primeraVez === val ? C.accent : C.accent + "25"}`,
+                background: form.primeraVez === val ? `${C.accent}15` : "transparent",
+                color: form.primeraVez === val ? C.accent : `${C.text}88`,
+              }}>
+              {label}
+            </button>
+          ))}
         </div>
-      ))}
+        {errors.primeraVez && <p className="text-[10px] mt-1" style={{ color: C.rust }}>{errors.primeraVez}</p>}
+
+        {/* calendario para agendar visita */}
+        {form.primeraVez === "no" && (
+          <div className="mt-4 space-y-2 overflow-hidden transition-all duration-500">
+            <p className="text-[10px] tracking-[0.25em] uppercase" style={{ color: `${C.accent}99` }}>
+              ¿Cuándo quieres visitar el salón?
+              {form.fechaVisita && (
+                <span className="ml-2 normal-case tracking-normal" style={{ color: C.accent }}>
+                  · {formatFecha(form.fechaVisita)}
+                </span>
+              )}
+            </p>
+            <Calendar
+              selected={form.fechaVisita}
+              onSelect={(d) => { setForm(f => ({ ...f, fechaVisita: d })); setErrors(er => ({ ...er, fechaVisita: undefined })); }}
+              blockedDates={[]}
+            />
+            {errors.fechaVisita && <p className="text-[10px] mt-1" style={{ color: C.rust }}>{errors.fechaVisita}</p>}
+          </div>
+        )}
+      </div>
+
+      {/* tipo de evento */}
       <div>
         <label className="block text-[10px] tracking-[0.3em] uppercase mb-2" style={{ color: `${C.accent}99` }}>Tipo de evento</label>
-        <select value={form.servicio} onChange={handleChange("servicio")} className={`${field("servicio")} appearance-none`}
-          style={{ background: C.surface, color: C.text, borderColor: errors.servicio ? "rgba(248,113,113,0.5)" : `${C.accent}30` }}>
-          <option value="">Selecciona un evento</option>
-          {["Boda","XV Años","Cumpleaños","Bautizo","Comunión","Grado","Corporativo","Baby Shower","Otro"].map((s) => (
+        <select value={form.evento} onChange={set("evento")} className={`${inputBase} appearance-none`}
+          style={{ background: C.surface, color: form.evento ? C.text : `${C.text}66`, borderColor: errors.evento ? C.rust : `${C.accent}30` }}>
+          <option value="">Selecciona el tipo de evento</option>
+          {["Boda","XV Años","Cumpleaños","Bautizo","Comunión","Grado","Corporativo","Baby Shower","Otro"].map(s => (
             <option key={s} value={s}>{s}</option>
           ))}
         </select>
-        {errors.servicio && <p className="text-[10px] mt-1 text-red-500/70">{errors.servicio}</p>}
+        {errors.evento && <p className="text-[10px] mt-1" style={{ color: C.rust }}>{errors.evento}</p>}
       </div>
+
+      {/* personas */}
       <div>
-        <label className="block text-[10px] tracking-[0.3em] uppercase mb-2" style={{ color: `${C.accent}99` }}>Mensaje (opcional)</label>
-        <textarea rows={3} value={form.mensaje} onChange={handleChange("mensaje")} placeholder="Fecha aproximada, número de invitados..."
-          className={`${field("mensaje")} resize-none`}
-          style={{ color: C.text, borderColor: `${C.accent}30`, caretColor: C.accent }} />
+        <label className="block text-[10px] tracking-[0.3em] uppercase mb-2" style={{ color: `${C.accent}99` }}>Número de personas</label>
+        <input type="number" min="1" value={form.personas} onChange={set("personas")} placeholder="Ej: 150"
+          className={inputBase}
+          style={{ color: C.text, borderColor: errors.personas ? C.rust : `${C.accent}30`, caretColor: C.accent }} />
+        {errors.personas && <p className="text-[10px] mt-1" style={{ color: C.rust }}>{errors.personas}</p>}
       </div>
-      <button type="submit" disabled={status === "loading"}
-        className="w-full py-4 text-xs tracking-[0.3em] uppercase font-medium transition-all duration-300 hover:opacity-85 disabled:opacity-60"
-        style={{ background: `linear-gradient(135deg, ${C.accent}, #5a7a30)`, color: C.bg }}>
-        {status === "loading"
-          ? <span className="flex items-center justify-center gap-2">
-              <span className="w-3 h-3 rounded-full border-2 anim-spin" style={{ borderColor: `${C.bg}50`, borderTopColor: C.bg }} />
-              Enviando...
+
+      {/* paquete */}
+      <div>
+        <label className="block text-[10px] tracking-[0.3em] uppercase mb-2" style={{ color: `${C.accent}99` }}>Paquete de interés</label>
+        <div className="flex gap-3">
+          {[{ val: "Paquete Completo", label: "Paquete Completo", sub: "$350/persona" }, { val: "Paquete Sencillo", label: "Paquete Sencillo", sub: "$19,800 total" }].map(({ val, label, sub }) => (
+            <button type="button" key={val} onClick={() => { setForm(f => ({ ...f, paquete: val })); setErrors(er => ({ ...er, paquete: undefined })); }}
+              className="flex-1 py-3 px-2 text-center transition-all duration-200"
+              style={{
+                border: `1px solid ${form.paquete === val ? C.accent : C.accent + "25"}`,
+                background: form.paquete === val ? `${C.accent}15` : "transparent",
+              }}>
+              <p className="text-[10px] tracking-[0.1em] uppercase" style={{ color: form.paquete === val ? C.accent : `${C.text}88` }}>{label}</p>
+              <p className="text-[9px] mt-0.5" style={{ color: form.paquete === val ? `${C.accent}99` : `${C.text}55` }}>{sub}</p>
+            </button>
+          ))}
+        </div>
+        {errors.paquete && <p className="text-[10px] mt-1" style={{ color: C.rust }}>{errors.paquete}</p>}
+      </div>
+
+      {/* fecha con calendario */}
+      <div>
+        <label className="block text-[10px] tracking-[0.3em] uppercase mb-2" style={{ color: `${C.accent}99` }}>
+          Fecha deseada
+          {form.fecha && !blockedDates.includes(form.fecha) && (
+            <span className="ml-2 normal-case tracking-normal" style={{ color: C.accent }}>
+              · {formatFecha(form.fecha)}
             </span>
-          : "Solicitar reserva"}
+          )}
+        </label>
+        <Calendar selected={form.fecha} onSelect={(d) => { setForm(f => ({ ...f, fecha: d })); setErrors(er => ({ ...er, fecha: undefined })); }} blockedDates={blockedDates} />
+        {errors.fecha && <p className="text-[10px] mt-1" style={{ color: C.rust }}>{errors.fecha}</p>}
+        {form.fecha && blockedDates.includes(form.fecha) && (
+          <p className="text-xs mt-2 px-3 py-2" style={{ background: `${C.rust}12`, color: C.rust, border: `1px solid ${C.rust}30` }}>
+            Esta fecha ya está reservada. Por favor elige otra.
+          </p>
+        )}
+      </div>
+
+      {/* submit */}
+      <button type="submit"
+        disabled={!!(form.fecha && blockedDates.includes(form.fecha))}
+        className="w-full py-4 text-xs tracking-[0.3em] uppercase font-medium transition-all duration-300 hover:opacity-85 disabled:opacity-40 disabled:cursor-not-allowed"
+        style={{ background: `linear-gradient(135deg, ${C.accent}, #5a7a30)`, color: C.bg }}>
+        Ver resumen y enviar por WhatsApp
       </button>
     </form>
   );
 }
 
 /* ─── QuoteCalculator ─── */
-function PackageCard({ pkg }: { pkg: typeof PACKAGES[number] }) {
+function PackageCard({ pkg, onElegir }: { pkg: typeof PACKAGES[number]; onElegir: (nombre: string) => void }) {
   const [open, setOpen] = useState(false);
   const isAccent = pkg.color === C.accent;
 
@@ -481,20 +672,20 @@ function PackageCard({ pkg }: { pkg: typeof PACKAGES[number] }) {
         )}
 
         {/* CTA */}
-        <a href="#reserva"
+        <button onClick={() => onElegir(pkg.name)}
           className="block w-full py-3.5 text-center text-xs tracking-[0.25em] uppercase font-medium transition-all duration-300 hover:opacity-85"
           style={{ background: isAccent ? `linear-gradient(135deg, ${C.accent}, #5a7a30)` : `linear-gradient(135deg, ${C.amber}, #c48830)`, color: C.bg }}>
           Solicitar este paquete
-        </a>
+        </button>
       </div>
     </div>
   );
 }
 
-function QuoteCalculator() {
+function QuoteCalculator({ onElegirPaquete }: { onElegirPaquete: (nombre: string) => void }) {
   return (
     <div className="space-y-6">
-      {PACKAGES.map((pkg) => <PackageCard key={pkg.id} pkg={pkg} />)}
+      {PACKAGES.map((pkg) => <PackageCard key={pkg.id} pkg={pkg} onElegir={onElegirPaquete} />)}
       <div className="p-5 text-center" style={{ background: C.surface2, border: `1px dashed ${C.accent}25` }}>
         <p className="text-sm font-light mb-1" style={{ fontFamily: "var(--font-display,serif)", color: `${C.text}cc` }}>
           ¿Tienes necesidades especiales o un grupo grande?
@@ -611,6 +802,14 @@ function CustomCursor() {
 ════════════════════════════════════════════ */
 export default function Home() {
   const addReveal = useReveal();
+  const [paqueteSeleccionado, setPaqueteSeleccionado] = useState("");
+
+  const elegirPaquete = (nombre: string) => {
+    setPaqueteSeleccionado(nombre);
+    setTimeout(() => {
+      document.getElementById("reserva")?.scrollIntoView({ behavior: "smooth" });
+    }, 100);
+  };
 
   return (
     <div className="min-h-screen" style={{ background: C.bg, color: C.text, fontFamily: "var(--font-body,sans-serif)", cursor: "none" }}>
@@ -618,18 +817,10 @@ export default function Home() {
       <Navbar />
 
       {/* ══ HERO ══ */}
-      <section id="hero" className="md:flex relative min-h-screen">
+      <section id="hero" className="md:flex md:items-stretch relative min-h-screen">
         {/* imagen izquierda sticky */}
-        <div className="relative h-64 md:h-screen md:sticky md:top-0 flex-shrink-0 md:w-1/2 overflow-hidden">
-          <div className="absolute inset-0" style={{ background: `linear-gradient(160deg, ${C.surface2} 0%, ${C.surface} 60%, ${C.bg} 100%)` }} />
-          <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: `radial-gradient(${C.accent}18 1px, transparent 1px)`, backgroundSize: "28px 28px" }} />
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 px-10 text-center">
-            <div className="w-14 h-14 rounded-full flex items-center justify-center" style={{ border: `1px dashed ${C.accent}50`, background: `${C.accent}10` }}>
-              <span className="text-2xl" style={{ color: `${C.accent}70` }}>⬚</span>
-            </div>
-            <p className="text-sm font-light tracking-[0.12em]" style={{ color: `${C.text}bb` }}>Fachada / exterior del salón</p>
-            <p className="text-[10px] leading-relaxed max-w-[200px]" style={{ color: `${C.text}66` }}>Vista principal del Salón del Bosque · 1200 × 900 px</p>
-          </div>
+        <div className="relative h-64 md:h-auto md:self-stretch flex-shrink-0 md:w-1/2 overflow-hidden">
+          <Image src="/fotos/salon-noche.jpg" alt="Salón del Bosque" fill style={{ objectFit: "cover", objectPosition: "center" }} sizes="50vw" priority />
           <div className="absolute inset-0 pointer-events-none hidden md:block" style={{ background: `linear-gradient(to right, transparent 55%, ${C.bg} 92%)` }} />
           <div className="absolute inset-0 pointer-events-none md:hidden" style={{ background: `linear-gradient(to bottom, transparent 50%, ${C.bg} 95%)` }} />
         </div>
@@ -667,7 +858,6 @@ export default function Home() {
                 Conócenos
               </a>
             </div>
-            <CountdownTimer />
           </div>
         </div>
       </section>
@@ -675,7 +865,8 @@ export default function Home() {
       {/* ══ NOSOTROS ══ */}
       <SplitSection id="nosotros"
         photoLabel="Salón decorado para evento"
-        photoHint="Interior del Salón del Bosque con decoración · 1200 × 1600 px">
+        photoHint="Interior del Salón del Bosque con decoración · 1200 × 1600 px"
+        photoSrc="/fotos/salon-dia.jpg">
         <div className="py-20 px-8 md:px-14 space-y-14">
           {/* intro */}
           <div ref={addReveal} className="section-reveal">
@@ -730,11 +921,11 @@ export default function Home() {
             </p>
             <div className="grid grid-cols-2 gap-3">
               {[
-                { label: "Chef Andrés Morales", hint: "Retrato · 600×750" },
-                { label: "Equipo de cocina",    hint: "En acción · 600×750" },
-                { label: "Preparación",         hint: "Detalle gastronómico · 600×750" },
-                { label: "Banquete",            hint: "Mesa montada · 600×750" },
-              ].map((p) => <PhotoSlot key={p.label} label={p.label} hint={p.hint} />)}
+                { label: "Chef Andrés Morales", hint: "Retrato · 600×750",           src: undefined },
+                { label: "Equipo de cocina",    hint: "En acción · 600×750",          src: undefined },
+                { label: "Preparación",         hint: "Detalle gastronómico · 600×750", src: undefined },
+                { label: "Banquete",            hint: "Mesa montada · 600×750",        src: "/fotos/comida-menu.jpg" },
+              ].map((p) => <PhotoSlot key={p.label} label={p.label} hint={p.hint} src={p.src} />)}
             </div>
           </div>
 
@@ -745,17 +936,6 @@ export default function Home() {
         </div>
       </SplitSection>
 
-      {/* ══ SERVICIOS (quote strip) ══ */}
-      <div className="py-16 relative overflow-hidden" style={{ background: `linear-gradient(90deg, ${C.bg} 0%, ${C.surface} 50%, ${C.bg} 100%)` }}>
-        <div className="relative z-10 text-center px-6">
-          <p className="text-2xl md:text-3xl font-light max-w-2xl mx-auto leading-relaxed"
-            style={{ fontFamily: "var(--font-display,serif)", color: `${C.text}88` }}>
-            &ldquo;La elegancia no es ser notada,
-            <span className="forest-text"> es ser recordada.</span>&rdquo;
-          </p>
-          <p className="mt-3 text-[10px] tracking-[0.3em] uppercase" style={{ color: `${C.accent}55` }}>— Giorgio Armani</p>
-        </div>
-      </div>
 
       {/* ══ UBICACIÓN ══ */}
       <SplitSection id="ubicacion"
@@ -813,7 +993,8 @@ export default function Home() {
       {/* ══ COTIZACIONES ══ */}
       <SplitSection id="cotizaciones"
         photoLabel="Mesa elegante de evento"
-        photoHint="Detalle de vajilla y decoración · 1200 × 1600 px">
+        photoHint="Detalle de vajilla y decoración · 1200 × 1600 px"
+        photoSrc="/fotos/salon-mesa.jpg">
         <div className="py-20 px-8 md:px-14">
           <div ref={addReveal} className="section-reveal mb-10">
             <p className="text-xs tracking-[0.4em] uppercase mb-4" style={{ color: C.accent }}>Precios claros</p>
@@ -825,7 +1006,7 @@ export default function Home() {
             </p>
           </div>
           <div ref={addReveal} className="section-reveal">
-            <QuoteCalculator />
+            <QuoteCalculator onElegirPaquete={elegirPaquete} />
           </div>
 
           {/* testimonios aquí dentro */}
@@ -842,17 +1023,18 @@ export default function Home() {
       {/* ══ RESERVA ══ */}
       <SplitSection id="reserva"
         photoLabel="Ambiente de evento nocturno"
-        photoHint="Iluminación cálida del salón en celebración · 1200 × 1600 px">
+        photoHint="Iluminación cálida del salón en celebración · 1200 × 1600 px"
+        photoSrc="/fotos/salon-noche.jpg">
         <div className="py-20 px-8 md:px-14">
           <div ref={addReveal} className="section-reveal mb-10">
             <p className="text-xs tracking-[0.4em] uppercase mb-4" style={{ color: C.accent }}>Agenda tu visita</p>
             <h2 className="text-4xl md:text-5xl font-light mb-3" style={{ fontFamily: "var(--font-display,serif)" }}>
               <span className="forest-text">Reserva</span> tu evento
             </h2>
-            <p className="text-sm font-light" style={{ color: `${C.text}99` }}>Te contactamos en menos de 24 horas.</p>
+            <p className="text-sm font-light" style={{ color: `${C.text}99` }}>Te contactamos en menos de 1 hora.</p>
           </div>
           <div ref={addReveal} className="section-reveal">
-            <BookingForm />
+            <BookingForm paqueteInicial={paqueteSeleccionado} />
           </div>
         </div>
       </SplitSection>
