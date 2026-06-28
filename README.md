@@ -1,36 +1,79 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Salón del Bosque
 
-## Getting Started
+Sitio web del **Salón del Bosque**, salón de eventos en Toluca. Next.js 16 (App Router) +
+React 19 + Tailwind 4 + Supabase. Una sola página con hero, secciones (Nosotros, Ubicación,
+Cotizaciones, Reserva), formulario de reserva que termina en WhatsApp, calendario de fechas
+ocupadas y un panel `/admin` para bloquear fechas.
 
-First, run the development server:
+## Puesta en marcha
 
 ```bash
+npm install
+cp .env.example .env.local   # rellena con tus credenciales de Supabase
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abre [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Variables de entorno (`.env.local`)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Variable | Descripción |
+| --- | --- |
+| `NEXT_PUBLIC_SUPABASE_URL` | URL del proyecto Supabase (Settings → API). |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Clave pública `anon` del proyecto. |
 
-## Learn More
+`.env.local` está en `.gitignore`; nunca lo subas al repositorio.
 
-To learn more about Next.js, take a look at the following resources:
+## Supabase
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Tabla `blocked_dates`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```sql
+create table public.blocked_dates (
+  id uuid primary key default gen_random_uuid(),
+  date date not null,
+  reason text,
+  created_at timestamptz default now()
+);
+```
 
-## Deploy on Vercel
+### Row Level Security (IMPORTANTE)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+El sitio usa la clave `anon` desde el navegador. Para que **cualquiera no pueda** crear o borrar
+fechas, activa RLS y deja la escritura solo para usuarios autenticados:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```sql
+alter table public.blocked_dates enable row level security;
+
+-- Lectura pública (el calendario del formulario la necesita)
+create policy "blocked_dates lectura pública"
+  on public.blocked_dates for select
+  to anon, authenticated using (true);
+
+-- Escritura solo para administradores autenticados
+create policy "blocked_dates escritura admin"
+  on public.blocked_dates for all
+  to authenticated using (true) with check (true);
+```
+
+### Usuario administrador
+
+El panel `/admin` usa **Supabase Auth** (correo + contraseña), no una contraseña en el código.
+Crea el usuario en el panel de Supabase: **Authentication → Users → Add user** (email + password).
+Inicia sesión en `/admin` con esas credenciales.
+
+## Estructura
+
+- `app/page.tsx` — página principal (componentes de UI y secciones).
+- `app/admin/page.tsx` — panel de administración de fechas.
+- `app/layout.tsx` — metadata, Open Graph y JSON-LD (`EventVenue`).
+- `app/sitemap.ts`, `app/robots.ts`, `app/icon.svg` — SEO.
+- `lib/theme.ts` — paleta de color (fuente única).
+- `lib/site.ts` — datos del negocio y teléfono.
+- `lib/content.ts` — textos, paquetes, testimonios y stats.
+- `lib/supabase.ts` — cliente de Supabase.
+
+## Contenido pendiente
+
+Hay datos de ejemplo (testimonios, chef, premios, fotos) que deben reemplazarse con información
+real. Ver [`CONTENIDO-PENDIENTE.md`](./CONTENIDO-PENDIENTE.md).

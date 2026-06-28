@@ -1,0 +1,116 @@
+/* Stepper adaptado de React Bits a la paleta del Salón del Bosque.
+   Usa las variables de color definidas en globals.css (:root). */
+
+.stepper-outer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.stepper-card {
+  width: 100%;
+  background: var(--surface);
+}
+
+.stepper-indicator-row {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  padding: 1.5rem 1.5rem 0.25rem;
+}
+
+.stepper-content {
+  position: relative;
+  overflow: hidden;
+}
+
+.stepper-step {
+  padding: 1.5rem;
+}
+
+.stepper-footer {
+  padding: 0 1.5rem 1.5rem;
+}
+
+.stepper-nav {
+  margin-top: 1.25rem;
+  display: flex;
+}
+.stepper-nav.spread { justify-content: space-between; }
+.stepper-nav.end { justify-content: flex-end; }
+
+.stepper-back {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.65rem 0.5rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  transition: opacity 300ms;
+}
+.stepper-back:hover { opacity: 0.6; }
+
+.stepper-next {
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.75rem;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--bg);
+  background: linear-gradient(135deg, var(--accent), #5a7a30);
+  transition: opacity 300ms;
+}
+.stepper-next:hover { opacity: 0.85; }
+
+.stepper-indicator {
+  position: relative;
+  cursor: pointer;
+  outline: none;
+}
+
+.stepper-indicator-inner {
+  display: flex;
+  height: 2rem;
+  width: 2rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+.stepper-active-dot {
+  height: 0.7rem;
+  width: 0.7rem;
+  border-radius: 9999px;
+  background: var(--bg);
+}
+
+.stepper-connector {
+  position: relative;
+  margin: 0 0.5rem;
+  height: 2px;
+  flex: 1;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+.stepper-connector-inner {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+}
+
+.stepper-check {
+  height: 1rem;
+  width: 1rem;
+  color: var(--bg);
+}
