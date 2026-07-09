@@ -13,7 +13,6 @@ import AnimatedStat from "./components/AnimatedStat";
 import QuoteCalculator from "./components/Packages";
 import BookingForm from "./components/BookingForm";
 import Amenities from "./components/Amenities";
-import Faq from "./components/Faq";
 import WhatsAppButton from "./components/WhatsAppButton";
 import SocialLinks from "./components/SocialLinks";
 
@@ -53,49 +52,58 @@ export default function Home() {
       <Navbar />
 
       {/* ══ HERO ══ */}
-      <section id="hero" className="md:flex md:items-stretch relative min-h-screen">
-        {/* imagen izquierda sticky */}
-        <div className="relative h-64 md:h-auto md:self-stretch flex-shrink-0 md:w-1/2 overflow-hidden">
-          <Image src="/fotos/salon-noche.jpg" alt="Salón del Bosque" fill style={{ objectFit: "cover", objectPosition: "center" }} sizes="50vw" priority />
-          <div className="absolute inset-0 pointer-events-none hidden md:block" style={{ background: `linear-gradient(to right, transparent 55%, ${C.bg} 92%)` }} />
-          <div className="absolute inset-0 pointer-events-none md:hidden" style={{ background: `linear-gradient(to bottom, transparent 50%, ${C.bg} 95%)` }} />
-        </div>
+      <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden">
+        {/* foto de fondo */}
+        <Image src="/fotos/salon-dia.jpg" alt="Salón del Bosque" fill priority sizes="100vw"
+          style={{ objectFit: "cover", objectPosition: "center" }} />
+        {/* velo crema que desvanece la foto (texto oscuro legible) */}
+        <div className="absolute inset-0 pointer-events-none" style={{ background: `${C.bg}bb` }} />
+        <div className="absolute inset-0 pointer-events-none"
+          style={{ background: `linear-gradient(to bottom, ${C.bg}66 0%, transparent 32%, transparent 58%, ${C.bg} 100%)` }} />
 
-        {/* contenido derecho */}
-        <div className="w-full md:w-1/2 flex items-center justify-center py-32 px-8 md:px-14 relative" style={{ background: `${C.bg}ee`, backdropFilter: "blur(2px)" }}>
-          <div className="max-w-lg w-full text-center">
-            <p className="anim-fade d-100 text-xs tracking-[0.4em] uppercase mb-5" style={{ color: C.accent }}>
-              Salón de Eventos · Toluca
+        {/* contenido centrado */}
+        <div className="relative z-10 w-full max-w-2xl mx-auto text-center px-6 py-24">
+          <div className="anim-fade d-100"><LeafAccent /></div>
+          <p className="anim-fade d-100 text-xs tracking-[0.4em] uppercase mb-5" style={{ color: C.accent }}>
+            Salón de Eventos · Toluca
+          </p>
+          <h1 className="anim-fade-up d-200 mb-5 leading-none"
+            style={{ fontFamily: "var(--font-display,serif)", fontSize: "clamp(2.5rem,6vw,5rem)", fontWeight: 300, color: C.text }}>
+            Tu espacio ideal<br />
+            <span className="forest-shimmer">para celebrar</span>
+          </h1>
+          <p className="anim-fade-up d-400 text-base font-light leading-relaxed mb-4" style={{ color: `${C.text}aa` }}>
+            Un entorno único donde cada celebración<br />se convierte en un recuerdo eterno.
+          </p>
+          <div className="anim-fade-up d-500 flex items-center justify-center gap-3 mb-8">
+            <div className="h-px w-8" style={{ background: `${C.accent}50` }} />
+            <p className="text-sm font-light text-center leading-relaxed" style={{ color: `${C.text}99`, fontFamily: "var(--font-display,serif)", fontStyle: "italic" }}>
+              Empresa familiar comprometida con la calidad y calidez<br />en el servicio y la satisfacción total de sus clientes
             </p>
-            <h1 className="anim-fade-up d-200 mb-5 leading-none"
-              style={{ fontFamily: "var(--font-display,serif)", fontSize: "clamp(2.5rem,6vw,5rem)", fontWeight: 300, color: C.text }}>
-              Tu espacio ideal<br />
-              <span className="forest-shimmer">para celebrar</span>
-            </h1>
-            <p className="anim-fade-up d-400 text-base font-light leading-relaxed mb-4" style={{ color: `${C.text}aa` }}>
-              Un entorno único donde cada celebración<br />se convierte en un recuerdo eterno.
-            </p>
-            <div className="anim-fade-up d-500 flex items-center justify-center gap-3 mb-8">
-              <div className="h-px w-8" style={{ background: `${C.accent}50` }} />
-              <p className="text-sm font-light text-center leading-relaxed" style={{ color: `${C.text}99`, fontFamily: "var(--font-display,serif)", fontStyle: "italic" }}>
-                Empresa familiar comprometida con la calidad y calidez<br />en el servicio y la satisfacción total de sus clientes
-              </p>
-              <div className="h-px w-8" style={{ background: `${C.accent}50` }} />
-            </div>
-            <div className="anim-fade-up d-600 flex flex-col sm:flex-row gap-4 justify-center">
-              <a href="#reserva" className="inline-block px-10 py-4 text-xs tracking-[0.25em] uppercase font-medium hover:opacity-85 transition-opacity duration-300"
-                style={{ background: `linear-gradient(135deg, ${C.accent}, #5a7a30)`, color: C.bg }}>
-                Reservar evento
-              </a>
-              <a href="#nosotros" className="inline-block px-10 py-4 text-xs tracking-[0.25em] uppercase transition-all duration-300"
-                style={{ border: `1px solid ${C.text}28`, color: `${C.text}cc` }}
-                onMouseEnter={(e) => { const el = e.currentTarget as HTMLElement; el.style.borderColor = `${C.accent}60`; el.style.color = C.accent; }}
-                onMouseLeave={(e) => { const el = e.currentTarget as HTMLElement; el.style.borderColor = `${C.text}28`; el.style.color = `${C.text}cc`; }}>
-                Conócenos
-              </a>
-            </div>
+            <div className="h-px w-8" style={{ background: `${C.accent}50` }} />
+          </div>
+          <div className="anim-fade-up d-600 flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="#reserva" className="inline-block px-10 py-4 text-xs tracking-[0.25em] uppercase font-medium hover:opacity-85 transition-opacity duration-300"
+              style={{ background: `linear-gradient(135deg, ${C.accent}, #5a7a30)`, color: C.bg }}>
+              Reservar evento
+            </a>
+            <a href="#nosotros" className="inline-block px-10 py-4 text-xs tracking-[0.25em] uppercase transition-all duration-300"
+              style={{ border: `1px solid ${C.text}28`, color: `${C.text}cc` }}
+              onMouseEnter={(e) => { const el = e.currentTarget as HTMLElement; el.style.borderColor = `${C.accent}60`; el.style.color = C.accent; }}
+              onMouseLeave={(e) => { const el = e.currentTarget as HTMLElement; el.style.borderColor = `${C.text}28`; el.style.color = `${C.text}cc`; }}>
+              Conócenos
+            </a>
           </div>
         </div>
+
+        {/* indicador de scroll */}
+        <a href="#nosotros" aria-label="Desliza para ver más"
+          className="anim-fade d-800 absolute bottom-24 md:bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2">
+          <span className="text-[9px] tracking-[0.3em] uppercase" style={{ color: `${C.text}88` }}>Desliza</span>
+          <span className="anim-float" style={{ color: C.accent }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14M6 13l6 6 6-6" /></svg>
+          </span>
+        </a>
       </section>
 
       {/* ══ NOSOTROS ══ */}
@@ -180,25 +188,6 @@ export default function Home() {
         </div>
       </SplitSection>
 
-      {/* ══ GALERÍA ══ */}
-      <section id="galeria" className="py-24 px-6 md:px-16" style={{ background: C.bg }}>
-        <div className="max-w-6xl mx-auto">
-          <div ref={addReveal} className="section-reveal mb-10 text-center">
-            <LeafAccent />
-            <p className="text-xs tracking-[0.4em] uppercase mb-3" style={{ color: C.accent }}>Galería</p>
-            <h2 className="text-4xl md:text-5xl font-light" style={{ fontFamily: "var(--font-display,serif)" }}>
-              Nuestros <span className="forest-text">eventos</span>
-            </h2>
-            <p className="text-sm font-light mt-3" style={{ color: `${C.text}99` }}>
-              Un vistazo a los espacios y celebraciones del Salón del Bosque
-            </p>
-          </div>
-          <div ref={addReveal} className="section-reveal grid grid-cols-2 md:grid-cols-3 gap-3">
-            {GALLERY.map((g) => <PhotoSlot key={g.label} label={g.label} hint={g.hint} src={g.src} wide={g.wide} />)}
-          </div>
-        </div>
-      </section>
-
       {/* ══ COTIZACIONES ══ */}
       <SplitSection id="cotizaciones"
         photoLabel="Mesa elegante de evento"
@@ -221,16 +210,36 @@ export default function Home() {
       </SplitSection>
 
       {/* ══ SERVICIOS Y AMENIDADES ══ */}
-      <section id="servicios" className="py-24 px-6 md:px-16" style={{ background: C.surface }}>
+      <section id="servicios" className="py-24 px-6 md:px-16" style={{ background: C.bg }}>
         <div className="max-w-6xl mx-auto">
-          <div ref={addReveal} className="section-reveal mb-10">
-            <p className="text-xs tracking-[0.4em] uppercase mb-4" style={{ color: C.accent }}>Todo a tu servicio</p>
+          <div ref={addReveal} className="section-reveal mb-12 text-center">
+            <LeafAccent />
+            <p className="text-xs tracking-[0.4em] uppercase mb-3" style={{ color: C.accent }}>Todo a tu servicio</p>
             <h2 className="text-4xl md:text-5xl font-light" style={{ fontFamily: "var(--font-display,serif)" }}>
               Servicios y <span className="amber-text">amenidades</span>
             </h2>
           </div>
           <div ref={addReveal} className="section-reveal">
             <Amenities />
+          </div>
+        </div>
+      </section>
+
+      {/* ══ GALERÍA ══ */}
+      <section id="galeria" className="py-24 px-6 md:px-16" style={{ background: C.surface }}>
+        <div className="max-w-6xl mx-auto">
+          <div ref={addReveal} className="section-reveal mb-10 text-center">
+            <LeafAccent />
+            <p className="text-xs tracking-[0.4em] uppercase mb-3" style={{ color: C.accent }}>Galería</p>
+            <h2 className="text-4xl md:text-5xl font-light" style={{ fontFamily: "var(--font-display,serif)" }}>
+              Nuestros <span className="forest-text">eventos</span>
+            </h2>
+            <p className="text-sm font-light mt-3" style={{ color: `${C.text}99` }}>
+              Un vistazo a los espacios y celebraciones del Salón del Bosque
+            </p>
+          </div>
+          <div ref={addReveal} className="section-reveal grid grid-cols-2 md:grid-cols-3 gap-3">
+            {GALLERY.map((g) => <PhotoSlot key={g.label} label={g.label} hint={g.hint} src={g.src} wide={g.wide} />)}
           </div>
         </div>
       </section>
@@ -288,22 +297,6 @@ export default function Home() {
         </div>
       </SplitSection>
 
-      {/* ══ FAQ ══ */}
-      <section id="faq" className="py-24 px-6 md:px-16" style={{ background: C.bg }}>
-        <div className="max-w-3xl mx-auto">
-          <div ref={addReveal} className="section-reveal mb-8 text-center">
-            <LeafAccent />
-            <p className="text-xs tracking-[0.4em] uppercase mb-3" style={{ color: C.accent }}>Preguntas frecuentes</p>
-            <h2 className="text-4xl md:text-5xl font-light" style={{ fontFamily: "var(--font-display,serif)" }}>
-              Resolvemos tus <span className="forest-text">dudas</span>
-            </h2>
-          </div>
-          <div ref={addReveal} className="section-reveal">
-            <Faq />
-          </div>
-        </div>
-      </section>
-
       {/* ══ RESERVA ══ */}
       <SplitSection id="reserva"
         photoLabel="Ambiente de evento nocturno"
@@ -354,7 +347,7 @@ export default function Home() {
             Salón del Bosque
           </div>
           <div className="flex gap-7 text-[10px] tracking-[0.25em] uppercase">
-            {[["nosotros","Nosotros"],["galeria","Galería"],["cotizaciones","Paquetes"],["ubicacion","Ubicación"],["faq","FAQ"]].map(([id, label]) => (
+            {[["nosotros","Nosotros"],["cotizaciones","Paquetes"],["galeria","Galería"],["ubicacion","Ubicación"]].map(([id, label]) => (
               <a key={id} href={`#${id}`} className="transition-colors duration-300"
                 style={{ color: `${C.text}99` }}
                 onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = C.accent; }}

@@ -53,7 +53,7 @@ export default function Navbar() {
       const max = document.documentElement.scrollHeight - window.innerHeight;
       setProgress(max > 0 ? y / max : 0);
       setScrolled(y > 60);
-      const ids = ["reserva", "faq", "ubicacion", "servicios", "cotizaciones", "galeria", "nosotros"];
+      const ids = ["reserva", "ubicacion", "galeria", "servicios", "cotizaciones", "nosotros"];
       for (const id of ids) {
         const el = document.getElementById(id);
         if (el && el.getBoundingClientRect().top <= 120) { setActiveSection(id); break; }
@@ -72,12 +72,12 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const links = ["nosotros", "galeria", "cotizaciones", "ubicacion"];
+  const links = ["nosotros", "cotizaciones", "galeria", "ubicacion"];
 
   const dockItems: DockItemData[] = useMemo(() => [
     { icon: <IconLeaf />,     label: "Nosotros",  onClick: () => scrollToId("nosotros") },
-    { icon: <IconImage />,    label: "Galería",   onClick: () => scrollToId("galeria") },
     { icon: <IconBox />,      label: "Paquetes",  onClick: () => scrollToId("cotizaciones") },
+    { icon: <IconImage />,    label: "Galería",   onClick: () => scrollToId("galeria") },
     { icon: <IconPin />,      label: "Ubicación", onClick: () => scrollToId("ubicacion") },
     { icon: <IconCalendar />, label: "Reservar",  onClick: () => scrollToId("reserva") },
   ], []);

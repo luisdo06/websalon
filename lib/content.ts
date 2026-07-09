@@ -89,28 +89,46 @@ export const GALLERY: GalleryItem[] = [
   { label: "Sala VIP",          hint: "Eventos íntimos · foto pendiente" },
 ];
 
-/* Amenidades. 'icon' mapea a un SVG en el componente Amenities.
+/* Servicios y amenidades, agrupados por tema (tarjetas del CardSwap).
+   'icon' mapea a un SVG en el componente Amenities.
    ⚠️ Los valores con "(confirmar)" son placeholders a precisar por el dueño. */
-export interface Amenity { icon: string; label: string; note: string; }
-export const AMENITIES: Amenity[] = [
-  { icon: "users",   label: "Aforo amplio",       note: "Hasta 200 invitados (confirmar)" },
-  { icon: "parking", label: "Estacionamiento",    note: "Con personal cuidando autos" },
-  { icon: "climate", label: "Clima agradable",    note: "Espacio ventilado / A. A. (confirmar)" },
-  { icon: "access",  label: "Accesibilidad",      note: "Acceso a planta baja (confirmar)" },
-  { icon: "chair",   label: "Mobiliario incluido", note: "Mesas redondas + sillas Tiffany" },
-  { icon: "waiter",  label: "Meseros",            note: "Servicio durante todo el evento" },
-  { icon: "dish",    label: "Banquete propio",    note: "Cocina del Chef Román Hernández" },
-  { icon: "leaf",    label: "Entorno de bosque",  note: "Ambiente natural y tranquilo" },
-];
-
-/* Preguntas frecuentes. ⚠️ Las respuestas con "(definir)" son políticas a confirmar por el dueño. */
-export interface FaqItem { q: string; a: string; }
-export const FAQ: FaqItem[] = [
-  { q: "¿Cómo aparto mi fecha?", a: "Llena el formulario de reserva y te contactamos por WhatsApp en menos de 1 hora para confirmar disponibilidad y los siguientes pasos." },
-  { q: "¿Cuánto es el anticipo?", a: "Se requiere un anticipo para apartar la fecha. (Definir % y monto)." },
-  { q: "¿Cuál es la política de cancelación?", a: "(Definir política de cancelación y reembolso)." },
-  { q: "¿Qué incluye cada paquete?", a: "El Paquete Completo incluye banquete, mobiliario, meseros y más; el Sencillo incluye mobiliario completo sin comida. Revisa el detalle en la sección Paquetes." },
-  { q: "¿Puedo llevar mi propio banquete o proveedores?", a: "Sí, con el Paquete Sencillo puedes traer tu catering. (Confirmar reglas para proveedores externos)." },
-  { q: "¿Cuál es el horario del evento?", a: "La renta es de 8 horas. Lunes a viernes 9:00–19:00 y sábados 9:00–17:00; domingos cerrado." },
-  { q: "¿Hay degustación antes del evento?", a: "Sí. Al agendar tu primera visita puedes incluir una degustación sin costo con el chef." },
+export interface ServiceCard { icon: string; title: string; items: string[]; }
+export const SERVICE_CARDS: ServiceCard[] = [
+  {
+    icon: "users",
+    title: "Espacio & entorno",
+    items: [
+      "Aforo hasta 200 invitados (confirmar)",
+      "Clima agradable y ventilado",
+      "Entorno natural de bosque",
+      "Acceso en planta baja (confirmar)",
+    ],
+  },
+  {
+    icon: "chair",
+    title: "Mobiliario & montaje",
+    items: [
+      "Mesas redondas + sillas Tiffany",
+      "Mantelería completa",
+      "Loza y cristalería completas",
+    ],
+  },
+  {
+    icon: "waiter",
+    title: "Servicio",
+    items: [
+      "Meseros durante todo el evento",
+      "Estacionamiento con personal",
+      "Atención personalizada",
+    ],
+  },
+  {
+    icon: "dish",
+    title: "Gastronomía",
+    items: [
+      "Banquete del Chef Román Hernández",
+      "Menú en tres tiempos",
+      "Degustación previa sin costo",
+    ],
+  },
 ];
