@@ -2,7 +2,7 @@ import Image from "next/image";
 import { C } from "@/lib/theme";
 
 /* ─── PhotoSlot: placeholder inline (galería interna) ─── */
-export default function PhotoSlot({ label, hint, wide = false, src }: { label: string; hint: string; wide?: boolean; src?: string }) {
+export default function PhotoSlot({ label, wide = false, src }: { label: string; hint?: string; wide?: boolean; src?: string }) {
   return (
     <div className={`relative ${wide ? "aspect-[21/6]" : "aspect-[4/3]"} overflow-hidden group`}
       style={{ border: `1px dashed ${C.accent}35`, background: `linear-gradient(135deg, ${C.surface2}, ${C.surface})` }}>
@@ -16,10 +16,8 @@ export default function PhotoSlot({ label, hint, wide = false, src }: { label: s
             ["bottom-2 left-2","border-b border-l"],["bottom-2 right-2","border-b border-r"]].map(([p, cls]) => (
             <div key={p} className={`absolute ${p} w-4 h-4 ${cls}`} style={{ borderColor: `${C.accent}45` }} />
           ))}
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 px-4 text-center">
+          <div className="absolute inset-0 flex items-center justify-center">
             <span className="text-lg" style={{ color: `${C.accent}60` }}>⬚</span>
-            <p className="text-[10px]" style={{ color: `${C.text}99` }}>{label}</p>
-            <p className="text-[9px]" style={{ color: `${C.text}60` }}>{hint}</p>
           </div>
         </>
       )}

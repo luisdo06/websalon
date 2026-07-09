@@ -16,6 +16,7 @@ import Amenities from "./components/Amenities";
 import WhatsAppButton from "./components/WhatsAppButton";
 import SocialLinks from "./components/SocialLinks";
 import FallingLeaves from "./components/FallingLeaves";
+import DomeGallery from "./components/DomeGallery";
 
 /* acento botánico sutil para encabezados centrados */
 function LeafAccent() {
@@ -193,10 +194,8 @@ export default function Home() {
             </p>
             <div className="grid grid-cols-2 gap-3">
               {[
-                { label: "Chef Román Hernández", hint: "Retrato · 600×750",           src: undefined },
-                { label: "Equipo de cocina",    hint: "En acción · 600×750",          src: undefined },
-                { label: "Preparación",         hint: "Detalle gastronómico · 600×750", src: undefined },
-                { label: "Banquete",            hint: "Mesa montada · 600×750",        src: "/fotos/comida-menu.jpg" },
+                { label: "Chef Román Hernández", hint: "Retrato · 600×750", src: undefined },
+                { label: "Banquete",             hint: "Mesa montada · 600×750", src: "/fotos/comida-menu.jpg" },
               ].map((p) => <PhotoSlot key={p.label} label={p.label} hint={p.hint} src={p.src} />)}
             </div>
           </div>
@@ -292,11 +291,17 @@ export default function Home() {
               Nuestros <span className="forest-text">eventos</span>
             </h2>
             <p className="text-sm font-light mt-3" style={{ color: `${C.text}99` }}>
-              Un vistazo a los espacios y celebraciones del Salón del Bosque
+              Arrastra para explorar · toca una foto para ampliarla
             </p>
           </div>
-          <div ref={addReveal} className="section-reveal grid grid-cols-2 md:grid-cols-3 gap-3">
-            {GALLERY.map((g) => <PhotoSlot key={g.label} label={g.label} hint={g.hint} src={g.src} wide={g.wide} />)}
+          <div ref={addReveal} className="section-reveal relative w-full h-[70vh] min-h-[460px]">
+            <DomeGallery
+              images={GALLERY.filter((g) => g.src).map((g) => ({ src: g.src as string, alt: g.label }))}
+              grayscale={false}
+              overlayBlurColor={C.bg}
+              fit={0.5}
+              minRadius={380}
+            />
           </div>
         </div>
       </section>
