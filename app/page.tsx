@@ -106,6 +106,22 @@ export default function Home() {
         </a>
       </section>
 
+      {/* ══ SERVICIOS Y AMENIDADES ══ */}
+      <section id="servicios" className="py-24 px-6 md:px-16" style={{ background: C.bg }}>
+        <div className="max-w-6xl mx-auto">
+          <div ref={addReveal} className="section-reveal mb-12 text-center">
+            <LeafAccent />
+            <p className="text-xs tracking-[0.4em] uppercase mb-3" style={{ color: C.accent }}>Todo a tu servicio</p>
+            <h2 className="text-4xl md:text-5xl font-light" style={{ fontFamily: "var(--font-display,serif)" }}>
+              Servicios y <span className="amber-text">amenidades</span>
+            </h2>
+          </div>
+          <div ref={addReveal} className="section-reveal">
+            <Amenities />
+          </div>
+        </div>
+      </section>
+
       {/* ══ NOSOTROS ══ */}
       <SplitSection id="nosotros"
         photoLabel="Salón decorado para evento"
@@ -209,41 +225,6 @@ export default function Home() {
         </div>
       </SplitSection>
 
-      {/* ══ SERVICIOS Y AMENIDADES ══ */}
-      <section id="servicios" className="py-24 px-6 md:px-16" style={{ background: C.bg }}>
-        <div className="max-w-6xl mx-auto">
-          <div ref={addReveal} className="section-reveal mb-12 text-center">
-            <LeafAccent />
-            <p className="text-xs tracking-[0.4em] uppercase mb-3" style={{ color: C.accent }}>Todo a tu servicio</p>
-            <h2 className="text-4xl md:text-5xl font-light" style={{ fontFamily: "var(--font-display,serif)" }}>
-              Servicios y <span className="amber-text">amenidades</span>
-            </h2>
-          </div>
-          <div ref={addReveal} className="section-reveal">
-            <Amenities />
-          </div>
-        </div>
-      </section>
-
-      {/* ══ GALERÍA ══ */}
-      <section id="galeria" className="py-24 px-6 md:px-16" style={{ background: C.surface }}>
-        <div className="max-w-6xl mx-auto">
-          <div ref={addReveal} className="section-reveal mb-10 text-center">
-            <LeafAccent />
-            <p className="text-xs tracking-[0.4em] uppercase mb-3" style={{ color: C.accent }}>Galería</p>
-            <h2 className="text-4xl md:text-5xl font-light" style={{ fontFamily: "var(--font-display,serif)" }}>
-              Nuestros <span className="forest-text">eventos</span>
-            </h2>
-            <p className="text-sm font-light mt-3" style={{ color: `${C.text}99` }}>
-              Un vistazo a los espacios y celebraciones del Salón del Bosque
-            </p>
-          </div>
-          <div ref={addReveal} className="section-reveal grid grid-cols-2 md:grid-cols-3 gap-3">
-            {GALLERY.map((g) => <PhotoSlot key={g.label} label={g.label} hint={g.hint} src={g.src} wide={g.wide} />)}
-          </div>
-        </div>
-      </section>
-
       {/* ══ UBICACIÓN ══ */}
       <SplitSection id="ubicacion"
         photoLabel="Vista exterior / aérea del salón"
@@ -297,6 +278,25 @@ export default function Home() {
         </div>
       </SplitSection>
 
+      {/* ══ GALERÍA ══ */}
+      <section id="galeria" className="py-24 px-6 md:px-16" style={{ background: C.bg }}>
+        <div className="max-w-6xl mx-auto">
+          <div ref={addReveal} className="section-reveal mb-10 text-center">
+            <LeafAccent />
+            <p className="text-xs tracking-[0.4em] uppercase mb-3" style={{ color: C.accent }}>Galería</p>
+            <h2 className="text-4xl md:text-5xl font-light" style={{ fontFamily: "var(--font-display,serif)" }}>
+              Nuestros <span className="forest-text">eventos</span>
+            </h2>
+            <p className="text-sm font-light mt-3" style={{ color: `${C.text}99` }}>
+              Un vistazo a los espacios y celebraciones del Salón del Bosque
+            </p>
+          </div>
+          <div ref={addReveal} className="section-reveal grid grid-cols-2 md:grid-cols-3 gap-3">
+            {GALLERY.map((g) => <PhotoSlot key={g.label} label={g.label} hint={g.hint} src={g.src} wide={g.wide} />)}
+          </div>
+        </div>
+      </section>
+
       {/* ══ RESERVA ══ */}
       <SplitSection id="reserva"
         photoLabel="Ambiente de evento nocturno"
@@ -347,7 +347,7 @@ export default function Home() {
             Salón del Bosque
           </div>
           <div className="flex gap-7 text-[10px] tracking-[0.25em] uppercase">
-            {[["nosotros","Nosotros"],["cotizaciones","Paquetes"],["galeria","Galería"],["ubicacion","Ubicación"]].map(([id, label]) => (
+            {[["nosotros","Nosotros"],["cotizaciones","Paquetes"],["ubicacion","Ubicación"],["galeria","Galería"]].map(([id, label]) => (
               <a key={id} href={`#${id}`} className="transition-colors duration-300"
                 style={{ color: `${C.text}99` }}
                 onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = C.accent; }}
