@@ -5,14 +5,20 @@ export const SITE = {
   description:
     "Salón del Bosque — salón de eventos en Toluca, Estado de México. Bodas, XV años, " +
     "cumpleaños, bautizos, corporativos y más, con banquete y mobiliario completo.",
-  // Cambiar por el dominio real al desplegar.
-  url: "https://salondelbosque.com",
+  // URL de producción (Vercel). Cambiar si conectas un dominio propio.
+  url: "https://websalon.vercel.app",
   city: "Toluca",
   region: "Estado de México",
   country: "MX",
   contactName: "Evelia Mendoza Hernández",
+  capacity: 200, // ⚠️ aforo a confirmar
   geo: { lat: 19.2779057, lng: -99.619061 },
   maps: "https://maps.app.goo.gl/YZwtrZ7VSL3aCEz88",
+  // ⚠️ Redes sociales — pegar las URLs reales (déjalas vacías si no hay).
+  social: {
+    instagram: "", // ej: https://instagram.com/salondelbosque
+    facebook: "",  // ej: https://facebook.com/salondelbosque
+  },
 } as const;
 
 /* ─── teléfono en sus distintos formatos ─── */

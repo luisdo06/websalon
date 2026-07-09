@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { C } from "@/lib/theme";
-import { STATS } from "@/lib/content";
+import { STATS, GALLERY } from "@/lib/content";
 import { useReveal, usePrefersReducedMotion, useFinePointer } from "./hooks";
 import Navbar from "./components/Navbar";
 import CustomCursor from "./components/CustomCursor";
@@ -12,6 +12,23 @@ import PhotoSlot from "./components/PhotoSlot";
 import AnimatedStat from "./components/AnimatedStat";
 import QuoteCalculator from "./components/Packages";
 import BookingForm from "./components/BookingForm";
+import Amenities from "./components/Amenities";
+import Faq from "./components/Faq";
+import WhatsAppButton from "./components/WhatsAppButton";
+import SocialLinks from "./components/SocialLinks";
+
+/* acento botánico sutil para encabezados centrados */
+function LeafAccent() {
+  return (
+    <div className="flex items-center justify-center gap-3 mb-5" aria-hidden="true">
+      <span className="h-px w-10" style={{ background: `${C.accent}40` }} />
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={C.accent} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M4 20c0-8 6-14 16-16-2 10-8 16-16 16Z" /><path d="M4 20C8 14 12 10 18 8" />
+      </svg>
+      <span className="h-px w-10" style={{ background: `${C.accent}40` }} />
+    </div>
+  );
+}
 
 /* ════════════════════════════════════════════
    PÁGINA PRINCIPAL
@@ -130,18 +147,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* galería espacios */}
-          <div ref={addReveal} className="section-reveal">
-            <p className="text-xs tracking-[0.4em] uppercase mb-5" style={{ color: C.accent }}>Nuestros espacios</p>
-            <div className="grid grid-cols-3 gap-3">
-              {[
-                { label: "Salón principal", hint: "200 personas · 1000×700" },
-                { label: "Terraza exterior", hint: "Vista al jardín · 1000×700" },
-                { label: "Sala VIP", hint: "Eventos íntimos · 1000×700" },
-              ].map((p) => <PhotoSlot key={p.label} label={p.label} hint={p.hint} />)}
-            </div>
-          </div>
-
           {/* chef y equipo */}
           <div ref={addReveal} className="section-reveal">
             <p className="text-xs tracking-[0.4em] uppercase mb-4" style={{ color: C.accent }}>El alma de nuestra cocina</p>
@@ -175,6 +180,24 @@ export default function Home() {
         </div>
       </SplitSection>
 
+      {/* ══ GALERÍA ══ */}
+      <section id="galeria" className="py-24 px-6 md:px-16" style={{ background: C.bg }}>
+        <div className="max-w-6xl mx-auto">
+          <div ref={addReveal} className="section-reveal mb-10 text-center">
+            <LeafAccent />
+            <p className="text-xs tracking-[0.4em] uppercase mb-3" style={{ color: C.accent }}>Galería</p>
+            <h2 className="text-4xl md:text-5xl font-light" style={{ fontFamily: "var(--font-display,serif)" }}>
+              Nuestros <span className="forest-text">eventos</span>
+            </h2>
+            <p className="text-sm font-light mt-3" style={{ color: `${C.text}99` }}>
+              Un vistazo a los espacios y celebraciones del Salón del Bosque
+            </p>
+          </div>
+          <div ref={addReveal} className="section-reveal grid grid-cols-2 md:grid-cols-3 gap-3">
+            {GALLERY.map((g) => <PhotoSlot key={g.label} label={g.label} hint={g.hint} src={g.src} wide={g.wide} />)}
+          </div>
+        </div>
+      </section>
 
       {/* ══ COTIZACIONES ══ */}
       <SplitSection id="cotizaciones"
@@ -196,6 +219,21 @@ export default function Home() {
           </div>
         </div>
       </SplitSection>
+
+      {/* ══ SERVICIOS Y AMENIDADES ══ */}
+      <section id="servicios" className="py-24 px-6 md:px-16" style={{ background: C.surface }}>
+        <div className="max-w-6xl mx-auto">
+          <div ref={addReveal} className="section-reveal mb-10">
+            <p className="text-xs tracking-[0.4em] uppercase mb-4" style={{ color: C.accent }}>Todo a tu servicio</p>
+            <h2 className="text-4xl md:text-5xl font-light" style={{ fontFamily: "var(--font-display,serif)" }}>
+              Servicios y <span className="amber-text">amenidades</span>
+            </h2>
+          </div>
+          <div ref={addReveal} className="section-reveal">
+            <Amenities />
+          </div>
+        </div>
+      </section>
 
       {/* ══ UBICACIÓN ══ */}
       <SplitSection id="ubicacion"
@@ -250,6 +288,22 @@ export default function Home() {
         </div>
       </SplitSection>
 
+      {/* ══ FAQ ══ */}
+      <section id="faq" className="py-24 px-6 md:px-16" style={{ background: C.bg }}>
+        <div className="max-w-3xl mx-auto">
+          <div ref={addReveal} className="section-reveal mb-8 text-center">
+            <LeafAccent />
+            <p className="text-xs tracking-[0.4em] uppercase mb-3" style={{ color: C.accent }}>Preguntas frecuentes</p>
+            <h2 className="text-4xl md:text-5xl font-light" style={{ fontFamily: "var(--font-display,serif)" }}>
+              Resolvemos tus <span className="forest-text">dudas</span>
+            </h2>
+          </div>
+          <div ref={addReveal} className="section-reveal">
+            <Faq />
+          </div>
+        </div>
+      </section>
+
       {/* ══ RESERVA ══ */}
       <SplitSection id="reserva"
         photoLabel="Ambiente de evento nocturno"
@@ -299,8 +353,8 @@ export default function Home() {
           <div className="forest-shimmer text-lg tracking-[0.3em] uppercase font-light" style={{ fontFamily: "var(--font-display,serif)" }}>
             Salón del Bosque
           </div>
-          <div className="flex gap-8 text-[10px] tracking-[0.25em] uppercase">
-            {[["nosotros","Nosotros"],["cotizaciones","Paquetes"],["ubicacion","Ubicación"]].map(([id, label]) => (
+          <div className="flex gap-7 text-[10px] tracking-[0.25em] uppercase">
+            {[["nosotros","Nosotros"],["galeria","Galería"],["cotizaciones","Paquetes"],["ubicacion","Ubicación"],["faq","FAQ"]].map(([id, label]) => (
               <a key={id} href={`#${id}`} className="transition-colors duration-300"
                 style={{ color: `${C.text}99` }}
                 onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = C.accent; }}
@@ -309,7 +363,10 @@ export default function Home() {
               </a>
             ))}
           </div>
-          <p className="text-[10px] tracking-[0.15em]" style={{ color: `${C.text}88` }}>© 2026 Salón del Bosque.</p>
+          <div className="flex items-center gap-5">
+            <span style={{ color: `${C.text}99` }}><SocialLinks size={18} /></span>
+            <p className="text-[10px] tracking-[0.15em]" style={{ color: `${C.text}88` }}>© 2026 Salón del Bosque.</p>
+          </div>
         </div>
       </footer>
 
@@ -319,6 +376,9 @@ export default function Home() {
         style={{ background: `linear-gradient(135deg, ${C.accent}, #5a7a30)`, color: C.bg, boxShadow: `0 -8px 24px ${C.accent}22` }}>
         Reservar evento
       </a>
+
+      {/* WhatsApp flotante */}
+      <WhatsAppButton />
     </div>
   );
 }

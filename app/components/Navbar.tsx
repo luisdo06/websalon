@@ -1,15 +1,17 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { C } from "@/lib/theme";
 import { scrollToId } from "@/lib/lenisStore";
 import { useMediaQuery } from "../hooks";
 import Dock, { type DockItemData } from "./Dock";
+import SocialLinks from "./SocialLinks";
 
 /* etiquetas legibles para cada sección (el href usa el id) */
 const LABELS: Record<string, string> = {
   nosotros: "Nosotros",
+  galeria: "Galería",
   cotizaciones: "Paquetes",
   ubicacion: "Ubicación",
 };
@@ -31,6 +33,9 @@ const IconPin = () => (
 const IconCalendar = () => (
   <svg {...svgProps}><rect x="3.5" y="5" width="17" height="16" rx="2" /><path d="M3.5 9.5h17M8 3v4M16 3v4M9 14.5l2 2 4-4" /></svg>
 );
+const IconImage = () => (
+  <svg {...svgProps}><rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="8.5" cy="9" r="1.5" /><path d="m4 17 4.5-4.5L13 17M13 14l2.5-2.5L20 16" /></svg>
+);
 
 /* ─── Navbar ─── */
 export default function Navbar() {
@@ -48,7 +53,7 @@ export default function Navbar() {
       const max = document.documentElement.scrollHeight - window.innerHeight;
       setProgress(max > 0 ? y / max : 0);
       setScrolled(y > 60);
-      const ids = ["reserva", "ubicacion", "cotizaciones", "nosotros"];
+      const ids = ["reserva", "faq", "ubicacion", "servicios", "cotizaciones", "galeria", "nosotros"];
       for (const id of ids) {
         const el = document.getElementById(id);
         if (el && el.getBoundingClientRect().top <= 120) { setActiveSection(id); break; }
@@ -67,14 +72,15 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const links = ["nosotros", "cotizaciones", "ubicacion"];
+  const links = ["nosotros", "galeria", "cotizaciones", "ubicacion"];
 
-  const dockItems: DockItemData[] = [
+  const dockItems: DockItemData[] = useMemo(() => [
     { icon: <IconLeaf />,     label: "Nosotros",  onClick: () => scrollToId("nosotros") },
+    { icon: <IconImage />,    label: "Galería",   onClick: () => scrollToId("galeria") },
     { icon: <IconBox />,      label: "Paquetes",  onClick: () => scrollToId("cotizaciones") },
     { icon: <IconPin />,      label: "Ubicación", onClick: () => scrollToId("ubicacion") },
     { icon: <IconCalendar />, label: "Reservar",  onClick: () => scrollToId("reserva") },
-  ];
+  ], []);
 
   return (
     <>
@@ -90,6 +96,7 @@ export default function Navbar() {
           ))}
         </div>
         <div className="flex items-center gap-4">
+          <span className="hidden md:flex" style={{ color: C.accent }}><SocialLinks size={17} /></span>
           <a href="#reserva" className="hidden md:block text-xs tracking-[0.2em] uppercase px-5 py-2 transition-all duration-300"
             style={{ border: `1px solid ${C.accent}55`, color: C.accent }}
             onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = `${C.accent}18`; }}

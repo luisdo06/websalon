@@ -58,6 +58,7 @@ const jsonLd = {
   url: SITE.url,
   telephone: `+52${PHONE.tel}`,
   image: `${SITE.url}/fotos/salon-noche.jpg`,
+  sameAs: [SITE.social.instagram, SITE.social.facebook].filter(Boolean),
   address: {
     "@type": "PostalAddress",
     addressLocality: SITE.city,
