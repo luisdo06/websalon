@@ -137,6 +137,33 @@ body {
   transform: translateY(0);
 }
 
+/* ── hojas cayendo (hero) ── */
+@keyframes leaf-fall { from { transform: translateY(-15vh); } to { transform: translateY(115vh); } }
+@keyframes leaf-sway { from { transform: translateX(-16px); } to { transform: translateX(16px); } }
+@keyframes leaf-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+.leaf {
+  position: absolute;
+  top: 0;
+  animation-name: leaf-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+.leaf-sway {
+  display: block;
+  animation-name: leaf-sway;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+.leaf-spin {
+  display: block;
+  animation-name: leaf-spin;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
 /* ── prefers-reduced-motion: sin animaciones ni desplazamiento suave ── */
 @media (prefers-reduced-motion: reduce) {
   *,

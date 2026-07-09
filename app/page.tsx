@@ -15,6 +15,7 @@ import BookingForm from "./components/BookingForm";
 import Amenities from "./components/Amenities";
 import WhatsAppButton from "./components/WhatsAppButton";
 import SocialLinks from "./components/SocialLinks";
+import FallingLeaves from "./components/FallingLeaves";
 
 /* acento botánico sutil para encabezados centrados */
 function LeafAccent() {
@@ -57,9 +58,12 @@ export default function Home() {
         <Image src="/fotos/salon-dia.jpg" alt="Salón del Bosque" fill priority sizes="100vw"
           style={{ objectFit: "cover", objectPosition: "center" }} />
         {/* velo crema que desvanece la foto (texto oscuro legible) */}
-        <div className="absolute inset-0 pointer-events-none" style={{ background: `${C.bg}bb` }} />
+        <div className="absolute inset-0 pointer-events-none" style={{ background: `${C.bg}a6` }} />
         <div className="absolute inset-0 pointer-events-none"
           style={{ background: `linear-gradient(to bottom, ${C.bg}66 0%, transparent 32%, transparent 58%, ${C.bg} 100%)` }} />
+
+        {/* hojas cayendo (detrás del texto) */}
+        <FallingLeaves />
 
         {/* contenido centrado */}
         <div className="relative z-10 w-full max-w-2xl mx-auto text-center px-6 py-24">
