@@ -7,6 +7,7 @@ import { scrollToId } from "@/lib/lenisStore";
 import { useMediaQuery } from "../hooks";
 import Dock, { type DockItemData } from "./Dock";
 import SocialLinks from "./SocialLinks";
+import StaggeredMenu, { type SMItem } from "./StaggeredMenu";
 
 /* etiquetas legibles para cada sección (el href usa el id) */
 const LABELS: Record<string, string> = {
@@ -74,6 +75,16 @@ export default function Navbar() {
 
   const links = ["nosotros", "cotizaciones", "ubicacion", "galeria"];
 
+  /* ítems del menú móvil (StaggeredMenu) */
+  const mobileItems: SMItem[] = useMemo(
+    () => [
+      ...links.map((id) => ({ label: LABELS[id], link: `#${id}` })),
+      { label: "Reservar", link: "#reserva" },
+    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
+
   const dockItems: DockItemData[] = useMemo(() => [
     { icon: <IconLeaf />,     label: "Nosotros",  onClick: () => scrollToId("nosotros") },
     { icon: <IconBox />,      label: "Paquetes",  onClick: () => scrollToId("cotizaciones") },
@@ -88,7 +99,7 @@ export default function Navbar() {
         style={{ background: `linear-gradient(90deg, ${C.accent}, ${C.amber})`, transform: `scaleX(${progress})`, transition: "transform 0.1s linear" }} />
       <nav className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-5 md:px-16 transition-all duration-500 ${showDock ? "md:-translate-y-full md:opacity-0 md:pointer-events-none" : ""}`}
         style={{ background: scrolled ? `${C.bg}fc` : `linear-gradient(to bottom, ${C.bg}f0 0%, ${C.bg}00 100%)`, backdropFilter: scrolled ? "blur(14px)" : "none", borderBottom: scrolled ? `1px solid ${C.accent}14` : "none" }}>
-        <a href="#hero" aria-label="Ir al inicio" className="forest-shimmer text-xl tracking-[0.3em] uppercase font-light cursor-pointer" style={{ fontFamily: "var(--font-display,serif)" }}>Salón del Bosque</a>
+        <a href="#hero" aria-label="Ir al inicio" className="forest-text text-xl md:text-2xl tracking-[0.28em] uppercase font-semibold cursor-pointer" style={{ fontFamily: "var(--font-display,serif)" }}>Salón del Bosque</a>
         <div className="hidden md:flex gap-10 text-xs tracking-[0.2em] uppercase">
           {links.map((id) => (
             <a key={id} href={`#${id}`} className="transition-colors duration-300"
@@ -112,18 +123,15 @@ export default function Navbar() {
           </button>
         </div>
       </nav>
-      <div className="fixed inset-0 z-40 flex flex-col items-center justify-center gap-8 md:hidden transition-all duration-500"
-        style={{ background: `${C.bg}fe`, opacity: menuOpen ? 1 : 0, pointerEvents: menuOpen ? "auto" : "none" }}>
-        {links.map((id, i) => (
-          <a key={id} href={`#${id}`} onClick={() => setMenuOpen(false)}
-            className="text-3xl font-light transition-all duration-300"
-            style={{ fontFamily: "var(--font-display,serif)", color: C.text, transform: menuOpen ? "translateY(0)" : "translateY(20px)", transitionDelay: `${i * 60}ms` }}>
-            {LABELS[id]}
-          </a>
-        ))}
-        <a href="#reserva" onClick={() => setMenuOpen(false)} className="mt-4 px-10 py-3 text-xs tracking-[0.3em] uppercase"
-          style={{ background: `linear-gradient(135deg, ${C.accent}, #5a7a30)`, color: C.bg }}>Reservar</a>
-      </div>
+      {/* menú móvil animado (StaggeredMenu, controlado por la hamburguesa) */}
+      <StaggeredMenu
+        open={menuOpen}
+        items={mobileItems}
+        position="right"
+        colors={[C.surface2, C.accent]}
+        accentColor={C.accent}
+        onItemClick={() => setMenuOpen(false)}
+      />
 
       {/* Dock flotante (solo escritorio): aparece al bajar, desaparece al subir */}
       <AnimatePresence>

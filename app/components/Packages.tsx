@@ -93,7 +93,9 @@ function PackageCard({ pkg, onElegir }: { pkg: Package; onElegir: (nombre: strin
 export default function QuoteCalculator({ onElegirPaquete }: { onElegirPaquete: (nombre: string) => void }) {
   return (
     <div className="space-y-6">
-      {PACKAGES.map((pkg) => <PackageCard key={pkg.id} pkg={pkg} onElegir={onElegirPaquete} />)}
+      <div className="grid md:grid-cols-2 gap-6 items-start">
+        {PACKAGES.map((pkg) => <PackageCard key={pkg.id} pkg={pkg} onElegir={onElegirPaquete} />)}
+      </div>
       <div className="p-5 text-center" style={{ background: C.surface2, border: `1px dashed ${C.accent}25` }}>
         <p className="text-sm font-light mb-1" style={{ fontFamily: "var(--font-display,serif)", color: `${C.text}cc` }}>
           ¿Tienes necesidades especiales o un grupo grande?

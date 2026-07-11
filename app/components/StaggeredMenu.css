@@ -1,0 +1,136 @@
+/* StaggeredMenu (React Bits) adaptado a la paleta — panel controlado, solo móvil.
+   Usa las variables de color de :root (globals.css). */
+
+.staggered-menu-wrapper {
+  position: relative;
+  z-index: 40;
+  pointer-events: none;
+}
+
+.staggered-menu-wrapper.fixed-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100dvh;
+  z-index: 40;
+  overflow: hidden;
+}
+
+/* estado inicial fuera de pantalla (evita parpadeo antes de que gsap tome control) */
+.staggered-menu-panel,
+.sm-prelayer {
+  transform: translateX(100%);
+}
+[data-position="left"] .staggered-menu-panel,
+[data-position="left"] .sm-prelayer {
+  transform: translateX(-100%);
+}
+
+.staggered-menu-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  padding: 6.5em 2em 2em 2em;
+  overflow-y: auto;
+  z-index: 10;
+  pointer-events: auto;
+  box-shadow: -20px 0 60px rgba(14, 21, 8, 0.15);
+}
+[data-position="left"] .staggered-menu-panel {
+  right: auto;
+  left: 0;
+}
+
+.sm-prelayers {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  pointer-events: none;
+  z-index: 5;
+}
+[data-position="left"] .sm-prelayers {
+  right: auto;
+  left: 0;
+}
+
+.sm-prelayer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+}
+
+.sm-panel-inner {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.sm-panel-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sm-panel-itemWrap {
+  position: relative;
+  overflow: hidden;
+  line-height: 1;
+}
+
+.sm-panel-item {
+  position: relative;
+  color: var(--text);
+  font-family: var(--font-display), serif;
+  font-weight: 500;
+  font-size: clamp(2.2rem, 11vw, 3.2rem);
+  line-height: 1.05;
+  letter-spacing: -1px;
+  text-transform: uppercase;
+  text-decoration: none;
+  display: inline-block;
+  padding-right: 1.4em;
+  transition: color 0.25s;
+}
+
+.sm-panel-item:hover {
+  color: var(--sm-accent, #5a8a38);
+}
+
+.sm-panel-itemLabel {
+  display: inline-block;
+  will-change: transform;
+  transform-origin: 50% 100%;
+}
+
+.sm-panel-list[data-numbering] {
+  counter-reset: smItem;
+}
+
+.sm-panel-list[data-numbering] .sm-panel-item::after {
+  counter-increment: smItem;
+  content: counter(smItem, decimal-leading-zero);
+  position: absolute;
+  top: 0.15em;
+  right: 0.4em;
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--sm-accent, #5a8a38);
+  letter-spacing: 0;
+  pointer-events: none;
+  user-select: none;
+  opacity: var(--sm-num-opacity, 0);
+}

@@ -7,8 +7,6 @@ import { STATS, GALLERY } from "@/lib/content";
 import { useReveal, usePrefersReducedMotion, useFinePointer } from "./hooks";
 import Navbar from "./components/Navbar";
 import CustomCursor from "./components/CustomCursor";
-import SplitSection from "./components/SplitSection";
-import PhotoSlot from "./components/PhotoSlot";
 import AnimatedStat from "./components/AnimatedStat";
 import QuoteCalculator from "./components/Packages";
 import BookingForm from "./components/BookingForm";
@@ -73,16 +71,16 @@ export default function Home() {
             Salón de Eventos · Toluca
           </p>
           <h1 className="anim-fade-up d-200 mb-5 leading-none"
-            style={{ fontFamily: "var(--font-display,serif)", fontSize: "clamp(2.5rem,6vw,5rem)", fontWeight: 300, color: C.text }}>
+            style={{ fontFamily: "var(--font-display,serif)", fontSize: "clamp(2.5rem,6vw,5rem)", fontWeight: 500, color: C.text }}>
             Tu espacio ideal<br />
-            <span className="forest-shimmer">para celebrar</span>
+            <span className="forest-text">para celebrar</span>
           </h1>
-          <p className="anim-fade-up d-400 text-base font-light leading-relaxed mb-4" style={{ color: `${C.text}aa` }}>
+          <p className="anim-fade-up d-400 text-base font-normal leading-relaxed mb-4" style={{ color: `${C.text}bb` }}>
             Un entorno único donde cada celebración<br />se convierte en un recuerdo eterno.
           </p>
           <div className="anim-fade-up d-500 flex items-center justify-center gap-3 mb-8">
             <div className="h-px w-8" style={{ background: `${C.accent}50` }} />
-            <p className="text-sm font-light text-center leading-relaxed" style={{ color: `${C.text}99`, fontFamily: "var(--font-display,serif)", fontStyle: "italic" }}>
+            <p className="text-sm font-normal text-center leading-relaxed" style={{ color: `${C.text}aa`, fontFamily: "var(--font-display,serif)", fontStyle: "italic" }}>
               Empresa familiar comprometida con la calidad y calidez<br />en el servicio y la satisfacción total de sus clientes
             </p>
             <div className="h-px w-8" style={{ background: `${C.accent}50` }} />
@@ -128,17 +126,19 @@ export default function Home() {
       </section>
 
       {/* ══ NOSOTROS ══ */}
-      <SplitSection id="nosotros"
-        photoLabel="Exterior del Salón del Bosque"
-        photoHint="Fachada del Salón del Bosque"
-        photoSrc="/fotos/salon-fuera-1.jpeg">
-        <div className="py-20 px-8 md:px-14 space-y-14">
-          {/* intro */}
-          <div ref={addReveal} className="section-reveal">
-            <p className="text-xs tracking-[0.4em] uppercase mb-4" style={{ color: C.accent }}>Nuestra historia</p>
-            <h2 className="text-4xl md:text-5xl font-light mb-6 leading-tight" style={{ fontFamily: "var(--font-display,serif)" }}>
+      <section id="nosotros" className="py-24 px-6 md:px-16 section-blend" style={{ background: C.bg }}>
+        <div className="max-w-3xl mx-auto">
+          {/* header centrado */}
+          <div ref={addReveal} className="section-reveal mb-10 text-center">
+            <LeafAccent />
+            <p className="text-xs tracking-[0.4em] uppercase mb-3" style={{ color: C.accent }}>Nuestra historia</p>
+            <h2 className="text-4xl md:text-5xl font-light leading-tight" style={{ fontFamily: "var(--font-display,serif)" }}>
               Más de 20 años creando<br /><span className="forest-text">momentos especiales</span>
             </h2>
+          </div>
+
+          {/* historia (párrafos a la izquierda) */}
+          <div ref={addReveal} className="section-reveal">
             <p className="leading-relaxed mb-4 font-light text-sm" style={{ color: `${C.text}cc` }}>
               Desde 2005, hemos sido el lugar donde las mejores historias comienzan y los recuerdos más
               valiosos cobran vida. Durante más de dos décadas, cientos de familias han confiado en nosotros
@@ -160,10 +160,10 @@ export default function Home() {
               cada sonrisa, cada abrazo y cada brindis se conviertan en una experiencia que permanecerá en el
               corazón de quienes la viven.
             </p>
-            <p className="leading-relaxed font-light text-base italic" style={{ color: C.text, fontFamily: "var(--font-display,serif)" }}>
+            <p className="leading-relaxed font-light text-base italic text-center" style={{ color: C.text, fontFamily: "var(--font-display,serif)" }}>
               Tu celebración merece un lugar especial. Nosotros nos encargamos de hacerlo realidad.
             </p>
-            <div className="flex flex-wrap gap-2 mt-6">
+            <div className="flex flex-wrap gap-2 mt-8 justify-center">
               {["Bodas","XV Años","Cumpleaños","Bautizos","Comuniones","Grados","Corporativos","Baby Shower"].map((tag) => (
                 <span key={tag} className="text-[10px] tracking-[0.15em] uppercase px-3 py-1.5"
                   style={{ border: `1px solid ${C.accent}30`, color: `${C.text}99`, background: `${C.accent}0a` }}>
@@ -171,77 +171,64 @@ export default function Home() {
                 </span>
               ))}
             </div>
-            <div className="flex items-center gap-8 mt-10">
+            <div className="flex items-center justify-center gap-10 mt-12">
               {STATS.map((s) => <AnimatedStat key={s.label} {...s} />)}
             </div>
           </div>
 
-          {/* chef y equipo */}
-          <div ref={addReveal} className="section-reveal">
-            <p className="text-xs tracking-[0.4em] uppercase mb-4" style={{ color: C.accent }}>El alma de nuestra cocina</p>
-            <h3 className="text-2xl font-light mb-4" style={{ fontFamily: "var(--font-display,serif)" }}>
+          {/* cocina */}
+          <div ref={addReveal} className="section-reveal mt-16 text-center">
+            <p className="text-xs tracking-[0.4em] uppercase mb-3" style={{ color: C.accent }}>El alma de nuestra cocina</p>
+            <h3 className="text-2xl md:text-3xl font-light" style={{ fontFamily: "var(--font-display,serif)" }}>
               Nuestro <span className="amber-text">equipo culinario</span>
             </h3>
+          </div>
+          <div ref={addReveal} className="section-reveal max-w-2xl mx-auto mt-6">
             <p className="text-sm font-light leading-relaxed mb-4" style={{ color: `${C.text}cc` }}>
               Al frente está el <strong style={{ color: C.text, fontWeight: 400 }}>Chef Román Hernández</strong>,
               con más de <strong style={{ color: C.text, fontWeight: 400 }}>40 años de experiencia</strong> en
               La Finca de Adobe. Domina todo tipo de cocinas, desde la tradicional mexicana hasta la alta cocina
               internacional, con ingredientes frescos seleccionados cada día.
             </p>
-            <p className="text-sm font-light leading-relaxed mb-6" style={{ color: `${C.text}cc` }}>
+            <p className="text-sm font-light leading-relaxed" style={{ color: `${C.text}cc` }}>
               ¿Quieres probar antes de tu evento? Puedes <span style={{ color: C.amber }}>agendar una degustación</span>{" "}
               previa para elegir con calma el menú perfecto para tu celebración.
             </p>
-            <div className="grid grid-cols-2 gap-3">
-              {[
-                { label: "Chef Román Hernández", hint: "Retrato · 600×750", src: undefined },
-                { label: "Banquete",             hint: "Mesa montada · 600×750", src: "/fotos/comida-menu.jpg" },
-              ].map((p) => <PhotoSlot key={p.label} label={p.label} hint={p.hint} src={p.src} />)}
-            </div>
-          </div>
-
-          {/* foto grupal */}
-          <div ref={addReveal} className="section-reveal">
-            <PhotoSlot label="Foto grupal del equipo completo" hint="Panorámica · 1400×600" wide />
           </div>
         </div>
-      </SplitSection>
+      </section>
 
       {/* ══ COTIZACIONES ══ */}
-      <SplitSection id="cotizaciones"
-        photoLabel="Mesa elegante de evento"
-        photoHint="Detalle de vajilla y decoración · 1200 × 1600 px"
-        photoSrc="/fotos/salon-mesa.jpg">
-        <div className="py-20 px-8 md:px-14">
-          <div ref={addReveal} className="section-reveal mb-10">
-            <p className="text-xs tracking-[0.4em] uppercase mb-4" style={{ color: C.accent }}>Precios claros</p>
-            <h2 className="text-4xl md:text-5xl font-light mb-3" style={{ fontFamily: "var(--font-display,serif)" }}>
+      <section id="cotizaciones" className="py-24 px-6 md:px-16 section-blend" style={{ background: C.bg }}>
+        <div className="max-w-5xl mx-auto">
+          <div ref={addReveal} className="section-reveal mb-12 text-center">
+            <LeafAccent />
+            <p className="text-xs tracking-[0.4em] uppercase mb-3" style={{ color: C.accent }}>Nuestros paquetes</p>
+            <h2 className="text-4xl md:text-5xl font-light" style={{ fontFamily: "var(--font-display,serif)" }}>
               <span className="forest-text">Cotizaciones</span>
             </h2>
-            <p className="text-sm font-light" style={{ color: `${C.text}99` }}>
-              Selecciona los servicios que te interesan y recibe tu presupuesto al instante
+            <p className="text-sm font-light mt-3" style={{ color: `${C.text}99` }}>
+              Elige el paquete que mejor se ajusta a tu evento
             </p>
           </div>
           <div ref={addReveal} className="section-reveal">
             <QuoteCalculator onElegirPaquete={elegirPaquete} />
           </div>
         </div>
-      </SplitSection>
+      </section>
 
       {/* ══ UBICACIÓN ══ */}
-      <SplitSection id="ubicacion"
-        photoLabel="Vista exterior del salón"
-        photoHint="Fachada del Salón del Bosque"
-        photoSrc="/fotos/salon-fuera-2.jpeg">
-        <div className="py-20 px-8 md:px-14">
-          <div ref={addReveal} className="section-reveal mb-12">
-            <p className="text-xs tracking-[0.4em] uppercase mb-4" style={{ color: C.accent }}>Encuéntranos</p>
+      <section id="ubicacion" className="py-24 px-6 md:px-16 section-blend" style={{ background: C.bg }}>
+        <div className="max-w-5xl mx-auto">
+          <div ref={addReveal} className="section-reveal mb-10 text-center">
+            <LeafAccent />
+            <p className="text-xs tracking-[0.4em] uppercase mb-3" style={{ color: C.accent }}>Encuéntranos</p>
             <h2 className="text-4xl md:text-5xl font-light" style={{ fontFamily: "var(--font-display,serif)" }}>
               Nuestra <span className="forest-text">ubicación</span>
             </h2>
           </div>
           {/* mapa */}
-          <div ref={addReveal} className="section-reveal mb-8 relative overflow-hidden aspect-[4/3]"
+          <div ref={addReveal} className="section-reveal mb-12 relative overflow-hidden aspect-[16/9]"
             style={{ border: `1px solid ${C.accent}18` }}>
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3754.0!2d-99.619061!3d19.2779057!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85cd8a3090593f51:0x9a499e74b146f2be!2sSal%C3%B3n%20del%20Bosque!5e0!3m2!1ses!2smx!4v1700000000000"
@@ -252,35 +239,34 @@ export default function Home() {
               <div key={p} className={`absolute ${p} w-5 h-5 ${cls} pointer-events-none`} style={{ borderColor: `${C.accent}55` }} />
             ))}
           </div>
-          {/* info */}
-          <div ref={addReveal} className="section-reveal space-y-7">
+          {/* info en 3 columnas centradas */}
+          <div ref={addReveal} className="section-reveal grid sm:grid-cols-3 gap-8 text-center">
             {[
               { icon: "◎", label: "Dirección",  lines: ["Salón del Bosque", "Toluca, Estado de México"] },
               { icon: "◷", label: "Horarios",   lines: ["Lunes a Viernes · 9:00 am – 7:00 pm", "Sábados · 9:00 am – 5:00 pm", "Domingos · Cerrado"] },
               { icon: "◈", label: "Contacto",   lines: ["722 592 6512", "Evelia Mendoza Hernández"] },
             ].map((item) => (
-              <div key={item.label} className="flex gap-5">
-                <div className="text-xl mt-0.5 shrink-0" style={{ color: `${C.accent}80` }}>{item.icon}</div>
-                <div>
-                  <p className="text-[10px] tracking-[0.35em] uppercase mb-2" style={{ color: C.accent }}>{item.label}</p>
-                  {item.lines.map((l) => <p key={l} className="text-sm font-light leading-relaxed" style={{ color: `${C.text}cc` }}>{l}</p>)}
-                </div>
+              <div key={item.label}>
+                <div className="text-2xl mb-3" style={{ color: `${C.accent}80` }}>{item.icon}</div>
+                <p className="text-[10px] tracking-[0.35em] uppercase mb-2" style={{ color: C.accent }}>{item.label}</p>
+                {item.lines.map((l) => <p key={l} className="text-sm font-light leading-relaxed" style={{ color: `${C.text}cc` }}>{l}</p>)}
               </div>
             ))}
-            <div className="flex flex-wrap gap-3 pt-2">
-              <a href="#reserva" className="inline-block px-8 py-3 text-xs tracking-[0.25em] uppercase font-medium hover:opacity-85 transition-opacity duration-300"
-                style={{ background: `linear-gradient(135deg, ${C.accent}, #5a7a30)`, color: C.bg }}>
-                Reservar cita
-              </a>
-              <a href="https://maps.app.goo.gl/YZwtrZ7VSL3aCEz88" target="_blank" rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-8 py-3 text-xs tracking-[0.25em] uppercase transition-all duration-300 hover:opacity-80"
-                style={{ border: `1px solid ${C.accent}50`, color: C.accent }}>
-                ◎ Ver en Maps
-              </a>
-            </div>
+          </div>
+          {/* botones centrados */}
+          <div ref={addReveal} className="section-reveal flex flex-wrap gap-3 justify-center mt-12">
+            <a href="#reserva" className="inline-block px-8 py-3 text-xs tracking-[0.25em] uppercase font-medium hover:opacity-85 transition-opacity duration-300"
+              style={{ background: `linear-gradient(135deg, ${C.accent}, #5a7a30)`, color: C.bg }}>
+              Reservar cita
+            </a>
+            <a href="https://maps.app.goo.gl/YZwtrZ7VSL3aCEz88" target="_blank" rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-8 py-3 text-xs tracking-[0.25em] uppercase transition-all duration-300 hover:opacity-80"
+              style={{ border: `1px solid ${C.accent}50`, color: C.accent }}>
+              ◎ Ver en Maps
+            </a>
           </div>
         </div>
-      </SplitSection>
+      </section>
 
       {/* ══ GALERÍA ══ */}
       <section id="galeria" className="py-24 px-6 md:px-16 section-blend" style={{ background: C.bg }}>
@@ -308,29 +294,27 @@ export default function Home() {
       </section>
 
       {/* ══ RESERVA ══ */}
-      <SplitSection id="reserva"
-        photoLabel="Ambiente de evento nocturno"
-        photoHint="Iluminación cálida del salón en celebración · 1200 × 1600 px"
-        photoSrc="/fotos/salon-noche.jpg">
-        <div className="py-20 px-8 md:px-14">
-          <div ref={addReveal} className="section-reveal mb-10">
-            <p className="text-xs tracking-[0.4em] uppercase mb-4" style={{ color: C.accent }}>Agenda tu visita</p>
-            <h2 className="text-4xl md:text-5xl font-light mb-3" style={{ fontFamily: "var(--font-display,serif)" }}>
+      <section id="reserva" className="py-24 px-6 md:px-16 section-blend" style={{ background: C.bg }}>
+        <div className="max-w-3xl mx-auto">
+          <div ref={addReveal} className="section-reveal mb-10 text-center">
+            <LeafAccent />
+            <p className="text-xs tracking-[0.4em] uppercase mb-3" style={{ color: C.accent }}>Agenda tu visita</p>
+            <h2 className="text-4xl md:text-5xl font-light" style={{ fontFamily: "var(--font-display,serif)" }}>
               <span className="forest-text">Reserva</span> tu evento
             </h2>
-            <p className="text-sm font-light" style={{ color: `${C.text}99` }}>Te contactamos en menos de 1 hora.</p>
+            <p className="text-sm font-light mt-3" style={{ color: `${C.text}99` }}>Te contactamos en menos de 1 hora.</p>
           </div>
 
           {/* mini-guía: cómo reservar en 3 pasos */}
-          <div ref={addReveal} className="section-reveal mb-10">
-            <p className="text-[10px] tracking-[0.35em] uppercase mb-5" style={{ color: C.accent }}>Cómo reservar</p>
-            <div className="grid sm:grid-cols-3 gap-5">
+          <div ref={addReveal} className="section-reveal mb-12">
+            <p className="text-[10px] tracking-[0.35em] uppercase mb-6 text-center" style={{ color: C.accent }}>Cómo reservar</p>
+            <div className="grid sm:grid-cols-3 gap-6">
               {[
                 { n: "1", title: "Cuéntanos de tu evento", desc: "Completa los pasos del formulario." },
                 { n: "2", title: "Revisa y envía", desc: "Confirma el resumen y mándalo por WhatsApp." },
                 { n: "3", title: "Te confirmamos", desc: "Respondemos la disponibilidad en menos de 1 hora." },
               ].map((s) => (
-                <div key={s.n} className="flex sm:block items-start gap-4">
+                <div key={s.n} className="flex sm:flex-col items-start sm:items-center sm:text-center gap-4 sm:gap-0">
                   <div className="w-9 h-9 shrink-0 flex items-center justify-center text-sm font-light sm:mb-3"
                     style={{ borderRadius: "9999px", background: `${C.accent}15`, color: C.accent, border: `1px solid ${C.accent}40`, fontFamily: "var(--font-display,serif)" }}>
                     {s.n}
@@ -348,7 +332,7 @@ export default function Home() {
             <BookingForm paqueteInicial={paqueteSeleccionado} />
           </div>
         </div>
-      </SplitSection>
+      </section>
 
       {/* ══ FOOTER ══ */}
       <footer className="py-12 px-6 md:px-16" style={{ borderTop: `1px solid ${C.accent}12` }}>
