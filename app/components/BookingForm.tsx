@@ -174,7 +174,7 @@ export default function BookingForm({ paqueteInicial }: { paqueteInicial: string
           <div>
             <label className="block text-[10px] tracking-[0.3em] uppercase mb-2" style={{ color: `${C.accent}99` }}>Paquete de interés</label>
             <div className="flex gap-3">
-              {[{ val: "Paquete Completo", label: "Paquete Completo", sub: "$350/persona" }, { val: "Paquete Sencillo", label: "Paquete Sencillo", sub: "$19,800 total" }].map(({ val, label, sub }) => (
+              {[{ val: "Paquete Completo", label: "Paquete Completo" }, { val: "Paquete Sencillo", label: "Paquete Sencillo" }].map(({ val, label }) => (
                 <button type="button" key={val} onClick={() => { setForm(f => ({ ...f, paquete: val })); setErrors(er => ({ ...er, paquete: undefined })); }}
                   className="flex-1 py-3 px-2 text-center transition-all duration-200"
                   style={{
@@ -182,7 +182,6 @@ export default function BookingForm({ paqueteInicial }: { paqueteInicial: string
                     background: form.paquete === val ? `${C.accent}15` : "transparent",
                   }}>
                   <p className="text-[10px] tracking-[0.1em] uppercase" style={{ color: form.paquete === val ? C.accent : `${C.text}88` }}>{label}</p>
-                  <p className="text-[9px] mt-0.5" style={{ color: form.paquete === val ? `${C.accent}99` : `${C.text}55` }}>{sub}</p>
                 </button>
               ))}
             </div>

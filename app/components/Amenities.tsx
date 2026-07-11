@@ -70,7 +70,7 @@ export default function Amenities() {
       </div>
       {/* stack animado */}
       <div className="relative h-[460px]">
-        <CardSwap width={330} height={360} cardDistance={50} verticalDistance={58} delay={4200} skewAmount={5} pauseOnHover>
+        <CardSwap width={330} height={360} cardDistance={50} verticalDistance={58} delay={2000} skewAmount={5} easing="linear" pauseOnHover>
           {SERVICE_CARDS.map((c) => (
             <Card key={c.title}><CardBody c={c} /></Card>
           ))}
