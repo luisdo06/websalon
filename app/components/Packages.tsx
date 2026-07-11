@@ -11,12 +11,12 @@ function PackageCard({ pkg, onElegir }: { pkg: Package; onElegir: (nombre: strin
   const isAccent = pkg.color === C.accent;
 
   return (
-    <div className="relative overflow-hidden transition-all duration-500"
+    <div className="relative overflow-hidden transition-all duration-500 h-full flex flex-col"
       style={{ border: `1px solid ${pkg.color}25`, background: C.surface }}>
       {/* franja superior de color */}
       <div className="h-1 w-full" style={{ background: `linear-gradient(90deg, ${pkg.color}80, ${pkg.color}30)` }} />
 
-      <div className="p-6">
+      <div className="p-6 flex-1 flex flex-col">
         {/* cabecera */}
         <div className="mb-4">
           <p className="text-[9px] tracking-[0.45em] uppercase mb-1" style={{ color: `${pkg.color}99` }}>Paquete {pkg.id}</p>
@@ -63,9 +63,9 @@ function PackageCard({ pkg, onElegir }: { pkg: Package; onElegir: (nombre: strin
           </div>
         )}
 
-        {/* no incluye */}
+        {/* no incluye (fijado al fondo para alinear la línea divisoria entre tarjetas) */}
         {pkg.noIncluye.length > 0 && (
-          <div className="pt-4 mb-5" style={{ borderTop: `1px solid ${pkg.color}12` }}>
+          <div className="pt-4 mb-5 mt-auto" style={{ borderTop: `1px solid ${pkg.color}12` }}>
             <p className="text-[9px] tracking-[0.35em] uppercase mb-2" style={{ color: `${C.text}66` }}>No incluye</p>
             <div className="flex flex-wrap gap-2">
               {pkg.noIncluye.map((item) => (
