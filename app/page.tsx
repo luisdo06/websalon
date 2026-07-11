@@ -112,7 +112,7 @@ export default function Home() {
       </section>
 
       {/* ══ SERVICIOS Y AMENIDADES ══ */}
-      <section id="servicios" className="py-24 px-6 md:px-16" style={{ background: C.bg }}>
+      <section id="servicios" className="py-24 px-6 md:px-16 section-blend" style={{ background: C.bg }}>
         <div className="max-w-6xl mx-auto">
           <div ref={addReveal} className="section-reveal mb-12 text-center">
             <LeafAccent />
@@ -129,9 +129,9 @@ export default function Home() {
 
       {/* ══ NOSOTROS ══ */}
       <SplitSection id="nosotros"
-        photoLabel="Salón decorado para evento"
-        photoHint="Interior del Salón del Bosque con decoración · 1200 × 1600 px"
-        photoSrc="/fotos/salon-dia.jpg">
+        photoLabel="Exterior del Salón del Bosque"
+        photoHint="Fachada del Salón del Bosque"
+        photoSrc="/fotos/salon-fuera-1.jpeg">
         <div className="py-20 px-8 md:px-14 space-y-14">
           {/* intro */}
           <div ref={addReveal} className="section-reveal">
@@ -230,8 +230,9 @@ export default function Home() {
 
       {/* ══ UBICACIÓN ══ */}
       <SplitSection id="ubicacion"
-        photoLabel="Vista exterior / aérea del salón"
-        photoHint="Fachada o drone shot del Salón del Bosque · 1200 × 1600 px">
+        photoLabel="Vista exterior del salón"
+        photoHint="Fachada del Salón del Bosque"
+        photoSrc="/fotos/salon-fuera-2.jpeg">
         <div className="py-20 px-8 md:px-14">
           <div ref={addReveal} className="section-reveal mb-12">
             <p className="text-xs tracking-[0.4em] uppercase mb-4" style={{ color: C.accent }}>Encuéntranos</p>
@@ -282,7 +283,7 @@ export default function Home() {
       </SplitSection>
 
       {/* ══ GALERÍA ══ */}
-      <section id="galeria" className="py-24 px-6 md:px-16" style={{ background: C.bg }}>
+      <section id="galeria" className="py-24 px-6 md:px-16 section-blend" style={{ background: C.bg }}>
         <div className="max-w-6xl mx-auto">
           <div ref={addReveal} className="section-reveal mb-10 text-center">
             <LeafAccent />

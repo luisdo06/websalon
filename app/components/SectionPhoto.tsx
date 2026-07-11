@@ -21,12 +21,15 @@ export default function SectionPhoto({ label, src, priority = false }: { label: 
           </div>
         </>
       )}
-      {/* degradado horizontal → crema (desktop) */}
+      {/* fundido lateral → crema (hacia el panel de texto, desktop) */}
       <div className="absolute inset-0 pointer-events-none hidden md:block"
-        style={{ background: `linear-gradient(to right, transparent 55%, ${C.bg} 92%)` }} />
-      {/* degradado vertical → crema (móvil) */}
+        style={{ background: `linear-gradient(to right, transparent 55%, ${C.bg} 94%)` }} />
+      {/* fundido inferior más marcado → crema (móvil, hacia el contenido) */}
       <div className="absolute inset-0 pointer-events-none md:hidden"
-        style={{ background: `linear-gradient(to bottom, transparent 50%, ${C.bg} 95%)` }} />
+        style={{ background: `linear-gradient(to bottom, transparent 55%, ${C.bg} 96%)` }} />
+      {/* fundido superior e inferior → crema (ambos, quita el borde duro entre secciones) */}
+      <div className="absolute inset-0 pointer-events-none"
+        style={{ background: `linear-gradient(to bottom, ${C.bg} 0%, transparent 12%, transparent 88%, ${C.bg} 100%)` }} />
     </div>
   );
 }

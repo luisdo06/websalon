@@ -88,7 +88,7 @@ export default function Navbar() {
         style={{ background: `linear-gradient(90deg, ${C.accent}, ${C.amber})`, transform: `scaleX(${progress})`, transition: "transform 0.1s linear" }} />
       <nav className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-5 md:px-16 transition-all duration-500 ${showDock ? "md:-translate-y-full md:opacity-0 md:pointer-events-none" : ""}`}
         style={{ background: scrolled ? `${C.bg}fc` : `linear-gradient(to bottom, ${C.bg}f0 0%, ${C.bg}00 100%)`, backdropFilter: scrolled ? "blur(14px)" : "none", borderBottom: scrolled ? `1px solid ${C.accent}14` : "none" }}>
-        <a href="#" className="forest-shimmer text-xl tracking-[0.3em] uppercase font-light" style={{ fontFamily: "var(--font-display,serif)" }}>Salón del Bosque</a>
+        <a href="#hero" aria-label="Ir al inicio" className="forest-shimmer text-xl tracking-[0.3em] uppercase font-light cursor-pointer" style={{ fontFamily: "var(--font-display,serif)" }}>Salón del Bosque</a>
         <div className="hidden md:flex gap-10 text-xs tracking-[0.2em] uppercase">
           {links.map((id) => (
             <a key={id} href={`#${id}`} className="transition-colors duration-300"

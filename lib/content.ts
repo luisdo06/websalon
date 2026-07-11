@@ -85,8 +85,11 @@ export const GALLERY: GalleryItem[] = [
   { label: "Ambiente nocturno", hint: "Iluminación cálida de noche",    src: "/fotos/salon-noche.jpg" },
   { label: "Mesa montada",      hint: "Vajilla y mantelería completa",  src: "/fotos/salon-mesa.jpg" },
   { label: "Banquete",          hint: "Comida en tres tiempos",         src: "/fotos/comida-menu.jpg" },
-  { label: "Terraza exterior",  hint: "Vista al jardín · foto pendiente" },
-  { label: "Sala VIP",          hint: "Eventos íntimos · foto pendiente" },
+  { label: "Exterior del salón", hint: "Vista exterior",                src: "/fotos/salon-fuera-1.jpeg" },
+  { label: "Exterior del salón", hint: "Vista exterior",                src: "/fotos/salon-fuera-2.jpeg" },
+  { label: "Exterior del salón", hint: "Vista exterior",                src: "/fotos/salon-fuera-3.jpeg" },
+  { label: "Exterior del salón", hint: "Vista exterior",                src: "/fotos/salon-fuera-4.jpeg" },
+  { label: "Exterior del salón", hint: "Vista exterior",                src: "/fotos/salon-fuera-5.jpeg" },
 ];
 
 /* Servicios y amenidades, agrupados por tema (tarjetas del CardSwap).
@@ -98,10 +101,9 @@ export const SERVICE_CARDS: ServiceCard[] = [
     icon: "users",
     title: "Espacio & entorno",
     items: [
-      "Aforo hasta 200 invitados (confirmar)",
+      "Aforo hasta 200 invitados",
       "Clima agradable y ventilado",
       "Entorno natural de bosque",
-      "Acceso en planta baja (confirmar)",
     ],
   },
   {

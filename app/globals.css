@@ -137,6 +137,21 @@ body {
   transform: translateY(0);
 }
 
+/* ── bandas de fundido entre secciones (continuidad al hacer scroll) ── */
+.section-blend { position: relative; }
+.section-blend::before,
+.section-blend::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 56px;
+  pointer-events: none;
+  z-index: 4;
+}
+.section-blend::before { top: 0; background: linear-gradient(to bottom, var(--bg), transparent); }
+.section-blend::after { bottom: 0; background: linear-gradient(to top, var(--bg), transparent); }
+
 /* ── hojas cayendo (hero) ── */
 @keyframes leaf-fall { from { transform: translateY(-15vh); } to { transform: translateY(115vh); } }
 @keyframes leaf-sway { from { transform: translateX(-16px); } to { transform: translateX(16px); } }
