@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Cormorant_Garamond, Montserrat } from "next/font/google";
 import "./globals.css";
 import SmoothScroll from "./components/SmoothScroll";
+import ClickSpark from "./components/ClickSpark";
 import { SITE, PHONE } from "@/lib/site";
 
 const cormorant = Cormorant_Garamond({
@@ -99,6 +100,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         <SmoothScroll />
+        <ClickSpark />
         {children}
       </body>
     </html>
