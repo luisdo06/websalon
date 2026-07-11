@@ -99,9 +99,9 @@ export default function Home() {
           </div>
         </div>
 
-        {/* indicador de scroll */}
+        {/* indicador de scroll (oculto en móvil: colisiona con la barra fija "Reservar") */}
         <a href="#nosotros" aria-label="Desliza para ver más"
-          className="anim-fade d-800 absolute bottom-24 md:bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2">
+          className="anim-fade d-800 absolute bottom-8 left-1/2 -translate-x-1/2 z-10 hidden md:flex flex-col items-center gap-2">
           <span className="text-[9px] tracking-[0.3em] uppercase" style={{ color: `${C.text}88` }}>Desliza</span>
           <span className="anim-float" style={{ color: C.accent }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14M6 13l6 6 6-6" /></svg>

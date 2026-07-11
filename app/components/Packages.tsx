@@ -93,7 +93,7 @@ function PackageCard({ pkg, onElegir }: { pkg: Package; onElegir: (nombre: strin
 export default function QuoteCalculator({ onElegirPaquete }: { onElegirPaquete: (nombre: string) => void }) {
   return (
     <div className="space-y-6">
-      <div className="grid md:grid-cols-2 gap-6 items-start">
+      <div className="grid md:grid-cols-2 gap-6 items-stretch">
         {PACKAGES.map((pkg) => <PackageCard key={pkg.id} pkg={pkg} onElegir={onElegirPaquete} />)}
       </div>
       <div className="p-5 text-center" style={{ background: C.surface2, border: `1px dashed ${C.accent}25` }}>
