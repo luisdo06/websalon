@@ -79,7 +79,7 @@ export const PACKAGES: Package[] = [
 ];
 
 /* ⚠️ EJEMPLO — galería de eventos. Reemplazar por fotos reales en /public/fotos. */
-export interface GalleryItem { label: string; hint: string; src?: string; wide?: boolean; }
+export interface GalleryItem { label: string; hint: string; src?: string; }
 export const GALLERY: GalleryItem[] = [
   { label: "Salón principal",   hint: "Montaje para 200 personas",      src: "/fotos/salon-dia.jpg" },
   { label: "Ambiente nocturno", hint: "Iluminación cálida de noche",    src: "/fotos/salon-noche.jpg" },
