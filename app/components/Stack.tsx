@@ -101,7 +101,7 @@ export default function Stack({
   const shouldEnableClick = sendToBackOnClick || shouldDisableDrag;
 
   const [stack, setStack] = useState<StackCard[]>(() =>
-    images.map((img, i) => ({ id: i + 1, img, rot: randomRotation ? Math.random() * 8 - 4 : 0 })),
+    images.map((img, i) => ({ id: i + 1, img, rot: randomRotation ? Math.random() * 6 - 3 : 0 })),
   );
 
   const sendToBack = (id: number) => {
@@ -144,9 +144,9 @@ export default function Stack({
             className="card"
             onClick={() => shouldEnableClick && sendToBack(card.id)}
             animate={{
-              rotateZ: (stack.length - index - 1) * 4 + card.rot,
+              rotateZ: (stack.length - index - 1) * 3 + card.rot,
               scale: 1 + index * 0.06 - stack.length * 0.06,
-              transformOrigin: "90% 90%",
+              transformOrigin: "50% 50%",
             }}
             initial={false}
             transition={{ type: "spring", stiffness: animationConfig.stiffness, damping: animationConfig.damping }}

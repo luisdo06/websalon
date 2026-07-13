@@ -146,8 +146,8 @@ export default function Home() {
           </div>
 
           {/* fotos del salón (Stack que cicla, arrastrable) */}
-          <div ref={addReveal} className="section-reveal">
-            <div className="mx-auto w-[300px] h-[300px] sm:w-[340px] sm:h-[340px] md:w-[380px] md:h-[380px]">
+          <div ref={addReveal} className="section-reveal flex flex-col items-center">
+            <div className="mx-auto my-6 w-[280px] h-[280px] sm:w-[320px] sm:h-[320px] md:w-[360px] md:h-[360px]">
               <Stack
                 images={NOSOTROS_FOTOS}
                 randomRotation
@@ -159,7 +159,7 @@ export default function Home() {
                 mobileClickOnly
               />
             </div>
-            <p className="text-center text-[10px] tracking-[0.2em] uppercase mt-5" style={{ color: `${C.text}66` }}>
+            <p className="text-center text-[10px] tracking-[0.2em] uppercase" style={{ color: `${C.text}66` }}>
               Arrastra o toca para ver más
             </p>
             <div className="flex flex-wrap gap-2 mt-8 justify-center">
