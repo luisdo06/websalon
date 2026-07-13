@@ -15,14 +15,6 @@ import WhatsAppButton from "./components/WhatsAppButton";
 import SocialLinks from "./components/SocialLinks";
 import FallingLeaves from "./components/FallingLeaves";
 import DomeGallery from "./components/DomeGallery";
-import Stack from "./components/Stack";
-
-/* fotos del salón para el Stack de "Nuestra historia" (referencia estable) */
-const NOSOTROS_FOTOS = [
-  { src: "/fotos/salon-dia.jpg", alt: "Salón montado para un evento" },
-  { src: "/fotos/salon-noche.jpg", alt: "Ambiente nocturno con pista de baile" },
-  { src: "/fotos/salon-fuera-4.jpeg", alt: "Jardín y patio del salón" },
-];
 
 /* acento botánico sutil para encabezados centrados */
 function LeafAccent() {
@@ -145,23 +137,21 @@ export default function Home() {
             </h2>
           </div>
 
-          {/* fotos del salón (Stack que cicla, arrastrable) */}
-          <div ref={addReveal} className="section-reveal flex flex-col items-center">
-            <div className="mx-auto my-6 w-[280px] h-[280px] sm:w-[320px] sm:h-[320px] md:w-[360px] md:h-[360px]">
-              <Stack
-                images={NOSOTROS_FOTOS}
-                randomRotation
-                sensitivity={170}
-                sendToBackOnClick
-                autoplay
-                autoplayDelay={2800}
-                pauseOnHover
-                mobileClickOnly
-              />
+          {/* tríptico de fotos del salón */}
+          <div ref={addReveal} className="section-reveal">
+            <div className="grid grid-cols-3 gap-3 md:gap-4 mb-8">
+              {[
+                { src: "/fotos/salon-dia.jpg", alt: "Salón montado para un evento" },
+                { src: "/fotos/salon-noche.jpg", alt: "Ambiente nocturno con pista de baile" },
+                { src: "/fotos/salon-fuera-4.jpeg", alt: "Jardín y patio del salón" },
+              ].map((img) => (
+                <div key={img.src} className="relative aspect-square overflow-hidden"
+                  style={{ border: `1px solid ${C.accent}20`, boxShadow: `0 10px 30px ${C.text}14` }}>
+                  <Image src={img.src} alt={img.alt} fill quality={90} sizes="(max-width:768px) 33vw, 260px"
+                    style={{ objectFit: "cover", objectPosition: "center" }} />
+                </div>
+              ))}
             </div>
-            <p className="text-center text-[10px] tracking-[0.2em] uppercase" style={{ color: `${C.text}66` }}>
-              Arrastra o toca para ver más
-            </p>
             <div className="flex flex-wrap gap-2 mt-8 justify-center">
               {["Bodas","XV Años","Cumpleaños","Bautizos","Comuniones","Grados","Corporativos","Baby Shower"].map((tag) => (
                 <span key={tag} className="text-[10px] tracking-[0.15em] uppercase px-3 py-1.5"
