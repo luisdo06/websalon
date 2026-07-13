@@ -2,8 +2,10 @@
 
 import { motion, useMotionValue, useTransform, type PanInfo } from "motion/react";
 import { useState, useEffect, type ReactNode } from "react";
-import Image from "next/image";
 import "./Stack.css";
+
+/* rotaciones deterministas (look "despeinado" sin mismatch de hidratación) */
+const ROT = [-3, 2.5, -1.5, 3, -2];
 
 export interface StackImage {
   src: string;
@@ -101,7 +103,7 @@ export default function Stack({
   const shouldEnableClick = sendToBackOnClick || shouldDisableDrag;
 
   const [stack, setStack] = useState<StackCard[]>(() =>
-    images.map((img, i) => ({ id: i + 1, img, rot: randomRotation ? Math.random() * 6 - 3 : 0 })),
+    images.map((img, i) => ({ id: i + 1, img, rot: randomRotation ? ROT[i % ROT.length] : 0 })),
   );
 
   const sendToBack = (id: number) => {
@@ -151,14 +153,8 @@ export default function Stack({
             initial={false}
             transition={{ type: "spring", stiffness: animationConfig.stiffness, damping: animationConfig.damping }}
           >
-            <Image
-              src={card.img.src}
-              alt={card.img.alt}
-              fill
-              quality={90}
-              sizes="(max-width:768px) 80vw, 380px"
-              style={{ objectFit: "cover" }}
-            />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img className="card-image" src={card.img.src} alt={card.img.alt} draggable={false} />
           </motion.div>
         </CardRotate>
       ))}
