@@ -145,9 +145,9 @@ export default function Home() {
                 { src: "/fotos/salon-noche.jpg", alt: "Ambiente nocturno con pista de baile" },
                 { src: "/fotos/salon-fuera-4.jpeg", alt: "Jardín y patio del salón" },
               ].map((img) => (
-                <div key={img.src} className="relative aspect-[3/4] overflow-hidden"
+                <div key={img.src} className="relative aspect-square overflow-hidden"
                   style={{ border: `1px solid ${C.accent}20`, boxShadow: `0 10px 30px ${C.text}14` }}>
-                  <Image src={img.src} alt={img.alt} fill sizes="(max-width:768px) 33vw, 260px"
+                  <Image src={img.src} alt={img.alt} fill quality={90} sizes="(max-width:768px) 33vw, 260px"
                     style={{ objectFit: "cover", objectPosition: "center" }} />
                 </div>
               ))}
