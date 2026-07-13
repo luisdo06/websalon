@@ -137,32 +137,21 @@ export default function Home() {
             </h2>
           </div>
 
-          {/* historia (párrafos a la izquierda) */}
+          {/* tríptico de fotos del salón */}
           <div ref={addReveal} className="section-reveal">
-            <p className="leading-relaxed mb-4 font-light text-sm" style={{ color: `${C.text}cc` }}>
-              Desde 2005, hemos sido el lugar donde las mejores historias comienzan y los recuerdos más
-              valiosos cobran vida. Durante más de dos décadas, cientos de familias han confiado en nosotros
-              para celebrar esos momentos que solo ocurren una vez y que merecen ser recordados para siempre.
-            </p>
-            <p className="leading-relaxed mb-4 font-light text-sm" style={{ color: `${C.text}cc` }}>
-              Cada evento que recibimos es único, por eso nos dedicamos a cuidar cada detalle con pasión,
-              compromiso y profesionalismo. Nuestro objetivo no es solo ofrecer un salón de fiestas, sino crear
-              el ambiente perfecto para que tú y tus invitados disfruten una experiencia inolvidable.
-            </p>
-            <p className="leading-relaxed mb-4 font-light text-sm" style={{ color: `${C.text}cc` }}>
-              Somos el escenario ideal para <span style={{ color: C.amber }}>bodas, quinceañeras, cumpleaños,
-              bautizos, primeras comuniones, graduaciones, reuniones empresariales</span> y cualquier ocasión que
-              merezca ser celebrada en grande. Contamos con instalaciones diseñadas para brindar comodidad,
-              elegancia y el espacio perfecto para convertir cada celebración en un momento extraordinario.
-            </p>
-            <p className="leading-relaxed mb-4 font-light text-sm" style={{ color: `${C.text}cc` }}>
-              Porque entendemos que los mejores recuerdos nacen de los momentos compartidos, trabajamos para que
-              cada sonrisa, cada abrazo y cada brindis se conviertan en una experiencia que permanecerá en el
-              corazón de quienes la viven.
-            </p>
-            <p className="leading-relaxed font-light text-base italic text-center" style={{ color: C.text, fontFamily: "var(--font-display,serif)" }}>
-              Tu celebración merece un lugar especial. Nosotros nos encargamos de hacerlo realidad.
-            </p>
+            <div className="grid grid-cols-3 gap-3 md:gap-4 mb-8">
+              {[
+                { src: "/fotos/salon-dia.jpg", alt: "Salón montado para un evento" },
+                { src: "/fotos/salon-noche.jpg", alt: "Ambiente nocturno con pista de baile" },
+                { src: "/fotos/salon-fuera-4.jpeg", alt: "Jardín y patio del salón" },
+              ].map((img) => (
+                <div key={img.src} className="relative aspect-[3/4] overflow-hidden"
+                  style={{ border: `1px solid ${C.accent}20`, boxShadow: `0 10px 30px ${C.text}14` }}>
+                  <Image src={img.src} alt={img.alt} fill sizes="(max-width:768px) 33vw, 260px"
+                    style={{ objectFit: "cover", objectPosition: "center" }} />
+                </div>
+              ))}
+            </div>
             <div className="flex flex-wrap gap-2 mt-8 justify-center">
               {["Bodas","XV Años","Cumpleaños","Bautizos","Comuniones","Grados","Corporativos","Baby Shower"].map((tag) => (
                 <span key={tag} className="text-[10px] tracking-[0.15em] uppercase px-3 py-1.5"
