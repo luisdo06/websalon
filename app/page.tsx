@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { C } from "@/lib/theme";
 import { STATS, GALLERY } from "@/lib/content";
-import { useReveal, usePrefersReducedMotion, useFinePointer } from "./hooks";
+import { useReveal, usePrefersReducedMotion, useFinePointer, useMediaQuery } from "./hooks";
 import Navbar from "./components/Navbar";
 import CustomCursor from "./components/CustomCursor";
 import AnimatedStat from "./components/AnimatedStat";
@@ -16,6 +16,7 @@ import SocialLinks from "./components/SocialLinks";
 import FallingLeaves from "./components/FallingLeaves";
 import DomeGallery from "./components/DomeGallery";
 import PhotoBento, { type BentoItem } from "./components/PhotoBento";
+import BounceCards from "./components/BounceCards";
 
 /* fotos del salón para el bento de "Nuestra historia" */
 const HISTORIA_FOTOS: BentoItem[] = [
@@ -54,7 +55,19 @@ export default function Home() {
   const reduced = usePrefersReducedMotion();
   const finePointer = useFinePointer();
   const cursorEnabled = finePointer && !reduced;
+  const isDesktop = useMediaQuery("(min-width: 640px)");
   const [paqueteSeleccionado, setPaqueteSeleccionado] = useState("");
+
+  /* config del abanico de fotos (BounceCards), responsiva */
+  const bounce = isDesktop
+    ? {
+        containerWidth: 520, containerHeight: 300, cardSize: 185, enableHover: true,
+        transformStyles: ["rotate(8deg) translate(-150px)", "rotate(-4deg) translate(-52px)", "rotate(4deg) translate(52px)", "rotate(-8deg) translate(150px)"],
+      }
+    : {
+        containerWidth: 320, containerHeight: 220, cardSize: 128, enableHover: false,
+        transformStyles: ["rotate(8deg) translate(-92px)", "rotate(-4deg) translate(-32px)", "rotate(4deg) translate(32px)", "rotate(-8deg) translate(92px)"],
+      };
 
   const elegirPaquete = (nombre: string) => {
     setPaqueteSeleccionado(nombre);
@@ -152,11 +165,28 @@ export default function Home() {
             <h2 className="text-4xl md:text-5xl font-semibold leading-tight" style={{ fontFamily: "var(--font-display,serif)" }}>
               Más de 20 años creando<br /><span className="forest-text">momentos especiales</span>
             </h2>
+            <p className="text-base font-light leading-relaxed max-w-2xl mx-auto mt-6" style={{ color: `${C.text}cc` }}>
+              A las afueras de Toluca, entre naturaleza y calidez, damos vida a las celebraciones más
+              importantes. Somos una empresa familiar que desde hace más de dos décadas cuida cada detalle
+              —el espacio, el sabor y la atención— para que tu boda, XV años o evento sea justo como lo
+              imaginaste. Aquí tú solo te encargas de disfrutar; de lo demás nos ocupamos nosotros.
+            </p>
           </div>
 
-          {/* bento con fotos del salón */}
+          {/* abanico de fotos del salón (BounceCards) */}
           <div ref={addReveal} className="section-reveal">
-            <PhotoBento items={HISTORIA_FOTOS} />
+            <div className="flex justify-center">
+              <BounceCards
+                images={HISTORIA_FOTOS.map((f) => f.src as string)}
+                containerWidth={bounce.containerWidth}
+                containerHeight={bounce.containerHeight}
+                cardSize={bounce.cardSize}
+                transformStyles={bounce.transformStyles}
+                enableHover={bounce.enableHover}
+                animationDelay={0.3}
+                animationStagger={0.09}
+              />
+            </div>
             <div className="flex flex-wrap gap-2 mt-10 justify-center">
               {["Bodas","XV Años","Cumpleaños","Bautizos","Comuniones","Grados","Corporativos","Baby Shower"].map((tag) => (
                 <span key={tag} className="text-[10px] tracking-[0.15em] uppercase px-3 py-1.5"
