@@ -166,10 +166,13 @@ export default function Home() {
               Más de 20 años creando<br /><span className="forest-text">momentos especiales</span>
             </h2>
             <p className="text-base font-light leading-relaxed max-w-2xl mx-auto mt-6" style={{ color: `${C.text}cc` }}>
-              A las afueras de Toluca, entre naturaleza y calidez, damos vida a las celebraciones más
-              importantes. Somos una empresa familiar que desde hace más de dos décadas cuida cada detalle
-              —el espacio, el sabor y la atención— para que tu boda, XV años o evento sea justo como lo
-              imaginaste. Aquí tú solo te encargas de disfrutar; de lo demás nos ocupamos nosotros.
+              Desde <strong style={{ color: C.text, fontWeight: 600 }}>2011</strong>, hemos sido el lugar
+              donde las celebraciones más importantes se transforman en recuerdos inolvidables. Con años de
+              experiencia y el compromiso de cuidar cada detalle, ofrecemos el escenario perfecto para bodas,
+              quinceañeras, cumpleaños, bautizos, graduaciones, eventos empresariales y mucho más. Nuestro
+              objetivo es que tú y tus invitados vivan una experiencia única, llena de momentos que
+              permanecerán para siempre en su memoria. Porque las mejores historias merecen comenzar en un
+              lugar extraordinario.
             </p>
           </div>
 
