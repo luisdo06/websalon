@@ -32,12 +32,12 @@ export function useReveal() {
         if (e.isIntersecting) {
           const el = e.target as HTMLElement;
           const idx = refs.current.indexOf(el);
-          const delay = 200 + idx * 80; /* espera a que la sección entre, luego cascada */
+          const delay = Math.min(idx, 4) * 55; /* cascada corta y acotada: aparece rápido */
           setTimeout(() => el.classList.add("visible"), delay);
           io.unobserve(el);
         }
       }),
-      { threshold: 0.06 }
+      { threshold: 0.05 }
     );
     refs.current.forEach((el) => el && io.observe(el));
     return () => io.disconnect();
