@@ -60,6 +60,8 @@ export default function BookingForm({ paqueteInicial }: { paqueteInicial: string
     } else if (step === 2) {
       if (!form.evento)          e.evento   = "Selecciona el tipo de evento";
       if (!form.personas.trim()) e.personas = "Requerido";
+      else if (Number(form.personas) > 200) e.personas = "Máximo 200 personas";
+      else if (Number(form.personas) < 1) e.personas = "Ingresa un número válido";
       if (!form.paquete)         e.paquete  = "Selecciona un paquete";
     } else if (step === 3) {
       if (!form.primeraVez)      e.primeraVez = "Selecciona una opción";
@@ -165,8 +167,8 @@ export default function BookingForm({ paqueteInicial }: { paqueteInicial: string
             {errors.evento && <p role="alert" className="text-[10px] mt-1" style={{ color: C.rust }}>{errors.evento}</p>}
           </div>
           <div>
-            <label htmlFor="f-personas" className="block text-[10px] tracking-[0.3em] uppercase mb-2" style={{ color: `${C.accent}99` }}>Número de personas</label>
-            <input id="f-personas" type="number" min="1" value={form.personas} onChange={set("personas")} placeholder="Ej: 150"
+            <label htmlFor="f-personas" className="block text-[10px] tracking-[0.3em] uppercase mb-2" style={{ color: `${C.accent}99` }}>Número de personas <span style={{ textTransform: "none", letterSpacing: 0 }}>(máx. 200)</span></label>
+            <input id="f-personas" type="number" min="1" max="200" value={form.personas} onChange={set("personas")} placeholder="Ej: 150"
               className={inputBase} aria-invalid={!!errors.personas}
               style={{ color: C.text, borderColor: errors.personas ? C.rust : `${C.accent}30`, caretColor: C.accent }} />
             {errors.personas && <p role="alert" className="text-[10px] mt-1" style={{ color: C.rust }}>{errors.personas}</p>}

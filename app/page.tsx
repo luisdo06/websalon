@@ -191,7 +191,7 @@ export default function Home() {
               />
             </div>
             <div className="flex flex-wrap gap-2 mt-10 justify-center">
-              {["Bodas","XV Años","Cumpleaños","Bautizos","Comuniones","Grados","Corporativos","Baby Shower"].map((tag) => (
+              {["Bodas","XV Años","Cumpleaños","Bautizos","Comuniones","Graduaciones","Corporativos","Baby Shower"].map((tag) => (
                 <span key={tag} className="text-[10px] tracking-[0.15em] uppercase px-3 py-1.5"
                   style={{ border: `1px solid ${C.accent}30`, color: `${C.text}99`, background: `${C.accent}0a` }}>
                   {tag}
