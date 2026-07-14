@@ -166,7 +166,7 @@ export default function Home() {
               Más de 20 años creando<br /><span className="forest-text">momentos especiales</span>
             </h2>
             <p className="text-base font-light leading-relaxed max-w-2xl mx-auto mt-6" style={{ color: `${C.text}cc` }}>
-              Desde <strong style={{ color: C.text, fontWeight: 600 }}>2011</strong>, hemos sido el lugar
+              Desde 2011, hemos sido el lugar
               donde las celebraciones más importantes se transforman en recuerdos inolvidables. Con años de
               experiencia y el compromiso de cuidar cada detalle, ofrecemos el escenario perfecto para bodas,
               quinceañeras, cumpleaños, bautizos, graduaciones, eventos empresariales y mucho más. Nuestro
