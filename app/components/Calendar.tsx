@@ -5,9 +5,9 @@ import { C } from "@/lib/theme";
 
 /* ─── Calendario ─── */
 export default function Calendar({
-  selected, onSelect, blockedDates,
+  selected, onSelect, blockedDates, compact = false,
 }: {
-  selected: string; onSelect: (d: string) => void; blockedDates: string[];
+  selected: string; onSelect: (d: string) => void; blockedDates: string[]; compact?: boolean;
 }) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -28,9 +28,9 @@ export default function Calendar({
   const cells: (number | null)[] = [...Array(firstDay).fill(null), ...Array.from({ length: daysInMonth }, (_, i) => i + 1)];
 
   return (
-    <div className="p-4" style={{ background: C.surface, border: `1px solid ${C.accent}20` }}>
+    <div className={compact ? "p-3" : "p-4"} style={{ background: C.surface, border: `1px solid ${C.accent}20` }}>
       {/* nav mes */}
-      <div className="flex items-center justify-between mb-4">
+      <div className={`flex items-center justify-between ${compact ? "mb-2.5" : "mb-4"}`}>
         <button type="button" onClick={prevMonth} aria-label="Mes anterior" className="w-8 h-8 flex items-center justify-center text-sm transition-opacity hover:opacity-60"
           style={{ color: C.accent }}>‹</button>
         <p className="text-sm font-light tracking-[0.15em]" style={{ color: C.text }}>
@@ -82,7 +82,7 @@ export default function Calendar({
       </div>
 
       {/* leyenda */}
-      <div className="flex gap-4 mt-4 pt-3" style={{ borderTop: `1px solid ${C.accent}12` }}>
+      <div className={`flex gap-4 ${compact ? "mt-2.5 pt-2" : "mt-4 pt-3"}`} style={{ borderTop: `1px solid ${C.accent}12` }}>
         <div className="flex items-center gap-1.5">
           <div className="w-3 h-3" style={{ background: C.accent }} />
           <span className="text-[9px]" style={{ color: `${C.text}77` }}>Seleccionado</span>

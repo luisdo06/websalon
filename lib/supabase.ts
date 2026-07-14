@@ -18,3 +18,19 @@ export type BlockedDate = {
   reason: string | null;
   created_at: string;
 };
+
+export type Cita = {
+  id: string;
+  created_at: string;
+  nombre: string;
+  telefono: string;
+  evento: string | null;
+  personas: number | null;
+  paquete: string | null;
+  fecha_evento: string | null;
+  fecha_visita: string | null;
+  hora_visita: string | null;
+  degustacion: boolean;
+  estado: "pendiente" | "aceptada" | "borrada";
+  deleted_at: string | null;
+};

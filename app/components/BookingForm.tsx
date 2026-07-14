@@ -6,6 +6,16 @@ import { PHONE } from "@/lib/site";
 import Calendar from "./Calendar";
 import Stepper, { Step } from "./Stepper";
 
+/* horas disponibles para la primera visita (10 am → 8 pm, una por hora) */
+const TIME_SLOTS = Array.from({ length: 11 }, (_, i) => {
+  const h = 10 + i; // 10..20
+  const value = `${String(h).padStart(2, "0")}:00`;
+  const h12 = h > 12 ? h - 12 : h;
+  const ampm = h >= 12 ? "pm" : "am";
+  return { value, label: `${h12} ${ampm}` };
+});
+const horaLabel = (value: string) => TIME_SLOTS.find((s) => s.value === value)?.label ?? value;
+
 /* encabezado de cada paso */
 function StepHead({ n, title }: { n: number; title: string }) {
   return (
@@ -20,9 +30,10 @@ function StepHead({ n, title }: { n: number; title: string }) {
 export default function BookingForm({ paqueteInicial }: { paqueteInicial: string }) {
   const [form, setForm] = useState({
     nombre: "", telefono: "", primeraVez: "",
-    evento: "", personas: "", paquete: "", fecha: "", fechaVisita: "",
+    evento: "", personas: "", paquete: "", fecha: "", fechaVisita: "", horaVisita: "",
     degustacion: false,
   });
+  const [sent, setSent] = useState(false);
   const [errors, setErrors]       = useState<Partial<Record<keyof typeof form, string>>>({});
   const [blockedDates, setBlocked] = useState<string[]>([]);
   const [loadError, setLoadError] = useState(false);
@@ -66,6 +77,7 @@ export default function BookingForm({ paqueteInicial }: { paqueteInicial: string
     } else if (step === 3) {
       if (!form.primeraVez)      e.primeraVez = "Selecciona una opción";
       if (form.primeraVez === "no" && !form.fechaVisita) e.fechaVisita = "Selecciona una fecha para tu visita";
+      if (form.primeraVez === "no" && !form.horaVisita)  e.horaVisita  = "Selecciona una hora para tu visita";
     } else if (step === 4) {
       if (!form.fecha)           e.fecha = "Selecciona una fecha";
       if (form.fecha && blockedDates.includes(form.fecha)) e.fecha = "Esta fecha ya está ocupada";
@@ -85,13 +97,37 @@ export default function BookingForm({ paqueteInicial }: { paqueteInicial: string
     `\u{1F331} *Solicitud de reserva - Salón del Bosque*\n\n` +
     `\u{1F464} *Nombre:* ${form.nombre}\n` +
     `\u{1F4DE} *Teléfono:* ${form.telefono}\n` +
-    `\u{1F4CD} *Visita:* ${form.primeraVez === "no" ? `Primera vez · Quiero conocer el salón el ${formatFecha(form.fechaVisita)}` : "Ya visitó el salón"}\n` +
+    `\u{1F4CD} *Visita:* ${form.primeraVez === "no" ? `Primera vez · Quiero conocer el salón el ${formatFecha(form.fechaVisita)} a las ${horaLabel(form.horaVisita)}` : "Ya visitó el salón"}\n` +
     `\u{1F389} *Evento:* ${form.evento} · ${form.personas} personas\n` +
     `\u{1F4CB} *Paquete:* ${form.paquete}\n` +
     (form.degustacion ? `\u{1F37D}\u{FE0F} *Degustación:* Sí, quiero incluir una degustación sin costo en mi visita\n` : "") +
     `\u{1F4C5} *Fecha deseada:* ${formatFecha(form.fecha)}`;
 
+  /* guarda la cita de primera visita en el panel (no bloquea el envío si falla) */
+  const guardarCita = async () => {
+    if (sent || form.primeraVez !== "no") return;
+    setSent(true);
+    try {
+      const { supabase } = await import("@/lib/supabase");
+      await supabase.from("citas").insert({
+        nombre: form.nombre,
+        telefono: form.telefono,
+        evento: form.evento || null,
+        personas: form.personas ? Number(form.personas) : null,
+        paquete: form.paquete || null,
+        fecha_evento: form.fecha || null,
+        fecha_visita: form.fechaVisita || null,
+        hora_visita: form.horaVisita || null,
+        degustacion: form.degustacion,
+        estado: "pendiente",
+      });
+    } catch {
+      /* si Supabase no responde, igual dejamos continuar con WhatsApp */
+    }
+  };
+
   const sendWhatsApp = () => {
+    guardarCita();
     const url = `https://wa.me/${PHONE.whatsapp}?text=${encodeURIComponent(whatsappMsg())}`;
     window.open(url, "_blank");
   };
@@ -199,7 +235,7 @@ export default function BookingForm({ paqueteInicial }: { paqueteInicial: string
           <label className="block text-[10px] tracking-[0.3em] uppercase mb-2" style={{ color: `${C.accent}99` }}>¿Ya visitaste el salón?</label>
           <div className="flex gap-3">
             {[{ val: "no", label: "Primera visita" }, { val: "si", label: "Ya lo visité" }].map(({ val, label }) => (
-              <button type="button" key={val} onClick={() => { setForm(f => ({ ...f, primeraVez: val, fechaVisita: val === "si" ? "" : f.fechaVisita, degustacion: val === "si" ? false : f.degustacion })); setErrors(er => ({ ...er, primeraVez: undefined, fechaVisita: undefined })); }}
+              <button type="button" key={val} onClick={() => { setForm(f => ({ ...f, primeraVez: val, fechaVisita: val === "si" ? "" : f.fechaVisita, horaVisita: val === "si" ? "" : f.horaVisita, degustacion: val === "si" ? false : f.degustacion })); setErrors(er => ({ ...er, primeraVez: undefined, fechaVisita: undefined, horaVisita: undefined })); }}
                 className="flex-1 py-3 text-xs tracking-[0.15em] uppercase transition-all duration-200"
                 style={{
                   border: `1px solid ${form.primeraVez === val ? C.accent : C.accent + "25"}`,
@@ -223,12 +259,42 @@ export default function BookingForm({ paqueteInicial }: { paqueteInicial: string
                   </span>
                 )}
               </p>
-              <Calendar
-                selected={form.fechaVisita}
-                onSelect={(d) => { setForm(f => ({ ...f, fechaVisita: d })); setErrors(er => ({ ...er, fechaVisita: undefined })); }}
-                blockedDates={[]}
-              />
+              <div className="max-w-xs mx-auto">
+                <Calendar
+                  compact
+                  selected={form.fechaVisita}
+                  onSelect={(d) => { setForm(f => ({ ...f, fechaVisita: d })); setErrors(er => ({ ...er, fechaVisita: undefined })); }}
+                  blockedDates={[]}
+                />
+              </div>
               {errors.fechaVisita && <p role="alert" className="text-[10px] mt-1" style={{ color: C.rust }}>{errors.fechaVisita}</p>}
+
+              {/* zona de horas */}
+              <p className="text-[10px] tracking-[0.25em] uppercase mt-4" style={{ color: `${C.accent}99` }}>
+                ¿A qué hora?
+                {form.horaVisita && (
+                  <span className="ml-2 normal-case tracking-normal" style={{ color: C.accent }}>· {horaLabel(form.horaVisita)}</span>
+                )}
+              </p>
+              <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 mt-2">
+                {TIME_SLOTS.map(({ value, label }) => {
+                  const active = form.horaVisita === value;
+                  return (
+                    <button type="button" key={value}
+                      onClick={() => { setForm(f => ({ ...f, horaVisita: value })); setErrors(er => ({ ...er, horaVisita: undefined })); }}
+                      aria-pressed={active}
+                      className="py-2.5 text-xs tracking-[0.05em] uppercase transition-all duration-200"
+                      style={{
+                        border: `1px solid ${active ? C.accent : C.accent + "25"}`,
+                        background: active ? `${C.accent}15` : "transparent",
+                        color: active ? C.accent : `${C.text}88`,
+                      }}>
+                      {label}
+                    </button>
+                  );
+                })}
+              </div>
+              {errors.horaVisita && <p role="alert" className="text-[10px] mt-1" style={{ color: C.rust }}>{errors.horaVisita}</p>}
 
               {/* degustación opcional, sin costo, durante la visita */}
               <button type="button" role="checkbox" aria-checked={form.degustacion}
