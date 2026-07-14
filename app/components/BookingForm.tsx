@@ -11,7 +11,7 @@ function StepHead({ n, title }: { n: number; title: string }) {
   return (
     <div className="mb-5">
       <p className="text-[10px] tracking-[0.35em] uppercase mb-1" style={{ color: C.accent }}>Paso {n} de 4</p>
-      <h3 className="text-xl font-light" style={{ fontFamily: "var(--font-display,serif)", color: C.text }}>{title}</h3>
+      <h3 className="text-xl font-semibold" style={{ fontFamily: "var(--font-display,serif)", color: C.text }}>{title}</h3>
     </div>
   );
 }

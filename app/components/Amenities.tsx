@@ -26,7 +26,7 @@ function CardBody({ c }: { c: ServiceCard }) {
         style={{ background: `${C.accent}12`, border: `1px solid ${C.accent}30`, color: C.accent }}>
         {ICONS[c.icon] ?? ICONS.leaf}
       </div>
-      <h3 className="text-lg font-light mb-3" style={{ fontFamily: "var(--font-display,serif)", color: C.text }}>{c.title}</h3>
+      <h3 className="text-lg font-semibold mb-3" style={{ fontFamily: "var(--font-display,serif)", color: C.text }}>{c.title}</h3>
       <ul className="space-y-2">
         {c.items.map((it) => (
           <li key={it} className="flex gap-2.5 text-sm font-light leading-relaxed" style={{ color: `${C.text}cc` }}>

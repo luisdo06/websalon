@@ -13,6 +13,22 @@
 
 html {
   scroll-behavior: auto; /* Lenis maneja el scroll, no el navegador */
+  font-size: 106.25%;     /* base 17px: agranda toda la tipografía (rem) */
+}
+
+/* cuando el cursor-hoja está activo (solo escritorio), la hoja es el único puntero
+   → evita que la manita del sistema aparezca sobre enlaces/botones del header */
+@media (min-width: 768px) {
+  html.leaf-cursor,
+  html.leaf-cursor a,
+  html.leaf-cursor button,
+  html.leaf-cursor [role="button"],
+  html.leaf-cursor label,
+  html.leaf-cursor summary,
+  html.leaf-cursor input,
+  html.leaf-cursor select {
+    cursor: none !important;
+  }
 }
 
 /* compensa el navbar fijo al saltar a una sección (scroll nativo / reduced-motion) */

@@ -20,7 +20,7 @@ function PackageCard({ pkg, onElegir }: { pkg: Package; onElegir: (nombre: strin
         {/* cabecera */}
         <div className="mb-4">
           <p className="text-[9px] tracking-[0.45em] uppercase mb-1" style={{ color: `${pkg.color}99` }}>Paquete {pkg.id}</p>
-          <h3 className="text-2xl font-light" style={{ fontFamily: "var(--font-display,serif)", color: C.text }}>{pkg.name}</h3>
+          <h3 className="text-2xl font-semibold" style={{ fontFamily: "var(--font-display,serif)", color: C.text }}>{pkg.name}</h3>
           <p className="text-xs mt-1 font-light" style={{ color: `${C.text}88` }}>{pkg.tag}</p>
         </div>
 

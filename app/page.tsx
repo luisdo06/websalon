@@ -65,7 +65,7 @@ export default function Home() {
         <Image src="/fotos/salon-dia.jpg" alt="Salón del Bosque" fill priority sizes="100vw"
           style={{ objectFit: "cover", objectPosition: "center" }} />
         {/* velo crema que desvanece la foto (texto oscuro legible) */}
-        <div className="absolute inset-0 pointer-events-none" style={{ background: `${C.bg}a6` }} />
+        <div className="absolute inset-0 pointer-events-none" style={{ background: `${C.bg}8c` }} />
         <div className="absolute inset-0 pointer-events-none"
           style={{ background: `linear-gradient(to bottom, ${C.bg}66 0%, transparent 32%, transparent 58%, ${C.bg} 100%)` }} />
 
@@ -79,7 +79,7 @@ export default function Home() {
             Salón de Eventos · Toluca
           </p>
           <h1 className="anim-fade-up d-200 mb-5 leading-none"
-            style={{ fontFamily: "var(--font-display,serif)", fontSize: "clamp(2.5rem,6vw,5rem)", fontWeight: 500, color: C.text }}>
+            style={{ fontFamily: "var(--font-display,serif)", fontSize: "clamp(2.5rem,6vw,5rem)", fontWeight: 600, color: C.text }}>
             Tu espacio ideal<br />
             <span className="forest-text">para celebrar</span>
           </h1>
@@ -123,7 +123,7 @@ export default function Home() {
           <div ref={addReveal} className="section-reveal mb-12 text-center">
             <LeafAccent />
             <p className="text-xs tracking-[0.4em] uppercase mb-3" style={{ color: C.accent }}>Todo a tu servicio</p>
-            <h2 className="text-4xl md:text-5xl font-light" style={{ fontFamily: "var(--font-display,serif)" }}>
+            <h2 className="text-4xl md:text-5xl font-semibold" style={{ fontFamily: "var(--font-display,serif)" }}>
               Servicios y <span className="amber-text">amenidades</span>
             </h2>
           </div>
@@ -140,7 +140,7 @@ export default function Home() {
           <div ref={addReveal} className="section-reveal mb-10 text-center">
             <LeafAccent />
             <p className="text-xs tracking-[0.4em] uppercase mb-3" style={{ color: C.accent }}>Nuestra historia</p>
-            <h2 className="text-4xl md:text-5xl font-light leading-tight" style={{ fontFamily: "var(--font-display,serif)" }}>
+            <h2 className="text-4xl md:text-5xl font-semibold leading-tight" style={{ fontFamily: "var(--font-display,serif)" }}>
               Más de 20 años creando<br /><span className="forest-text">momentos especiales</span>
             </h2>
           </div>
@@ -176,7 +176,7 @@ export default function Home() {
           {/* cocina */}
           <div ref={addReveal} className="section-reveal mt-16 text-center">
             <p className="text-xs tracking-[0.4em] uppercase mb-3" style={{ color: C.accent }}>El alma de nuestra cocina</p>
-            <h3 className="text-2xl md:text-3xl font-light" style={{ fontFamily: "var(--font-display,serif)" }}>
+            <h3 className="text-2xl md:text-3xl font-semibold" style={{ fontFamily: "var(--font-display,serif)" }}>
               Nuestro <span className="amber-text">equipo culinario</span>
             </h3>
           </div>
@@ -201,7 +201,7 @@ export default function Home() {
           <div ref={addReveal} className="section-reveal mb-12 text-center">
             <LeafAccent />
             <p className="text-xs tracking-[0.4em] uppercase mb-3" style={{ color: C.accent }}>Nuestros paquetes</p>
-            <h2 className="text-4xl md:text-5xl font-light" style={{ fontFamily: "var(--font-display,serif)" }}>
+            <h2 className="text-4xl md:text-5xl font-semibold" style={{ fontFamily: "var(--font-display,serif)" }}>
               <span className="forest-text">Cotizaciones</span>
             </h2>
             <p className="text-sm font-light mt-3" style={{ color: `${C.text}99` }}>
@@ -220,7 +220,7 @@ export default function Home() {
           <div ref={addReveal} className="section-reveal mb-10 text-center">
             <LeafAccent />
             <p className="text-xs tracking-[0.4em] uppercase mb-3" style={{ color: C.accent }}>Encuéntranos</p>
-            <h2 className="text-4xl md:text-5xl font-light" style={{ fontFamily: "var(--font-display,serif)" }}>
+            <h2 className="text-4xl md:text-5xl font-semibold" style={{ fontFamily: "var(--font-display,serif)" }}>
               Nuestra <span className="forest-text">ubicación</span>
             </h2>
           </div>
@@ -271,7 +271,7 @@ export default function Home() {
           <div ref={addReveal} className="section-reveal mb-10 text-center">
             <LeafAccent />
             <p className="text-xs tracking-[0.4em] uppercase mb-3" style={{ color: C.accent }}>Galería</p>
-            <h2 className="text-4xl md:text-5xl font-light" style={{ fontFamily: "var(--font-display,serif)" }}>
+            <h2 className="text-4xl md:text-5xl font-semibold" style={{ fontFamily: "var(--font-display,serif)" }}>
               Nuestros <span className="forest-text">eventos</span>
             </h2>
             <p className="text-sm font-light mt-3" style={{ color: `${C.text}99` }}>
@@ -296,7 +296,7 @@ export default function Home() {
           <div ref={addReveal} className="section-reveal mb-10 text-center">
             <LeafAccent />
             <p className="text-xs tracking-[0.4em] uppercase mb-3" style={{ color: C.accent }}>Agenda tu visita</p>
-            <h2 className="text-4xl md:text-5xl font-light" style={{ fontFamily: "var(--font-display,serif)" }}>
+            <h2 className="text-4xl md:text-5xl font-semibold" style={{ fontFamily: "var(--font-display,serif)" }}>
               <span className="forest-text">Reserva</span> tu evento
             </h2>
             <p className="text-sm font-light mt-3" style={{ color: `${C.text}99` }}>Te contactamos en menos de 1 hora.</p>

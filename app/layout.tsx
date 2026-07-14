@@ -8,7 +8,7 @@ import { SITE, PHONE } from "@/lib/site";
 const cormorant = Cormorant_Garamond({
   variable: "--font-display",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
+  weight: ["300", "400", "500", "600", "700"],
 });
 
 const montserrat = Montserrat({

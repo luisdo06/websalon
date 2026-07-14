@@ -12,16 +12,22 @@ export default function CustomCursor({ enabled }: { enabled: boolean }) {
 
   useEffect(() => {
     if (!enabled) return;
+    /* la hoja es el único cursor en esta página (ver .leaf-cursor en globals.css) */
+    document.documentElement.classList.add("leaf-cursor");
     const onMove = (e: MouseEvent) => { pos.current = { x: e.clientX, y: e.clientY }; };
     window.addEventListener("mousemove", onMove);
     const animate = () => {
-      lag.current.x += (pos.current.x - lag.current.x) * 0.18;
-      lag.current.y += (pos.current.y - lag.current.y) * 0.18;
+      lag.current.x += (pos.current.x - lag.current.x) * 0.3;
+      lag.current.y += (pos.current.y - lag.current.y) * 0.3;
       if (leaf.current) leaf.current.style.transform = `translate(${lag.current.x - 13}px, ${lag.current.y - 13}px)`;
       raf.current = requestAnimationFrame(animate);
     };
     raf.current = requestAnimationFrame(animate);
-    return () => { window.removeEventListener("mousemove", onMove); if (raf.current) cancelAnimationFrame(raf.current); };
+    return () => {
+      document.documentElement.classList.remove("leaf-cursor");
+      window.removeEventListener("mousemove", onMove);
+      if (raf.current) cancelAnimationFrame(raf.current);
+    };
   }, [enabled]);
 
   if (!enabled) return null;
