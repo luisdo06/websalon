@@ -90,6 +90,17 @@ export const GALLERY: GalleryItem[] = [
   { label: "Exterior del salón", hint: "Vista exterior",                src: "/fotos/salon-fuera-3.jpeg" },
   { label: "Exterior del salón", hint: "Vista exterior",                src: "/fotos/salon-fuera-4.jpeg" },
   { label: "Exterior del salón", hint: "Vista exterior",                src: "/fotos/salon-fuera-5.jpeg" },
+  { label: "Montaje del evento",   hint: "Mesa lista para la celebración", src: "/fotos/IMG_4494.JPG.jpeg" },
+  { label: "Mesa montada",         hint: "Detalles en rosa",               src: "/fotos/IMG_4495.JPG.jpeg" },
+  { label: "Montaje del evento",   hint: "Montaje elegante",               src: "/fotos/IMG_4496.JPG.jpeg" },
+  { label: "Decoración de XV años", hint: "Letras iluminadas",             src: "/fotos/IMG_4497.JPG.jpeg" },
+  { label: "Platillo principal",   hint: "Del banquete del Chef Román",    src: "/fotos/IMG_4498.JPG.jpeg" },
+  { label: "Pasta del banquete",   hint: "Uno de nuestros tiempos",        src: "/fotos/IMG_4499.JPG.jpeg" },
+  { label: "Crema de entrada",     hint: "Primer tiempo del menú",         src: "/fotos/IMG_4500.JPG.jpeg" },
+  { label: "Centro de mesa",       hint: "Arreglo floral",                 src: "/fotos/IMG_4501.JPG.jpeg" },
+  { label: "Ambiente de fiesta",   hint: "Terraza decorada",               src: "/fotos/IMG_4502.JPG.jpeg" },
+  { label: "Pista de baile",       hint: "Salón listo para bailar",        src: "/fotos/IMG_4503.JPG.jpeg" },
+  { label: "Salón iluminado",      hint: "Ambiente nocturno",              src: "/fotos/IMG_4504.JPG.jpeg" },
 ];
 
 /* Servicios y amenidades, agrupados por tema (tarjetas del CardSwap).
