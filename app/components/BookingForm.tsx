@@ -160,7 +160,7 @@ export default function BookingForm({ paqueteInicial }: { paqueteInicial: string
             <select id="f-evento" value={form.evento} onChange={set("evento")} className={`${inputBase} appearance-none`} aria-invalid={!!errors.evento}
               style={{ background: C.surface, color: form.evento ? C.text : `${C.text}66`, borderColor: errors.evento ? C.rust : `${C.accent}30` }}>
               <option value="">Selecciona el tipo de evento</option>
-              {["Boda","XV Años","Cumpleaños","Bautizo","Comunión","Grado","Corporativo","Baby Shower","Otro"].map(s => (
+              {["Boda","XV Años","Cumpleaños","Bautizo","Comunión","Graduación","Corporativo","Baby Shower","Otro"].map(s => (
                 <option key={s} value={s}>{s}</option>
               ))}
             </select>
