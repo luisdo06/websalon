@@ -17,7 +17,7 @@ export const SITE = {
   // ⚠️ Redes sociales — pegar las URLs reales (déjalas vacías si no hay).
   social: {
     instagram: "", // ej: https://instagram.com/salondelbosque
-    facebook: "",  // ej: https://facebook.com/salondelbosque
+    facebook: "https://www.facebook.com/profile.php?id=100065608868207",
   },
 } as const;
 

@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { C } from "@/lib/theme";
 import { STATS, GALLERY } from "@/lib/content";
+import { SITE } from "@/lib/site";
 import { useReveal, usePrefersReducedMotion, useFinePointer, useMediaQuery } from "./hooks";
 import Navbar from "./components/Navbar";
 import CustomCursor from "./components/CustomCursor";
@@ -257,31 +258,44 @@ export default function Home() {
               Nuestra <span className="forest-text">ubicación</span>
             </h2>
           </div>
-          {/* mapa */}
-          <div ref={addReveal} className="section-reveal mb-12 relative overflow-hidden aspect-[16/9]"
-            style={{ border: `1px solid ${C.accent}18` }}>
-            <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3754.0!2d-99.619061!3d19.2779057!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85cd8a3090593f51:0x9a499e74b146f2be!2sSal%C3%B3n%20del%20Bosque!5e0!3m2!1ses!2smx!4v1700000000000"
-              width="100%" height="100%" style={{ border: 0, filter: "saturate(0.7) brightness(1.05)" }}
-              allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" title="Ubicación Salón del Bosque" />
-            {[["top-3 left-3","border-t border-l"],["top-3 right-3","border-t border-r"],
-              ["bottom-3 left-3","border-b border-l"],["bottom-3 right-3","border-b border-r"]].map(([p, cls]) => (
-              <div key={p} className={`absolute ${p} w-5 h-5 ${cls} pointer-events-none`} style={{ borderColor: `${C.accent}55` }} />
-            ))}
-          </div>
-          {/* info en 3 columnas centradas */}
-          <div ref={addReveal} className="section-reveal grid sm:grid-cols-3 gap-8 text-center">
-            {[
-              { icon: "◎", label: "Dirección",  lines: ["Salón del Bosque", "Toluca, Estado de México"] },
-              { icon: "◷", label: "Horarios",   lines: ["Lunes a Viernes · 9:00 am – 7:00 pm", "Sábados · 9:00 am – 5:00 pm", "Domingos · Cerrado"] },
-              { icon: "◈", label: "Contacto",   lines: ["722 592 6512", "Evelia Mendoza Hernández"] },
-            ].map((item) => (
-              <div key={item.label}>
-                <div className="text-2xl mb-3" style={{ color: `${C.accent}80` }}>{item.icon}</div>
-                <p className="text-[10px] tracking-[0.35em] uppercase mb-2" style={{ color: C.accent }}>{item.label}</p>
-                {item.lines.map((l) => <p key={l} className="text-sm font-light leading-relaxed" style={{ color: `${C.text}cc` }}>{l}</p>)}
-              </div>
-            ))}
+          {/* mapa (izq.) + info (der.) */}
+          <div ref={addReveal} className="section-reveal grid md:grid-cols-2 gap-8 lg:gap-12 items-center">
+            {/* mapa más pequeño, a la izquierda */}
+            <div className="relative overflow-hidden aspect-[4/3]" style={{ border: `1px solid ${C.accent}18` }}>
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3754.0!2d-99.619061!3d19.2779057!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85cd8a3090593f51:0x9a499e74b146f2be!2sSal%C3%B3n%20del%20Bosque!5e0!3m2!1ses!2smx!4v1700000000000"
+                width="100%" height="100%" style={{ border: 0, filter: "saturate(0.7) brightness(1.05)" }}
+                allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" title="Ubicación Salón del Bosque" />
+              {[["top-3 left-3","border-t border-l"],["top-3 right-3","border-t border-r"],
+                ["bottom-3 left-3","border-b border-l"],["bottom-3 right-3","border-b border-r"]].map(([p, cls]) => (
+                <div key={p} className={`absolute ${p} w-5 h-5 ${cls} pointer-events-none`} style={{ borderColor: `${C.accent}55` }} />
+              ))}
+            </div>
+            {/* info a la derecha + Facebook */}
+            <div className="space-y-6">
+              {[
+                { icon: "◎", label: "Dirección",  lines: ["Salón del Bosque", "Toluca, Estado de México"] },
+                { icon: "◷", label: "Horarios",   lines: ["Lunes a Viernes · 9:00 am – 7:00 pm", "Sábados · 9:00 am – 5:00 pm", "Domingos · Cerrado"] },
+                { icon: "◈", label: "Contacto",   lines: ["722 592 6512", "Evelia Mendoza Hernández"] },
+              ].map((item) => (
+                <div key={item.label} className="flex gap-3">
+                  <div className="text-xl shrink-0 mt-0.5" style={{ color: `${C.accent}80` }}>{item.icon}</div>
+                  <div>
+                    <p className="text-[10px] tracking-[0.35em] uppercase mb-1.5" style={{ color: C.accent }}>{item.label}</p>
+                    {item.lines.map((l) => <p key={l} className="text-sm font-light leading-relaxed" style={{ color: `${C.text}cc` }}>{l}</p>)}
+                  </div>
+                </div>
+              ))}
+              {/* botón de Facebook */}
+              <a href={SITE.social.facebook} target="_blank" rel="noopener noreferrer"
+                className="inline-flex items-center gap-2.5 px-6 py-3 text-xs tracking-[0.2em] uppercase transition-all duration-300 hover:opacity-80"
+                style={{ border: `1px solid ${C.accent}50`, color: C.accent }}>
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M15 4h-2.5A3.5 3.5 0 0 0 9 7.5V10H6.5v3H9v8h3v-8h2.5l.5-3H12V7.5a.5.5 0 0 1 .5-.5H15z" />
+                </svg>
+                Síguenos en Facebook
+              </a>
+            </div>
           </div>
           {/* botones centrados */}
           <div ref={addReveal} className="section-reveal flex flex-wrap gap-3 justify-center mt-12">
