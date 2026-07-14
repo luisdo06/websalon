@@ -189,7 +189,7 @@ export default function Home() {
               previa para elegir con calma el menú perfecto para tu celebración.
             </p>
           </div>
-          <div ref={addReveal} className="section-reveal mt-10">
+          <div className="mt-10">
             <PhotoBento items={CULINARIA_FOTOS} />
           </div>
         </div>
