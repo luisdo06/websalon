@@ -15,13 +15,22 @@ import WhatsAppButton from "./components/WhatsAppButton";
 import SocialLinks from "./components/SocialLinks";
 import FallingLeaves from "./components/FallingLeaves";
 import DomeGallery from "./components/DomeGallery";
-import Folder from "./components/Folder";
+import PhotoBento, { type BentoItem } from "./components/PhotoBento";
 
-/* fotos del salón para la carpeta de "Nuestra historia" */
-const NOSOTROS_FOTOS = [
-  { src: "/fotos/salon-dia.jpg", alt: "Salón montado para un evento" },
-  { src: "/fotos/salon-noche.jpg", alt: "Ambiente nocturno con pista de baile" },
-  { src: "/fotos/salon-fuera-4.jpeg", alt: "Jardín y patio del salón" },
+/* fotos del salón para el bento de "Nuestra historia" */
+const HISTORIA_FOTOS: BentoItem[] = [
+  { src: "/fotos/salon-dia.jpg", alt: "Salón montado para un evento", label: "Salón principal" },
+  { src: "/fotos/salon-noche.jpg", alt: "Ambiente nocturno con pista de baile", label: "Ambiente nocturno" },
+  { src: "/fotos/salon-mesa.jpg", alt: "Mesa montada con mantelería", label: "Mesa montada" },
+  { src: "/fotos/salon-fuera-4.jpeg", alt: "Jardín y patio del salón", label: "Jardín" },
+];
+
+/* bento de "Equipo culinario": banquete + espacios para futuras fotos */
+const CULINARIA_FOTOS: BentoItem[] = [
+  { src: "/fotos/comida-menu.jpg", alt: "Banquete del salón", label: "Banquete" },
+  { placeholder: true },
+  { placeholder: true },
+  { placeholder: true },
 ];
 
 /* acento botánico sutil para encabezados centrados */
@@ -145,22 +154,10 @@ export default function Home() {
             </h2>
           </div>
 
-          {/* carpeta con las 3 fotos del salón */}
-          <div ref={addReveal} className="section-reveal flex flex-col items-center">
-            <div className="flex items-center justify-center w-full h-[300px] md:h-[340px]">
-              <Folder
-                color={C.accent}
-                size={2.2}
-                items={NOSOTROS_FOTOS.map((f) => (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img key={f.src} className="folder-photo" src={f.src} alt={f.alt} draggable={false} />
-                ))}
-              />
-            </div>
-            <p className="text-center text-[10px] tracking-[0.2em] uppercase" style={{ color: `${C.text}66` }}>
-              Toca la carpeta para ver las fotos
-            </p>
-            <div className="flex flex-wrap gap-2 mt-8 justify-center">
+          {/* bento con fotos del salón */}
+          <div ref={addReveal} className="section-reveal">
+            <PhotoBento items={HISTORIA_FOTOS} />
+            <div className="flex flex-wrap gap-2 mt-10 justify-center">
               {["Bodas","XV Años","Cumpleaños","Bautizos","Comuniones","Grados","Corporativos","Baby Shower"].map((tag) => (
                 <span key={tag} className="text-[10px] tracking-[0.15em] uppercase px-3 py-1.5"
                   style={{ border: `1px solid ${C.accent}30`, color: `${C.text}99`, background: `${C.accent}0a` }}>
@@ -191,6 +188,9 @@ export default function Home() {
               ¿Quieres probar antes de tu evento? Puedes <span style={{ color: C.amber }}>agendar una degustación</span>{" "}
               previa para elegir con calma el menú perfecto para tu celebración.
             </p>
+          </div>
+          <div ref={addReveal} className="section-reveal mt-10">
+            <PhotoBento items={CULINARIA_FOTOS} />
           </div>
         </div>
       </section>
