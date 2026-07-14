@@ -100,6 +100,14 @@ export default function AdminPage() {
     setBusy(null); fetchCitas();
   };
 
+  const hardDelete = async (id: string) => {
+    if (!window.confirm("¿Borrar esta cita permanentemente? No se podrá recuperar.")) return;
+    setBusy(id);
+    await supabase.from("citas").delete().eq("id", id);
+    showToast("Cita eliminada permanentemente");
+    setBusy(null); fetchCitas();
+  };
+
   /* ── carga inicial ── */
   if (!authReady) return (
     <div className="min-h-screen flex items-center justify-center" style={{ background: C.bg }}>
@@ -258,7 +266,10 @@ export default function AdminPage() {
                 <p className="text-[10px] mb-3" style={{ color: `${C.text}55` }}>Se eliminan solas 15 días después.</p>
                 <div className="space-y-3 opacity-80">
                   {borradas.map((c) => (
-                    <CitaCard key={c.id} c={c} actions={btn("Restaurar", () => setEstado(c.id, "pendiente", "Cita restaurada"), "ghost", busy === c.id)} />
+                    <CitaCard key={c.id} c={c} actions={<>
+                      {btn("Restaurar", () => setEstado(c.id, "pendiente", "Cita restaurada"), "ghost", busy === c.id)}
+                      {btn("Borrar definitivo", () => hardDelete(c.id), "rust", busy === c.id)}
+                    </>} />
                   ))}
                 </div>
               </section>
