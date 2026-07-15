@@ -7,8 +7,9 @@ import React, {
   useEffect,
   useLayoutEffect,
   type ReactNode,
+  type ReactElement,
 } from "react";
-import { motion, AnimatePresence, MotionConfig, type Variants } from "motion/react";
+import { m, AnimatePresence, MotionConfig, type Variants } from "motion/react";
 import { C } from "@/lib/theme";
 import "./Stepper.css";
 
@@ -72,11 +73,13 @@ export default function Stepper({
       <div className="stepper-outer">
         <div className="stepper-card" style={{ border: `1px solid ${C.accent}25` }}>
           <div className="stepper-indicator-row">
-            {stepsArray.map((_, index) => {
+            {stepsArray.map((stepEl, index) => {
               const stepNumber = index + 1;
               const isNotLastStep = index < totalSteps - 1;
+              /* Children.toArray asigna una key estable a cada hijo; la reutilizamos */
+              const stableKey = (stepEl as ReactElement).key ?? stepNumber;
               return (
-                <React.Fragment key={stepNumber}>
+                <React.Fragment key={stableKey}>
                   <StepIndicator
                     step={stepNumber}
                     disableStepIndicators={disableStepIndicators}
@@ -129,7 +132,7 @@ function StepContentWrapper({
   const [parentHeight, setParentHeight] = useState(0);
 
   return (
-    <motion.div
+    <m.div
       className={className}
       style={{ position: "relative", overflow: "hidden" }}
       animate={{ height: isCompleted ? 0 : parentHeight }}
@@ -142,7 +145,7 @@ function StepContentWrapper({
           </SlideTransition>
         )}
       </AnimatePresence>
-    </motion.div>
+    </m.div>
   );
 }
 
@@ -158,7 +161,7 @@ function SlideTransition({
   }, [children, onHeightReady]);
 
   return (
-    <motion.div
+    <m.div
       ref={containerRef}
       custom={direction}
       variants={stepVariants}
@@ -169,7 +172,7 @@ function SlideTransition({
       style={{ position: "absolute", left: 0, right: 0, top: 0 }}
     >
       {children}
-    </motion.div>
+    </m.div>
   );
 }
 
@@ -195,14 +198,18 @@ function StepIndicator({
   };
 
   return (
-    <motion.div
+    <m.div
       onClick={handleClick}
+      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleClick(); } }}
+      role="button"
+      tabIndex={disableStepIndicators ? -1 : 0}
+      aria-label={`Ir al paso ${step}`}
       className="stepper-indicator"
       style={disableStepIndicators ? { pointerEvents: "none", opacity: 0.5 } : {}}
       animate={status}
       initial={false}
     >
-      <motion.div
+      <m.div
         variants={{
           inactive: { backgroundColor: C.surface2, color: `${C.text}66` },
           active: { backgroundColor: C.accent, color: C.accent },
@@ -218,20 +225,20 @@ function StepIndicator({
         ) : (
           <span>{step}</span>
         )}
-      </motion.div>
-    </motion.div>
+      </m.div>
+    </m.div>
   );
 }
 
-function StepConnector({ isComplete }: { isComplete: boolean }) {
-  const lineVariants: Variants = {
-    incomplete: { width: 0, backgroundColor: "transparent" },
-    complete: { width: "100%", backgroundColor: C.accent },
-  };
+const lineVariants: Variants = {
+  incomplete: { width: 0, backgroundColor: "transparent" },
+  complete: { width: "100%", backgroundColor: C.accent },
+};
 
+function StepConnector({ isComplete }: { isComplete: boolean }) {
   return (
     <div className="stepper-connector">
-      <motion.div
+      <m.div
         className="stepper-connector-inner"
         variants={lineVariants}
         initial={false}
@@ -245,7 +252,7 @@ function StepConnector({ isComplete }: { isComplete: boolean }) {
 function CheckIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg {...props} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-      <motion.path
+      <m.path
         initial={{ pathLength: 0 }}
         animate={{ pathLength: 1 }}
         transition={{ delay: 0.1, type: "tween", ease: "easeOut", duration: 0.3 }}

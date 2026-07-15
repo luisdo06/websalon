@@ -18,16 +18,20 @@ export default function SmoothScroll() {
     });
     setLenis(lenis);
 
-    /* conectar con anclas del navbar */
-    document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-      anchor.addEventListener("click", (e) => {
-        e.preventDefault();
-        const id = (anchor as HTMLAnchorElement).getAttribute("href")?.slice(1);
-        if (!id) return;
-        const target = document.getElementById(id);
-        if (target) lenis.scrollTo(target, { offset: -80, duration: 1.6 });
-      });
-    });
+    /* conectar con anclas del navbar mediante delegación: un solo listener en
+       document (cubre también anclas añadidas después y se limpia con un único
+       removeEventListener) */
+    const onAnchorClick = (e: MouseEvent) => {
+      const anchor = (e.target as Element | null)?.closest?.('a[href^="#"]');
+      if (!anchor) return;
+      const id = anchor.getAttribute("href")?.slice(1);
+      if (!id) return;
+      const target = document.getElementById(id);
+      if (!target) return;
+      e.preventDefault();
+      lenis.scrollTo(target, { offset: -80, duration: 1.6 });
+    };
+    document.addEventListener("click", onAnchorClick);
 
     /* recalcular límites de scroll cuando el contenido cambia de alto
        (p. ej. al abrir un calendario): sin esto, Lenis mantiene la altura
@@ -45,6 +49,7 @@ export default function SmoothScroll() {
     return () => {
       cancelAnimationFrame(raf);
       ro.disconnect();
+      document.removeEventListener("click", onAnchorClick);
       lenis.destroy();
       setLenis(null);
     };

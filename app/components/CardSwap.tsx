@@ -72,13 +72,15 @@ export default function CardSwap({
     [childArr.length]
   );
 
-  const order = useRef<number[]>(Array.from({ length: childArr.length }, (_, i) => i));
+  const order = useRef<number[]>([]);
   const tlRef = useRef<gsap.core.Timeline | null>(null);
   const intervalRef = useRef<number | undefined>(undefined);
   const container = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const total = refs.length;
+    /* orden inicial de las tarjetas (se construye una vez por montaje del efecto) */
+    order.current = Array.from({ length: total }, (_, i) => i);
     refs.forEach((r, i) => { if (r.current) placeNow(r.current, makeSlot(i, cardDistance, verticalDistance, total), skewAmount); });
 
     const swap = () => {

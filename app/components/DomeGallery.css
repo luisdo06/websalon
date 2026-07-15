@@ -107,6 +107,14 @@ main.sphere-main {
   pointer-events: auto;
   -webkit-transform: translateZ(0);
   transform: translateZ(0);
+  /* reset para cuando el tile es un <button> */
+  padding: 0;
+  border: none;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .item__image:focus {

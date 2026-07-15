@@ -26,6 +26,51 @@ const waLink = (tel: string) => {
   return `https://wa.me/${full}`;
 };
 
+const handleLogout = async () => { await supabase.auth.signOut(); };
+
+/* ── botón de acción de una cita ── */
+function CitaButton({ label, onClick, kind, disabled = false }: {
+  label: string; onClick: () => void; kind: "accent" | "rust" | "ghost"; disabled?: boolean;
+}) {
+  return (
+    <button type="button" onClick={onClick} disabled={disabled}
+      className="flex-1 py-2 text-[10px] tracking-[0.2em] uppercase transition-opacity hover:opacity-80 disabled:opacity-40"
+      style={kind === "accent"
+        ? { background: `linear-gradient(135deg, ${C.accent}, #5a7a30)`, color: C.bg }
+        : kind === "rust"
+          ? { border: `1px solid ${C.rust}40`, color: C.rust }
+          : { border: `1px solid ${C.accent}40`, color: C.accent }}>
+      {label}
+    </button>
+  );
+}
+
+/* ── tarjeta de cita ── */
+function CitaCard({ c, actions }: { c: Cita; actions: React.ReactNode }) {
+  return (
+    <div className="p-5" style={{ background: C.bg, border: `1px solid ${C.accent}20` }}>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <p className="text-[10px] tracking-[0.3em] uppercase" style={{ color: `${C.accent}` }}>Primera visita</p>
+          <p className="text-lg font-semibold mt-0.5" style={{ color: C.text, fontFamily: "var(--font-display,serif)" }}>
+            {c.fecha_visita ? formatDate(c.fecha_visita) : "—"}
+            {c.hora_visita && <span style={{ color: C.accent }}> · {horaLabel(c.hora_visita)}</span>}
+          </p>
+        </div>
+      </div>
+      <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 text-[11px]" style={{ color: `${C.text}cc` }}>
+        <p><span style={{ color: `${C.text}77` }}>Nombre:</span> {c.nombre}</p>
+        <p><span style={{ color: `${C.text}77` }}>Tel:</span> <a href={waLink(c.telefono)} target="_blank" rel="noopener noreferrer" style={{ color: C.accent }}>{c.telefono}</a></p>
+        {c.evento && <p><span style={{ color: `${C.text}77` }}>Evento:</span> {c.evento}{c.personas ? ` · ${c.personas} pers.` : ""}</p>}
+        {c.paquete && <p><span style={{ color: `${C.text}77` }}>Paquete:</span> {c.paquete}</p>}
+        {c.fecha_evento && <p><span style={{ color: `${C.text}77` }}>Fecha evento:</span> {formatDate(c.fecha_evento)}</p>}
+        {c.degustacion && <p style={{ color: C.amber }}>Con degustación</p>}
+      </div>
+      <div className="flex gap-2 mt-4">{actions}</div>
+    </div>
+  );
+}
+
 export default function AdminPage() {
   const [auth, setAuth] = useState(false);
   const [authReady, setAuthReady] = useState(false);
@@ -76,8 +121,6 @@ export default function AdminPage() {
     if (error) setPwdErr("Credenciales incorrectas");
     setLoggingIn(false);
   };
-  const handleLogout = async () => { await supabase.auth.signOut(); };
-
   const handleBlock = async () => {
     if (!blockDate) return;
     setSaving(true);
@@ -157,42 +200,6 @@ export default function AdminPage() {
   const borradas = citas.filter((c) => c.estado === "borrada");
   const blockedList = dates.map((d) => d.date);
 
-  /* ── tarjeta de cita ── */
-  const CitaCard = ({ c, actions }: { c: Cita; actions: React.ReactNode }) => (
-    <div className="p-5" style={{ background: C.bg, border: `1px solid ${C.accent}20` }}>
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <p className="text-[10px] tracking-[0.3em] uppercase" style={{ color: `${C.accent}` }}>Primera visita</p>
-          <p className="text-lg font-semibold mt-0.5" style={{ color: C.text, fontFamily: "var(--font-display,serif)" }}>
-            {c.fecha_visita ? formatDate(c.fecha_visita) : "—"}
-            {c.hora_visita && <span style={{ color: C.accent }}> · {horaLabel(c.hora_visita)}</span>}
-          </p>
-        </div>
-      </div>
-      <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 text-[11px]" style={{ color: `${C.text}cc` }}>
-        <p><span style={{ color: `${C.text}77` }}>Nombre:</span> {c.nombre}</p>
-        <p><span style={{ color: `${C.text}77` }}>Tel:</span> <a href={waLink(c.telefono)} target="_blank" rel="noopener noreferrer" style={{ color: C.accent }}>{c.telefono}</a></p>
-        {c.evento && <p><span style={{ color: `${C.text}77` }}>Evento:</span> {c.evento}{c.personas ? ` · ${c.personas} pers.` : ""}</p>}
-        {c.paquete && <p><span style={{ color: `${C.text}77` }}>Paquete:</span> {c.paquete}</p>}
-        {c.fecha_evento && <p><span style={{ color: `${C.text}77` }}>Fecha evento:</span> {formatDate(c.fecha_evento)}</p>}
-        {c.degustacion && <p style={{ color: C.amber }}>Con degustación</p>}
-      </div>
-      <div className="flex gap-2 mt-4">{actions}</div>
-    </div>
-  );
-
-  const btn = (label: string, onClick: () => void, kind: "accent" | "rust" | "ghost", disabled = false) => (
-    <button onClick={onClick} disabled={disabled}
-      className="flex-1 py-2 text-[10px] tracking-[0.2em] uppercase transition-opacity hover:opacity-80 disabled:opacity-40"
-      style={kind === "accent"
-        ? { background: `linear-gradient(135deg, ${C.accent}, #5a7a30)`, color: C.bg }
-        : kind === "rust"
-          ? { border: `1px solid ${C.rust}40`, color: C.rust }
-          : { border: `1px solid ${C.accent}40`, color: C.accent }}>
-      {label}
-    </button>
-  );
-
   /* ── PANEL ── */
   return (
     <div className="min-h-screen px-4 py-10" style={{ background: C.bg }}>
@@ -207,7 +214,7 @@ export default function AdminPage() {
             <p className="text-[10px] tracking-[0.4em] uppercase mb-1" style={{ color: C.accent }}>Panel de Administración</p>
             <h1 className="text-3xl font-semibold" style={{ color: C.text, fontFamily: "var(--font-display,serif)" }}>Salón del Bosque</h1>
           </div>
-          <button onClick={handleLogout}
+          <button type="button" onClick={handleLogout}
             className="text-[10px] tracking-[0.2em] uppercase px-4 py-2 transition-opacity hover:opacity-70"
             style={{ border: `1px solid ${C.text}20`, color: `${C.text}77` }}>Cerrar sesión</button>
         </div>
@@ -215,7 +222,7 @@ export default function AdminPage() {
         {/* tabs */}
         <div className="flex gap-2">
           {([["citas", `Citas${pendientes.length ? ` (${pendientes.length})` : ""}`], ["fechas", "Fechas ocupadas"]] as const).map(([key, label]) => (
-            <button key={key} onClick={() => setTab(key)}
+            <button type="button" key={key} onClick={() => setTab(key)}
               className="px-5 py-2.5 text-[11px] tracking-[0.2em] uppercase transition-all"
               style={{ background: tab === key ? C.accent : "transparent", color: tab === key ? C.bg : `${C.text}88`, border: `1px solid ${tab === key ? C.accent : C.accent + "30"}` }}>
               {label}
@@ -237,8 +244,8 @@ export default function AdminPage() {
                 <div className="space-y-3">
                   {pendientes.map((c) => (
                     <CitaCard key={c.id} c={c} actions={<>
-                      {btn("Aceptar", () => setEstado(c.id, "aceptada", "Cita aceptada ✓"), "accent", busy === c.id)}
-                      {btn("Rechazar", () => setEstado(c.id, "borrada", "Cita rechazada"), "rust", busy === c.id)}
+                      <CitaButton label="Aceptar" onClick={() => setEstado(c.id, "aceptada", "Cita aceptada ✓")} kind="accent" disabled={busy === c.id} />
+                      <CitaButton label="Rechazar" onClick={() => setEstado(c.id, "borrada", "Cita rechazada")} kind="rust" disabled={busy === c.id} />
                     </>} />
                   ))}
                 </div>
@@ -253,7 +260,7 @@ export default function AdminPage() {
               ) : (
                 <div className="space-y-3">
                   {aceptadas.map((c) => (
-                    <CitaCard key={c.id} c={c} actions={btn("Eliminar", () => setEstado(c.id, "borrada", "Cita movida a borradas"), "rust", busy === c.id)} />
+                    <CitaCard key={c.id} c={c} actions={<CitaButton label="Eliminar" onClick={() => setEstado(c.id, "borrada", "Cita movida a borradas")} kind="rust" disabled={busy === c.id} />} />
                   ))}
                 </div>
               )}
@@ -267,8 +274,8 @@ export default function AdminPage() {
                 <div className="space-y-3 opacity-80">
                   {borradas.map((c) => (
                     <CitaCard key={c.id} c={c} actions={<>
-                      {btn("Restaurar", () => setEstado(c.id, "pendiente", "Cita restaurada"), "ghost", busy === c.id)}
-                      {btn("Borrar definitivo", () => hardDelete(c.id), "rust", busy === c.id)}
+                      <CitaButton label="Restaurar" onClick={() => setEstado(c.id, "pendiente", "Cita restaurada")} kind="ghost" disabled={busy === c.id} />
+                      <CitaButton label="Borrar definitivo" onClick={() => hardDelete(c.id)} kind="rust" disabled={busy === c.id} />
                     </>} />
                   ))}
                 </div>
@@ -293,7 +300,7 @@ export default function AdminPage() {
                   className="w-full bg-transparent px-3 py-2.5 text-sm font-light focus:outline-none"
                   style={{ border: `1px solid ${C.accent}30`, color: C.text, caretColor: C.accent }} />
               </div>
-              <button onClick={handleBlock} disabled={!blockDate || saving}
+              <button type="button" onClick={handleBlock} disabled={!blockDate || saving}
                 className="w-full py-3 text-xs tracking-[0.25em] uppercase font-medium transition-opacity hover:opacity-85 disabled:opacity-40"
                 style={{ background: `linear-gradient(135deg, ${C.accent}, #5a7a30)`, color: C.bg }}>
                 {saving ? "Guardando..." : "Bloquear fecha"}
@@ -315,7 +322,7 @@ export default function AdminPage() {
                         <p className="text-sm font-light" style={{ color: C.text }}>{formatDate(d.date)}</p>
                         {d.reason && <p className="text-[10px] mt-0.5" style={{ color: `${C.text}77` }}>{d.reason}</p>}
                       </div>
-                      <button onClick={() => handleUnblock(d.id)} disabled={busy === d.id}
+                      <button type="button" onClick={() => handleUnblock(d.id)} disabled={busy === d.id}
                         className="text-[10px] tracking-[0.2em] uppercase px-3 py-1.5 transition-opacity hover:opacity-70 disabled:opacity-30"
                         style={{ border: `1px solid ${C.rust}40`, color: C.rust }}>
                         {busy === d.id ? "..." : "Desbloquear"}

@@ -1,8 +1,9 @@
 "use client";
 
 import {
-  motion,
+  m,
   useMotionValue,
+  useMotionValueEvent,
   useSpring,
   useTransform,
   AnimatePresence,
@@ -13,7 +14,6 @@ import {
 import {
   Children,
   cloneElement,
-  useEffect,
   useMemo,
   useRef,
   useState,
@@ -47,7 +47,7 @@ function DockItem({
   const size = useSpring(targetSize, spring);
 
   return (
-    <motion.div
+    <m.div
       ref={ref}
       style={{ width: size, height: size }}
       onHoverStart={() => isHovered.set(1)}
@@ -64,23 +64,22 @@ function DockItem({
       {Children.map(children, (child) =>
         cloneElement(child as ReactElement<{ isHovered?: MotionValue<number> }>, { isHovered })
       )}
-    </motion.div>
+    </m.div>
   );
 }
 
 function DockLabel({ children, isHovered }: { children: ReactNode; isHovered?: MotionValue<number> }) {
   const [isVisible, setIsVisible] = useState(false);
 
-  useEffect(() => {
-    if (!isHovered) return;
-    const unsubscribe = isHovered.on("change", (latest) => setIsVisible(latest === 1));
-    return () => unsubscribe();
-  }, [isHovered]);
+  /* motion value de respaldo para poder llamar el hook incondicionalmente
+     (DockItem siempre inyecta `isHovered`, pero el tipo es opcional) */
+  const fallback = useMotionValue(0);
+  useMotionValueEvent(isHovered ?? fallback, "change", (latest) => setIsVisible(latest === 1));
 
   return (
     <AnimatePresence>
       {isVisible && (
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 0 }}
           animate={{ opacity: 1, y: -10 }}
           exit={{ opacity: 0, y: 0 }}
@@ -90,7 +89,7 @@ function DockLabel({ children, isHovered }: { children: ReactNode; isHovered?: M
           style={{ x: "-50%" }}
         >
           {children}
-        </motion.div>
+        </m.div>
       )}
     </AnimatePresence>
   );
@@ -131,8 +130,8 @@ export default function Dock({
 
   return (
     <MotionConfig reducedMotion="user">
-      <motion.div style={{ height, scrollbarWidth: "none" }} className="dock-outer">
-        <motion.div
+      <m.div style={{ height, scrollbarWidth: "none" }} className="dock-outer">
+        <m.div
           onMouseMove={({ pageX }) => { isHovered.set(1); mouseX.set(pageX); }}
           onMouseLeave={() => { isHovered.set(0); mouseX.set(Infinity); }}
           className={`dock-panel ${className}`}
@@ -140,9 +139,9 @@ export default function Dock({
           role="toolbar"
           aria-label="Navegación"
         >
-          {items.map((item, index) => (
+          {items.map((item) => (
             <DockItem
-              key={index}
+              key={item.label}
               onClick={item.onClick}
               className={item.className}
               mouseX={mouseX}
@@ -156,8 +155,8 @@ export default function Dock({
               <DockLabel>{item.label}</DockLabel>
             </DockItem>
           ))}
-        </motion.div>
-      </motion.div>
+        </m.div>
+      </m.div>
     </MotionConfig>
   );
 }

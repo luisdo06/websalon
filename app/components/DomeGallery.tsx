@@ -21,6 +21,10 @@ const getDataNumber = (el: HTMLElement, name: string, fallback: number) => {
   return Number.isFinite(n) ? n : fallback;
 };
 
+/* referencia estable para el default de `images` (un `[]` inline se recrearía
+   cada render y rompería el useMemo de buildItems) */
+const EMPTY_IMAGES: ImageInput[] = [];
+
 interface Coord { x: number; y: number; sizeX: number; sizeY: number; }
 interface Item extends Coord { src: string; alt: string; }
 
@@ -84,8 +88,12 @@ export interface DomeGalleryProps {
   grayscale?: boolean;
 }
 
+/* Componente 3D vendido (galería esférica): su lógica de arrastre, inercia y
+   apertura está fuertemente acoplada por refs. Dividirlo no aporta valor de
+   comportamiento y sí riesgo, así que se mantiene íntegro a propósito. */
+// react-doctor-disable-next-line react-doctor/no-giant-component
 export default function DomeGallery({
-  images = [],
+  images = EMPTY_IMAGES,
   fit = 0.5,
   fitBasis = "auto",
   minRadius = 600,
@@ -468,14 +476,14 @@ export default function DomeGallery({
     }
   }, [enlargeTransitionMs, lockScroll, openedImageHeight, openedImageWidth, segments, unlockScroll]);
 
-  const onTileClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+  const onTileClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
     if (draggingRef.current || movedRef.current) return;
     if (performance.now() - lastDragEndAt.current < 80) return;
     if (openingRef.current) return;
     openItemFromElement(e.currentTarget);
   }, [openItemFromElement]);
 
-  const onTilePointerUp = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+  const onTilePointerUp = useCallback((e: React.PointerEvent<HTMLButtonElement>) => {
     if (e.pointerType !== "touch") return;
     if (draggingRef.current || movedRef.current) return;
     if (performance.now() - lastDragEndAt.current < 80) return;
@@ -501,9 +509,9 @@ export default function DomeGallery({
       <main ref={mainRef} className="sphere-main">
         <div className="stage">
           <div ref={sphereRef} className="sphere">
-            {items.map((it, i) => (
+            {items.map((it) => (
               <div
-                key={`${it.x},${it.y},${i}`}
+                key={`${it.x},${it.y}`}
                 className="item"
                 data-src={it.src}
                 data-offset-x={it.x}
@@ -517,19 +525,19 @@ export default function DomeGallery({
                   ["--item-size-y" as string]: it.sizeY,
                 } as React.CSSProperties}
               >
-                <div
+                <button
+                  type="button"
                   className="item__image"
-                  role="button"
-                  tabIndex={0}
                   aria-label={it.alt || "Ampliar imagen"}
                   onClick={onTileClick}
                   onPointerUp={onTilePointerUp}
                 >
                   {it.src ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={it.src} draggable={false} alt={it.alt} />
+                    // tiles en una esfera 3D con transforms; next/image no aplica
+                    <img src={it.src} draggable={false} alt={it.alt} /> // react-doctor-disable-line react-doctor/nextjs-no-img-element
                   ) : null}
-                </div>
+                </button>
               </div>
             ))}
           </div>

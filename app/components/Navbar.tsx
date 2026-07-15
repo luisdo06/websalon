@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { m, AnimatePresence } from "motion/react";
 import { C } from "@/lib/theme";
 import { scrollToId } from "@/lib/lenisStore";
 import { useMediaQuery } from "../hooks";
@@ -16,6 +16,9 @@ const LABELS: Record<string, string> = {
   cotizaciones: "Paquetes",
   ubicacion: "Ubicación",
 };
+
+/* secciones que aparecen en los enlaces del navbar (orden de aparición) */
+const links = ["nosotros", "cotizaciones", "ubicacion", "galeria"];
 
 /* ─── íconos de línea para el Dock ─── */
 const svgProps = {
@@ -73,15 +76,12 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const links = ["nosotros", "cotizaciones", "ubicacion", "galeria"];
-
   /* ítems del menú móvil (StaggeredMenu) */
   const mobileItems: SMItem[] = useMemo(
     () => [
       ...links.map((id) => ({ label: LABELS[id], link: `#${id}` })),
       { label: "Reservar", link: "#reserva" },
     ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
 
@@ -136,7 +136,7 @@ export default function Navbar() {
       {/* Dock flotante (solo escritorio): aparece al bajar, desaparece al subir */}
       <AnimatePresence>
         {showDock && isDesktop && (
-          <motion.div
+          <m.div
             key="dock"
             className="fixed inset-x-0 bottom-5 z-40 flex justify-center pointer-events-none"
             initial={{ opacity: 0, y: 28 }}
@@ -147,7 +147,7 @@ export default function Navbar() {
             <div className="pointer-events-auto">
               <Dock items={dockItems} baseItemSize={56} panelHeight={74} magnification={88} distance={200} />
             </div>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </>

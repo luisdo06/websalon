@@ -154,6 +154,7 @@ function CardShell({
       el.removeEventListener("click", onClick);
       clearParticles();
     };
+    // react-doctor-disable-next-line react-doctor/prefer-use-effect-event -- useEffectEvent es experimental; no lo adoptamos por una micro-optimización
   }, [animateParticles, clearParticles, disableAnimations, enableTilt, enableMagnetism, clickEffect, glowColor]);
 
   return (
@@ -261,7 +262,7 @@ export default function PhotoBento({
       <div className={`bento-grid bento-section ${className}`} ref={gridRef}>
         {items.map((item, i) => (
           <CardShell
-            key={i}
+            key={item.src ?? item.label ?? `slot-${i}`}
             className={`bento-card--glow ${item.placeholder ? "bento-card--placeholder" : ""}`}
             style={{ ["--glow-color" as string]: glowColor } as CSSProperties}
             disableAnimations={disableAnimations}
@@ -278,7 +279,8 @@ export default function PhotoBento({
             ) : (
               <>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img className="bento-photo" src={item.src} alt={item.alt || item.label || ""} draggable={false} />
+                {/* tarjetas con tilt/partículas de gsap y posición absoluta; next/image rompe el layout */}
+                <img className="bento-photo" src={item.src} alt={item.alt || item.label || ""} draggable={false} /> {/* react-doctor-disable-line react-doctor/nextjs-no-img-element */}
                 {item.label && <span className="bento-label">{item.label}</span>}
               </>
             )}

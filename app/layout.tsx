@@ -3,6 +3,7 @@ import { Cormorant_Garamond, Montserrat } from "next/font/google";
 import "./globals.css";
 import SmoothScroll from "./components/SmoothScroll";
 import ClickSpark from "./components/ClickSpark";
+import MotionProvider from "./components/MotionProvider";
 import { SITE, PHONE } from "@/lib/site";
 
 const cormorant = Cormorant_Garamond({
@@ -97,11 +98,17 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col antialiased">
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{
+            /* escapamos < > & para que ningún valor pueda cerrar el <script> */
+            __html: JSON.stringify(jsonLd)
+              .replace(/</g, "\\u003c")
+              .replace(/>/g, "\\u003e")
+              .replace(/&/g, "\\u0026"),
+          }}
         />
         <SmoothScroll />
         <ClickSpark />
-        {children}
+        <MotionProvider>{children}</MotionProvider>
       </body>
     </html>
   );

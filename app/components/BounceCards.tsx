@@ -4,6 +4,19 @@ import { useEffect, useRef, type CSSProperties } from "react";
 import { gsap } from "gsap";
 import "./BounceCards.css";
 
+const getNoRotationTransform = (t: string) => {
+  if (/rotate\([\s\S]*?\)/.test(t)) return t.replace(/rotate\([\s\S]*?\)/, "rotate(0deg)");
+  if (t === "none") return "rotate(0deg)";
+  return `${t} rotate(0deg)`;
+};
+
+const getPushedTransform = (base: string, offsetX: number) => {
+  const re = /translate\(([-0-9.]+)px\)/;
+  const m = base.match(re);
+  if (m) return base.replace(re, `translate(${parseFloat(m[1]) + offsetX}px)`);
+  return base === "none" ? `translate(${offsetX}px)` : `${base} translate(${offsetX}px)`;
+};
+
 export default function BounceCards({
   className = "",
   images = [],
@@ -46,19 +59,6 @@ export default function BounceCards({
     return () => ctx.revert();
   }, [animationStagger, easeType, animationDelay]);
 
-  const getNoRotationTransform = (t: string) => {
-    if (/rotate\([\s\S]*?\)/.test(t)) return t.replace(/rotate\([\s\S]*?\)/, "rotate(0deg)");
-    if (t === "none") return "rotate(0deg)";
-    return `${t} rotate(0deg)`;
-  };
-
-  const getPushedTransform = (base: string, offsetX: number) => {
-    const re = /translate\(([-0-9.]+)px\)/;
-    const m = base.match(re);
-    if (m) return base.replace(re, `translate(${parseFloat(m[1]) + offsetX}px)`);
-    return base === "none" ? `translate(${offsetX}px)` : `${base} translate(${offsetX}px)`;
-  };
-
   const pushSiblings = (hoveredIdx: number) => {
     if (!enableHover || !containerRef.current) return;
     const q = gsap.utils.selector(containerRef);
@@ -93,14 +93,15 @@ export default function BounceCards({
     >
       {images.map((src, idx) => (
         <div
-          key={idx}
+          key={src}
           className={`bounce-card bounce-card-${idx}`}
           style={{ transform: transformStyles[idx] ?? "none" }}
           onMouseEnter={() => pushSiblings(idx)}
           onMouseLeave={resetSiblings}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img className="bounce-image" src={src} alt="" draggable={false} />
+          {/* gsap anima estas cartas con transform absoluto; next/image rompe el layout */}
+          <img className="bounce-image" src={src} alt="" draggable={false} /> {/* react-doctor-disable-line react-doctor/nextjs-no-img-element */}
         </div>
       ))}
     </div>

@@ -1,0 +1,6 @@
+# Build artifacts — no es código fuente, no debe escanearse ni formatearse
+.next/
+out/
+build/
+node_modules/
+next-env.d.ts

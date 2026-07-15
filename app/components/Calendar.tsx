@@ -3,6 +3,10 @@
 import { useState } from "react";
 import { C } from "@/lib/theme";
 
+const MONTHS = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+const DAYS = ["Do","Lu","Ma","Mi","Ju","Vi","Sá"];
+const pad2 = (n: number) => String(n).padStart(2, "0");
+
 /* ─── Calendario ─── */
 export default function Calendar({
   selected, onSelect, blockedDates, compact = false,
@@ -16,11 +20,10 @@ export default function Calendar({
 
   const firstDay  = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const MONTHS = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
-  const DAYS   = ["Do","Lu","Ma","Mi","Ju","Vi","Sá"];
 
-  const pad2 = (n: number) => String(n).padStart(2, "0");
   const toISO = (d: number) => `${year}-${pad2(month + 1)}-${pad2(d)}`;
+  /* Set para búsquedas O(1) en vez de Array.includes O(n) por celda */
+  const blockedSet = new Set(blockedDates);
 
   const prevMonth = () => { if (month === 0) { setMonth(11); setYear(y => y - 1); } else setMonth(m => m - 1); };
   const nextMonth = () => { if (month === 11) { setMonth(0); setYear(y => y + 1); } else setMonth(m => m + 1); };
@@ -54,7 +57,7 @@ export default function Calendar({
           const iso      = toISO(day);
           const date     = new Date(year, month, day);
           const isPast   = date < today;
-          const isBlocked = blockedDates.includes(iso);
+          const isBlocked = blockedSet.has(iso);
           const isSelected = selected === iso;
           const disabled = isPast || isBlocked;
 

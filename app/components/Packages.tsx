@@ -43,7 +43,7 @@ function PackageCard({ pkg, onElegir }: { pkg: Package; onElegir: (nombre: strin
         {/* menú expandible (solo paquete completo) */}
         {pkg.menu.length > 0 && (
           <div className="mb-4">
-            <button onClick={() => setOpen((o) => !o)}
+            <button type="button" onClick={() => setOpen((o) => !o)}
               className="flex items-center gap-2 text-[10px] tracking-[0.25em] uppercase transition-colors duration-300"
               style={{ color: open ? pkg.color : `${C.text}77` }}>
               <span className="transition-transform duration-300" style={{ transform: open ? "rotate(90deg)" : "rotate(0deg)" }}>▶</span>
@@ -79,7 +79,7 @@ function PackageCard({ pkg, onElegir }: { pkg: Package; onElegir: (nombre: strin
         )}
 
         {/* CTA */}
-        <button onClick={() => onElegir(pkg.name)}
+        <button type="button" onClick={() => onElegir(pkg.name)}
           className="block w-full py-3.5 text-center text-xs tracking-[0.25em] uppercase font-medium transition-all duration-300 hover:opacity-85"
           style={{ background: isAccent ? `linear-gradient(135deg, ${C.accent}, #5a7a30)` : `linear-gradient(135deg, ${C.amber}, #c48830)`, color: C.bg }}>
           Solicitar este paquete

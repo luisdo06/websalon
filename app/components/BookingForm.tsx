@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { C } from "@/lib/theme";
 import { PHONE } from "@/lib/site";
 import Calendar from "./Calendar";
@@ -16,6 +16,22 @@ const TIME_SLOTS = Array.from({ length: 11 }, (_, i) => {
 });
 const horaLabel = (value: string) => TIME_SLOTS.find((s) => s.value === value)?.label ?? value;
 
+const MESES = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+const formatFecha = (iso: string) => {
+  if (!iso) return "";
+  const [y, m, d] = iso.split("-");
+  return `${parseInt(d)} de ${MESES[parseInt(m) - 1]} de ${y}`;
+};
+
+type FormState = {
+  nombre: string; telefono: string; primeraVez: string;
+  evento: string; personas: string; paquete: string; fecha: string; fechaVisita: string; horaVisita: string;
+  degustacion: boolean;
+};
+type FormErrors = Partial<Record<keyof FormState, string>>;
+type SetForm = React.Dispatch<React.SetStateAction<FormState>>;
+type SetErrors = React.Dispatch<React.SetStateAction<FormErrors>>;
+
 /* encabezado de cada paso */
 function StepHead({ n, title }: { n: number; title: string }) {
   return (
@@ -26,15 +42,139 @@ function StepHead({ n, title }: { n: number; title: string }) {
   );
 }
 
+/* vista previa del mensaje de WhatsApp antes de enviarlo */
+function PreviewPanel({ message, onSend, onBack }: { message: string; onSend: () => void; onBack: () => void }) {
+  return (
+    <div className="space-y-5">
+      <div className="p-6 space-y-3" style={{ background: C.surface, border: `1px solid ${C.accent}20` }}>
+        <p className="text-[10px] tracking-[0.35em] uppercase mb-4" style={{ color: C.accent }}>Vista previa del mensaje</p>
+        <pre className="text-sm font-light leading-relaxed whitespace-pre-wrap" style={{ color: C.text, fontFamily: "inherit" }}>
+          {message}
+        </pre>
+      </div>
+      <p className="text-xs font-light text-center" style={{ color: `${C.text}77` }}>
+        Revisa el mensaje y pulsa el botón para enviarlo por WhatsApp
+      </p>
+      <button type="button" onClick={onSend}
+        className="w-full py-4 text-xs tracking-[0.3em] uppercase font-medium transition-opacity hover:opacity-85 flex items-center justify-center gap-3"
+        style={{ background: `linear-gradient(135deg, #25D366, #128C7E)`, color: "#fff" }}>
+        <span>📲</span> Enviar por WhatsApp
+      </button>
+      <button type="button" onClick={onBack}
+        className="w-full py-3 text-xs tracking-[0.2em] uppercase transition-opacity hover:opacity-70"
+        style={{ border: `1px solid ${C.accent}30`, color: `${C.text}88` }}>
+        ← Volver y editar
+      </button>
+    </div>
+  );
+}
+
+/* ── Paso 3: ¿ya visitó el salón? + agendar visita (fecha/hora/degustación) ── */
+function VisitStep({ form, setForm, setErrors, errors }: {
+  form: FormState; setForm: SetForm; setErrors: SetErrors; errors: FormErrors;
+}) {
+  return (
+    <div>
+      <span id="lbl-primera-vez" className="block text-[10px] tracking-[0.3em] uppercase mb-2" style={{ color: `${C.accent}99` }}>¿Ya visitaste el salón?</span>
+      <div className="flex gap-3" role="group" aria-labelledby="lbl-primera-vez">
+        {[{ val: "no", label: "Primera visita" }, { val: "si", label: "Ya lo visité" }].map(({ val, label }) => (
+          <button type="button" key={val} onClick={() => { setForm(f => ({ ...f, primeraVez: val, fechaVisita: val === "si" ? "" : f.fechaVisita, horaVisita: val === "si" ? "" : f.horaVisita, degustacion: val === "si" ? false : f.degustacion })); setErrors(er => ({ ...er, primeraVez: undefined, fechaVisita: undefined, horaVisita: undefined })); }}
+            className="flex-1 py-3 text-xs tracking-[0.15em] uppercase transition-all duration-200"
+            style={{
+              border: `1px solid ${form.primeraVez === val ? C.accent : C.accent + "25"}`,
+              background: form.primeraVez === val ? `${C.accent}15` : "transparent",
+              color: form.primeraVez === val ? C.accent : `${C.text}88`,
+            }}>
+            {label}
+          </button>
+        ))}
+      </div>
+      {errors.primeraVez && <p role="alert" className="text-[10px] mt-1" style={{ color: C.rust }}>{errors.primeraVez}</p>}
+
+      {/* calendario para agendar visita */}
+      {form.primeraVez === "no" && (
+        <div className="mt-4 space-y-2">
+          <p className="text-[10px] tracking-[0.25em] uppercase" style={{ color: `${C.accent}99` }}>
+            ¿Cuándo quieres visitar el salón?
+            {form.fechaVisita && (
+              <span className="ml-2 normal-case tracking-normal" style={{ color: C.accent }}>
+                · {formatFecha(form.fechaVisita)}
+              </span>
+            )}
+          </p>
+          <div className="max-w-xs mx-auto">
+            <Calendar
+              compact
+              selected={form.fechaVisita}
+              onSelect={(d) => { setForm(f => ({ ...f, fechaVisita: d })); setErrors(er => ({ ...er, fechaVisita: undefined })); }}
+              blockedDates={[]}
+            />
+          </div>
+          {errors.fechaVisita && <p role="alert" className="text-[10px] mt-1" style={{ color: C.rust }}>{errors.fechaVisita}</p>}
+
+          {/* zona de horas */}
+          <p className="text-[10px] tracking-[0.25em] uppercase mt-4" style={{ color: `${C.accent}99` }}>
+            ¿A qué hora?
+            {form.horaVisita && (
+              <span className="ml-2 normal-case tracking-normal" style={{ color: C.accent }}>· {horaLabel(form.horaVisita)}</span>
+            )}
+          </p>
+          <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 mt-2">
+            {TIME_SLOTS.map(({ value, label }) => {
+              const active = form.horaVisita === value;
+              return (
+                <button type="button" key={value}
+                  onClick={() => { setForm(f => ({ ...f, horaVisita: value })); setErrors(er => ({ ...er, horaVisita: undefined })); }}
+                  aria-pressed={active}
+                  className="py-2.5 text-xs tracking-[0.05em] uppercase transition-all duration-200"
+                  style={{
+                    border: `1px solid ${active ? C.accent : C.accent + "25"}`,
+                    background: active ? `${C.accent}15` : "transparent",
+                    color: active ? C.accent : `${C.text}88`,
+                  }}>
+                  {label}
+                </button>
+              );
+            })}
+          </div>
+          {errors.horaVisita && <p role="alert" className="text-[10px] mt-1" style={{ color: C.rust }}>{errors.horaVisita}</p>}
+
+          {/* degustación opcional, sin costo, durante la visita */}
+          <button type="button" role="checkbox" aria-checked={form.degustacion}
+            onClick={() => setForm(f => ({ ...f, degustacion: !f.degustacion }))}
+            className="w-full flex items-center gap-3 px-4 py-3 mt-2 text-left transition-all duration-200"
+            style={{
+              border: `1px solid ${form.degustacion ? C.accent : C.accent + "25"}`,
+              background: form.degustacion ? `${C.accent}15` : "transparent",
+            }}>
+            <span className="w-5 h-5 flex items-center justify-center shrink-0 text-xs"
+              style={{ border: `1px solid ${form.degustacion ? C.accent : C.accent + "40"}`, background: form.degustacion ? C.accent : "transparent", color: C.bg }}>
+              {form.degustacion ? "✓" : ""}
+            </span>
+            <span>
+              <span className="block text-[11px] tracking-[0.1em] uppercase" style={{ color: form.degustacion ? C.accent : `${C.text}99` }}>
+                Incluir una degustación · sin costo
+              </span>
+              <span className="block text-[10px] mt-0.5" style={{ color: `${C.text}66` }}>
+                Prueba el menú con el Chef Román el día de tu visita
+              </span>
+            </span>
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ─── BookingForm (wizard por pasos) ─── */
 export default function BookingForm({ paqueteInicial }: { paqueteInicial: string }) {
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<FormState>({
     nombre: "", telefono: "", primeraVez: "",
     evento: "", personas: "", paquete: "", fecha: "", fechaVisita: "", horaVisita: "",
     degustacion: false,
   });
-  const [sent, setSent] = useState(false);
-  const [errors, setErrors]       = useState<Partial<Record<keyof typeof form, string>>>({});
+  const sentRef = useRef(false); /* evita doble alta de la cita; no afecta el render */
+  const [errors, setErrors]       = useState<FormErrors>({});
   const [blockedDates, setBlocked] = useState<string[]>([]);
   const [loadError, setLoadError] = useState(false);
   const [preview, setPreview]     = useState(false);
@@ -86,13 +226,6 @@ export default function BookingForm({ paqueteInicial }: { paqueteInicial: string
     return Object.keys(e).length === 0;
   };
 
-  const formatFecha = (iso: string) => {
-    if (!iso) return "";
-    const [y, m, d] = iso.split("-");
-    const months = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
-    return `${parseInt(d)} de ${months[parseInt(m) - 1]} de ${y}`;
-  };
-
   const whatsappMsg = () =>
     `\u{1F331} *Solicitud de reserva - Salón del Bosque*\n\n` +
     `\u{1F464} *Nombre:* ${form.nombre}\n` +
@@ -105,8 +238,8 @@ export default function BookingForm({ paqueteInicial }: { paqueteInicial: string
 
   /* guarda la cita de primera visita en el panel (no bloquea el envío si falla) */
   const guardarCita = async () => {
-    if (sent || form.primeraVez !== "no") return;
-    setSent(true);
+    if (sentRef.current || form.primeraVez !== "no") return;
+    sentRef.current = true;
     try {
       const { supabase } = await import("@/lib/supabase");
       await supabase.from("citas").insert({
@@ -135,27 +268,7 @@ export default function BookingForm({ paqueteInicial }: { paqueteInicial: string
   const inputBase = "w-full bg-transparent px-4 py-3 text-sm font-light focus:outline-none border";
 
   if (preview) return (
-    <div className="space-y-5">
-      <div className="p-6 space-y-3" style={{ background: C.surface, border: `1px solid ${C.accent}20` }}>
-        <p className="text-[10px] tracking-[0.35em] uppercase mb-4" style={{ color: C.accent }}>Vista previa del mensaje</p>
-        <pre className="text-sm font-light leading-relaxed whitespace-pre-wrap" style={{ color: C.text, fontFamily: "inherit" }}>
-          {whatsappMsg()}
-        </pre>
-      </div>
-      <p className="text-xs font-light text-center" style={{ color: `${C.text}77` }}>
-        Revisa el mensaje y pulsa el botón para enviarlo por WhatsApp
-      </p>
-      <button onClick={sendWhatsApp}
-        className="w-full py-4 text-xs tracking-[0.3em] uppercase font-medium transition-opacity hover:opacity-85 flex items-center justify-center gap-3"
-        style={{ background: `linear-gradient(135deg, #25D366, #128C7E)`, color: "#fff" }}>
-        <span>📲</span> Enviar por WhatsApp
-      </button>
-      <button onClick={() => setPreview(false)}
-        className="w-full py-3 text-xs tracking-[0.2em] uppercase transition-opacity hover:opacity-70"
-        style={{ border: `1px solid ${C.accent}30`, color: `${C.text}88` }}>
-        ← Volver y editar
-      </button>
-    </div>
+    <PreviewPanel message={whatsappMsg()} onSend={sendWhatsApp} onBack={() => setPreview(false)} />
   );
 
   return (
@@ -210,8 +323,8 @@ export default function BookingForm({ paqueteInicial }: { paqueteInicial: string
             {errors.personas && <p role="alert" className="text-[10px] mt-1" style={{ color: C.rust }}>{errors.personas}</p>}
           </div>
           <div>
-            <label className="block text-[10px] tracking-[0.3em] uppercase mb-2" style={{ color: `${C.accent}99` }}>Paquete de interés</label>
-            <div className="flex gap-3">
+            <span id="lbl-paquete" className="block text-[10px] tracking-[0.3em] uppercase mb-2" style={{ color: `${C.accent}99` }}>Paquete de interés</span>
+            <div className="flex gap-3" role="group" aria-labelledby="lbl-paquete">
               {[{ val: "Paquete Completo", label: "Paquete Completo" }, { val: "Paquete Sencillo", label: "Paquete Sencillo" }].map(({ val, label }) => (
                 <button type="button" key={val} onClick={() => { setForm(f => ({ ...f, paquete: val })); setErrors(er => ({ ...er, paquete: undefined })); }}
                   className="flex-1 py-3 px-2 text-center transition-all duration-200"
@@ -231,95 +344,7 @@ export default function BookingForm({ paqueteInicial }: { paqueteInicial: string
       {/* ── Paso 3: visita ── */}
       <Step>
         <StepHead n={3} title="Tu visita" />
-        <div>
-          <label className="block text-[10px] tracking-[0.3em] uppercase mb-2" style={{ color: `${C.accent}99` }}>¿Ya visitaste el salón?</label>
-          <div className="flex gap-3">
-            {[{ val: "no", label: "Primera visita" }, { val: "si", label: "Ya lo visité" }].map(({ val, label }) => (
-              <button type="button" key={val} onClick={() => { setForm(f => ({ ...f, primeraVez: val, fechaVisita: val === "si" ? "" : f.fechaVisita, horaVisita: val === "si" ? "" : f.horaVisita, degustacion: val === "si" ? false : f.degustacion })); setErrors(er => ({ ...er, primeraVez: undefined, fechaVisita: undefined, horaVisita: undefined })); }}
-                className="flex-1 py-3 text-xs tracking-[0.15em] uppercase transition-all duration-200"
-                style={{
-                  border: `1px solid ${form.primeraVez === val ? C.accent : C.accent + "25"}`,
-                  background: form.primeraVez === val ? `${C.accent}15` : "transparent",
-                  color: form.primeraVez === val ? C.accent : `${C.text}88`,
-                }}>
-                {label}
-              </button>
-            ))}
-          </div>
-          {errors.primeraVez && <p role="alert" className="text-[10px] mt-1" style={{ color: C.rust }}>{errors.primeraVez}</p>}
-
-          {/* calendario para agendar visita */}
-          {form.primeraVez === "no" && (
-            <div className="mt-4 space-y-2">
-              <p className="text-[10px] tracking-[0.25em] uppercase" style={{ color: `${C.accent}99` }}>
-                ¿Cuándo quieres visitar el salón?
-                {form.fechaVisita && (
-                  <span className="ml-2 normal-case tracking-normal" style={{ color: C.accent }}>
-                    · {formatFecha(form.fechaVisita)}
-                  </span>
-                )}
-              </p>
-              <div className="max-w-xs mx-auto">
-                <Calendar
-                  compact
-                  selected={form.fechaVisita}
-                  onSelect={(d) => { setForm(f => ({ ...f, fechaVisita: d })); setErrors(er => ({ ...er, fechaVisita: undefined })); }}
-                  blockedDates={[]}
-                />
-              </div>
-              {errors.fechaVisita && <p role="alert" className="text-[10px] mt-1" style={{ color: C.rust }}>{errors.fechaVisita}</p>}
-
-              {/* zona de horas */}
-              <p className="text-[10px] tracking-[0.25em] uppercase mt-4" style={{ color: `${C.accent}99` }}>
-                ¿A qué hora?
-                {form.horaVisita && (
-                  <span className="ml-2 normal-case tracking-normal" style={{ color: C.accent }}>· {horaLabel(form.horaVisita)}</span>
-                )}
-              </p>
-              <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 mt-2">
-                {TIME_SLOTS.map(({ value, label }) => {
-                  const active = form.horaVisita === value;
-                  return (
-                    <button type="button" key={value}
-                      onClick={() => { setForm(f => ({ ...f, horaVisita: value })); setErrors(er => ({ ...er, horaVisita: undefined })); }}
-                      aria-pressed={active}
-                      className="py-2.5 text-xs tracking-[0.05em] uppercase transition-all duration-200"
-                      style={{
-                        border: `1px solid ${active ? C.accent : C.accent + "25"}`,
-                        background: active ? `${C.accent}15` : "transparent",
-                        color: active ? C.accent : `${C.text}88`,
-                      }}>
-                      {label}
-                    </button>
-                  );
-                })}
-              </div>
-              {errors.horaVisita && <p role="alert" className="text-[10px] mt-1" style={{ color: C.rust }}>{errors.horaVisita}</p>}
-
-              {/* degustación opcional, sin costo, durante la visita */}
-              <button type="button" role="checkbox" aria-checked={form.degustacion}
-                onClick={() => setForm(f => ({ ...f, degustacion: !f.degustacion }))}
-                className="w-full flex items-center gap-3 px-4 py-3 mt-2 text-left transition-all duration-200"
-                style={{
-                  border: `1px solid ${form.degustacion ? C.accent : C.accent + "25"}`,
-                  background: form.degustacion ? `${C.accent}15` : "transparent",
-                }}>
-                <span className="w-5 h-5 flex items-center justify-center shrink-0 text-xs"
-                  style={{ border: `1px solid ${form.degustacion ? C.accent : C.accent + "40"}`, background: form.degustacion ? C.accent : "transparent", color: C.bg }}>
-                  {form.degustacion ? "✓" : ""}
-                </span>
-                <span>
-                  <span className="block text-[11px] tracking-[0.1em] uppercase" style={{ color: form.degustacion ? C.accent : `${C.text}99` }}>
-                    Incluir una degustación · sin costo
-                  </span>
-                  <span className="block text-[10px] mt-0.5" style={{ color: `${C.text}66` }}>
-                    Prueba el menú con el Chef Román el día de tu visita
-                  </span>
-                </span>
-              </button>
-            </div>
-          )}
-        </div>
+        <VisitStep form={form} setForm={setForm} setErrors={setErrors} errors={errors} />
       </Step>
 
       {/* ── Paso 4: fecha ── */}
