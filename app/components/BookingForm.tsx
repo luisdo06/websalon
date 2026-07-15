@@ -225,8 +225,10 @@ export default function BookingForm({ paqueteInicial }: { paqueteInicial: string
       if (form.primeraVez === "no" && !form.fechaVisita) e.fechaVisita = "Selecciona una fecha para tu visita";
       if (form.primeraVez === "no" && !form.horaVisita)  e.horaVisita  = "Selecciona una hora para tu visita";
     } else if (step === 4) {
-      if (!form.fecha)           e.fecha = "Selecciona una fecha";
-      if (form.fecha && blockedDates.includes(form.fecha)) e.fecha = "Esta fecha ya está ocupada";
+      if (!form.fecha)                                     e.fecha = "Selecciona una fecha";
+      else if (blockedDates.includes(form.fecha))          e.fecha = "Esta fecha ya está ocupada";
+      else if (form.primeraVez === "no" && form.fechaVisita && form.fecha < form.fechaVisita)
+        e.fecha = "Tu evento no puede ser antes que tu visita";
     }
     setErrors(prev => ({ ...prev, ...e }));
     return Object.keys(e).length === 0;
@@ -375,6 +377,11 @@ export default function BookingForm({ paqueteInicial }: { paqueteInicial: string
           {form.fecha && blockedDates.includes(form.fecha) && (
             <p className="text-xs mt-2 px-3 py-2" style={{ background: `${C.rust}12`, color: C.rust, border: `1px solid ${C.rust}30` }}>
               Esta fecha ya está reservada. Por favor elige otra.
+            </p>
+          )}
+          {form.primeraVez === "no" && form.fechaVisita && form.fecha && !blockedDates.includes(form.fecha) && form.fecha < form.fechaVisita && (
+            <p className="text-xs mt-2 px-3 py-2" style={{ background: `${C.rust}12`, color: C.rust, border: `1px solid ${C.rust}30` }}>
+              Tu evento no puede ser antes que tu visita ({formatFecha(form.fechaVisita)}). Elige una fecha posterior.
             </p>
           )}
         </div>
