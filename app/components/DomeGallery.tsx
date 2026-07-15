@@ -533,8 +533,8 @@ export default function DomeGallery({
                   onPointerUp={onTilePointerUp}
                 >
                   {it.src ? (
-                    // eslint-disable-next-line @next/next/no-img-element
                     // tiles en una esfera 3D con transforms; next/image no aplica
+                    // eslint-disable-next-line @next/next/no-img-element
                     <img src={it.src} draggable={false} alt={it.alt} /> // react-doctor-disable-line react-doctor/nextjs-no-img-element
                   ) : null}
                 </button>

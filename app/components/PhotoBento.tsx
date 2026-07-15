@@ -278,8 +278,8 @@ export default function PhotoBento({
               </div>
             ) : (
               <>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
                 {/* tarjetas con tilt/partículas de gsap y posición absoluta; next/image rompe el layout */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img className="bento-photo" src={item.src} alt={item.alt || item.label || ""} draggable={false} /> {/* react-doctor-disable-line react-doctor/nextjs-no-img-element */}
                 {item.label && <span className="bento-label">{item.label}</span>}
               </>

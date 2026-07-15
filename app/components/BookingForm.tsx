@@ -93,56 +93,62 @@ function VisitStep({ form, setForm, setErrors, errors }: {
 
       {/* calendario para agendar visita */}
       {form.primeraVez === "no" && (
-        <div className="mt-4 space-y-2">
-          <p className="text-[10px] tracking-[0.25em] uppercase" style={{ color: `${C.accent}99` }}>
-            ¿Cuándo quieres visitar el salón?
-            {form.fechaVisita && (
-              <span className="ml-2 normal-case tracking-normal" style={{ color: C.accent }}>
-                · {formatFecha(form.fechaVisita)}
-              </span>
-            )}
-          </p>
-          <div className="max-w-xs mx-auto">
-            <Calendar
-              compact
-              selected={form.fechaVisita}
-              onSelect={(d) => { setForm(f => ({ ...f, fechaVisita: d })); setErrors(er => ({ ...er, fechaVisita: undefined })); }}
-              blockedDates={[]}
-            />
-          </div>
-          {errors.fechaVisita && <p role="alert" className="text-[10px] mt-1" style={{ color: C.rust }}>{errors.fechaVisita}</p>}
+        <div className="mt-4 space-y-4">
+          {/* calendario (izquierda) + horas (derecha); se apila en móvil */}
+          <div className="grid md:grid-cols-2 gap-5 items-start">
+            {/* ── columna izquierda: fecha ── */}
+            <div className="space-y-2">
+              <p className="text-[10px] tracking-[0.25em] uppercase" style={{ color: `${C.accent}99` }}>
+                ¿Cuándo quieres visitar el salón?
+                {form.fechaVisita && (
+                  <span className="ml-2 normal-case tracking-normal" style={{ color: C.accent }}>
+                    · {formatFecha(form.fechaVisita)}
+                  </span>
+                )}
+              </p>
+              <Calendar
+                compact
+                selected={form.fechaVisita}
+                onSelect={(d) => { setForm(f => ({ ...f, fechaVisita: d })); setErrors(er => ({ ...er, fechaVisita: undefined })); }}
+                blockedDates={[]}
+              />
+              {errors.fechaVisita && <p role="alert" className="text-[10px] mt-1" style={{ color: C.rust }}>{errors.fechaVisita}</p>}
+            </div>
 
-          {/* zona de horas */}
-          <p className="text-[10px] tracking-[0.25em] uppercase mt-4" style={{ color: `${C.accent}99` }}>
-            ¿A qué hora?
-            {form.horaVisita && (
-              <span className="ml-2 normal-case tracking-normal" style={{ color: C.accent }}>· {horaLabel(form.horaVisita)}</span>
-            )}
-          </p>
-          <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 mt-2">
-            {TIME_SLOTS.map(({ value, label }) => {
-              const active = form.horaVisita === value;
-              return (
-                <button type="button" key={value}
-                  onClick={() => { setForm(f => ({ ...f, horaVisita: value })); setErrors(er => ({ ...er, horaVisita: undefined })); }}
-                  aria-pressed={active}
-                  className="py-2.5 text-xs tracking-[0.05em] uppercase transition-all duration-200"
-                  style={{
-                    border: `1px solid ${active ? C.accent : C.accent + "25"}`,
-                    background: active ? `${C.accent}15` : "transparent",
-                    color: active ? C.accent : `${C.text}88`,
-                  }}>
-                  {label}
-                </button>
-              );
-            })}
+            {/* ── columna derecha: hora ── */}
+            <div className="space-y-2">
+              <p className="text-[10px] tracking-[0.25em] uppercase" style={{ color: `${C.accent}99` }}>
+                ¿A qué hora?
+                {form.horaVisita && (
+                  <span className="ml-2 normal-case tracking-normal" style={{ color: C.accent }}>· {horaLabel(form.horaVisita)}</span>
+                )}
+              </p>
+              <div className="grid grid-cols-3 gap-2">
+                {TIME_SLOTS.map(({ value, label }) => {
+                  const active = form.horaVisita === value;
+                  return (
+                    <button type="button" key={value}
+                      onClick={() => { setForm(f => ({ ...f, horaVisita: value })); setErrors(er => ({ ...er, horaVisita: undefined })); }}
+                      aria-pressed={active}
+                      className="py-2.5 text-xs tracking-[0.05em] uppercase transition-all duration-200"
+                      style={{
+                        border: `1px solid ${active ? C.accent : C.accent + "25"}`,
+                        background: active ? `${C.accent}15` : "transparent",
+                        color: active ? C.accent : `${C.text}88`,
+                      }}>
+                      {label}
+                    </button>
+                  );
+                })}
+              </div>
+              {errors.horaVisita && <p role="alert" className="text-[10px] mt-1" style={{ color: C.rust }}>{errors.horaVisita}</p>}
+            </div>
           </div>
-          {errors.horaVisita && <p role="alert" className="text-[10px] mt-1" style={{ color: C.rust }}>{errors.horaVisita}</p>}
 
           {/* degustación opcional, sin costo, durante la visita */}
           <button type="button" role="checkbox" aria-checked={form.degustacion}
             onClick={() => setForm(f => ({ ...f, degustacion: !f.degustacion }))}
-            className="w-full flex items-center gap-3 px-4 py-3 mt-2 text-left transition-all duration-200"
+            className="w-full flex items-center gap-3 px-4 py-3 text-left transition-all duration-200"
             style={{
               border: `1px solid ${form.degustacion ? C.accent : C.accent + "25"}`,
               background: form.degustacion ? `${C.accent}15` : "transparent",

@@ -99,8 +99,8 @@ export default function BounceCards({
           onMouseEnter={() => pushSiblings(idx)}
           onMouseLeave={resetSiblings}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
           {/* gsap anima estas cartas con transform absoluto; next/image rompe el layout */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img className="bounce-image" src={src} alt="" draggable={false} /> {/* react-doctor-disable-line react-doctor/nextjs-no-img-element */}
         </div>
       ))}
