@@ -180,8 +180,9 @@ function NosotrosSection({ addReveal, bounce }: { addReveal: RevealRef; bounce: 
             internacional, con ingredientes frescos seleccionados cada día.
           </p>
           <p className="text-sm font-light leading-relaxed" style={{ color: `${C.text}cc` }}>
-            ¿Quieres probar antes de tu evento? Puedes <span style={{ color: C.amber }}>agendar una degustación</span>{" "}
-            previa para elegir con calma el menú perfecto para tu celebración.
+            Cuando apartes tu fecha con nosotros, te invitamos a una{" "}
+            <strong style={{ color: C.text, fontWeight: 400 }}>degustación sin costo</strong> con el
+            Chef Román, para elegir con calma el menú de tu celebración.
           </p>
         </div>
         <div className="mt-10">
@@ -397,6 +398,9 @@ export default function Home() {
                 </div>
               ))}
             </div>
+            <p className="text-xs font-light leading-relaxed text-center mt-8 max-w-md mx-auto" style={{ color: `${C.text}99` }}>
+              Al apartar tu fecha te invitamos a una degustación del menú con el Chef Román.
+            </p>
           </div>
 
           <div ref={addReveal} className="section-reveal">

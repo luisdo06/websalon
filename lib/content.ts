@@ -133,7 +133,7 @@ export const SERVICE_CARDS: ServiceCard[] = [
     items: [
       "Banquete del Chef Román Hernández",
       "Menú en tres tiempos",
-      "Degustación previa sin costo",
+      "Degustación sin costo al apartar tu fecha",
     ],
   },
 ];

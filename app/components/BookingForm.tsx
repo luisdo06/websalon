@@ -26,9 +26,21 @@ const formatFecha = (iso: string) => {
 type FormState = {
   nombre: string; telefono: string; primeraVez: string;
   evento: string; personas: string; paquete: string; fecha: string; fechaVisita: string; horaVisita: string;
-  degustacion: boolean;
 };
 type FormErrors = Partial<Record<keyof FormState, string>>;
+
+/* resultado de guardar la cita en el panel; decide el aviso de la vista previa */
+type SaveState = "idle" | "ok" | "limite" | "error";
+
+const AVISOS: Record<SaveState, string | null> = {
+  idle: null,
+  ok: null,
+  limite:
+    "Ya recibimos una solicitud de este teléfono hace poco, así que no la registramos otra vez. " +
+    "Envía el mensaje de todos modos y te contactamos por WhatsApp.",
+  error:
+    "No pudimos registrar tu solicitud en nuestro panel, pero puedes enviarla por WhatsApp sin problema.",
+};
 type SetForm = React.Dispatch<React.SetStateAction<FormState>>;
 type SetErrors = React.Dispatch<React.SetStateAction<FormErrors>>;
 
@@ -43,7 +55,9 @@ function StepHead({ n, title }: { n: number; title: string }) {
 }
 
 /* vista previa del mensaje de WhatsApp antes de enviarlo */
-function PreviewPanel({ message, onSend, onBack }: { message: string; onSend: () => void; onBack: () => void }) {
+function PreviewPanel({ message, aviso, onSend, onBack }: {
+  message: string; aviso: string | null; onSend: () => void; onBack: () => void;
+}) {
   return (
     <div className="space-y-5">
       <div className="p-6 space-y-3" style={{ background: C.surface, border: `1px solid ${C.accent}20` }}>
@@ -52,6 +66,12 @@ function PreviewPanel({ message, onSend, onBack }: { message: string; onSend: ()
           {message}
         </pre>
       </div>
+      {aviso && (
+        <p role="status" className="text-xs font-light leading-relaxed px-4 py-3"
+          style={{ border: `1px solid ${C.amber}40`, background: `${C.amber}10`, color: `${C.text}cc` }}>
+          {aviso}
+        </p>
+      )}
       <p className="text-xs font-light text-center" style={{ color: `${C.text}77` }}>
         Revisa el mensaje y pulsa el botón para enviarlo por WhatsApp
       </p>
@@ -69,7 +89,7 @@ function PreviewPanel({ message, onSend, onBack }: { message: string; onSend: ()
   );
 }
 
-/* ── Paso 3: ¿ya visitó el salón? + agendar visita (fecha/hora/degustación) ── */
+/* ── Paso 3: ¿ya visitó el salón? + agendar visita (fecha/hora) ── */
 function VisitStep({ form, setForm, setErrors, errors }: {
   form: FormState; setForm: SetForm; setErrors: SetErrors; errors: FormErrors;
 }) {
@@ -78,7 +98,7 @@ function VisitStep({ form, setForm, setErrors, errors }: {
       <span id="lbl-primera-vez" className="block text-[10px] tracking-[0.3em] uppercase mb-2" style={{ color: `${C.accent}99` }}>¿Ya visitaste el salón?</span>
       <div className="flex gap-3" role="group" aria-labelledby="lbl-primera-vez">
         {[{ val: "no", label: "Primera visita" }, { val: "si", label: "Ya lo visité" }].map(({ val, label }) => (
-          <button type="button" key={val} onClick={() => { setForm(f => ({ ...f, primeraVez: val, fechaVisita: val === "si" ? "" : f.fechaVisita, horaVisita: val === "si" ? "" : f.horaVisita, degustacion: val === "si" ? false : f.degustacion })); setErrors(er => ({ ...er, primeraVez: undefined, fechaVisita: undefined, horaVisita: undefined })); }}
+          <button type="button" key={val} onClick={() => { setForm(f => ({ ...f, primeraVez: val, fechaVisita: val === "si" ? "" : f.fechaVisita, horaVisita: val === "si" ? "" : f.horaVisita })); setErrors(er => ({ ...er, primeraVez: undefined, fechaVisita: undefined, horaVisita: undefined })); }}
             className="flex-1 py-3 text-xs tracking-[0.15em] uppercase transition-all duration-200"
             style={{
               border: `1px solid ${form.primeraVez === val ? C.accent : C.accent + "25"}`,
@@ -93,7 +113,7 @@ function VisitStep({ form, setForm, setErrors, errors }: {
 
       {/* calendario para agendar visita */}
       {form.primeraVez === "no" && (
-        <div className="mt-4 space-y-4">
+        <div className="mt-4">
           {/* calendario (izquierda) + horas (derecha); se apila en móvil */}
           <div className="grid md:grid-cols-2 gap-5 items-start">
             {/* ── columna izquierda: fecha ── */}
@@ -144,28 +164,6 @@ function VisitStep({ form, setForm, setErrors, errors }: {
               {errors.horaVisita && <p role="alert" className="text-[10px] mt-1" style={{ color: C.rust }}>{errors.horaVisita}</p>}
             </div>
           </div>
-
-          {/* degustación opcional, sin costo, durante la visita */}
-          <button type="button" role="checkbox" aria-checked={form.degustacion}
-            onClick={() => setForm(f => ({ ...f, degustacion: !f.degustacion }))}
-            className="w-full flex items-center gap-3 px-4 py-3 text-left transition-all duration-200"
-            style={{
-              border: `1px solid ${form.degustacion ? C.accent : C.accent + "25"}`,
-              background: form.degustacion ? `${C.accent}15` : "transparent",
-            }}>
-            <span className="w-5 h-5 flex items-center justify-center shrink-0 text-xs"
-              style={{ border: `1px solid ${form.degustacion ? C.accent : C.accent + "40"}`, background: form.degustacion ? C.accent : "transparent", color: C.bg }}>
-              {form.degustacion ? "✓" : ""}
-            </span>
-            <span>
-              <span className="block text-[11px] tracking-[0.1em] uppercase" style={{ color: form.degustacion ? C.accent : `${C.text}99` }}>
-                Incluir una degustación · sin costo
-              </span>
-              <span className="block text-[10px] mt-0.5" style={{ color: `${C.text}66` }}>
-                Prueba el menú con el Chef Román el día de tu visita
-              </span>
-            </span>
-          </button>
         </div>
       )}
     </div>
@@ -177,13 +175,13 @@ export default function BookingForm({ paqueteInicial }: { paqueteInicial: string
   const [form, setForm] = useState<FormState>({
     nombre: "", telefono: "", primeraVez: "",
     evento: "", personas: "", paquete: "", fecha: "", fechaVisita: "", horaVisita: "",
-    degustacion: false,
   });
   const sentRef = useRef(false); /* evita doble alta de la cita; no afecta el render */
   const [errors, setErrors]       = useState<FormErrors>({});
   const [blockedDates, setBlocked] = useState<string[]>([]);
   const [loadError, setLoadError] = useState(false);
   const [preview, setPreview]     = useState(false);
+  const [saveState, setSaveState] = useState<SaveState>("idle");
 
   /* sincroniza el paquete elegido en la sección de cotizaciones (ajuste durante render,
      patrón recomendado por React para reaccionar a un cambio de prop sin useEffect) */
@@ -241,16 +239,19 @@ export default function BookingForm({ paqueteInicial }: { paqueteInicial: string
     `\u{1F4CD} *Visita:* ${form.primeraVez === "no" ? `Primera vez · Quiero conocer el salón el ${formatFecha(form.fechaVisita)} a las ${horaLabel(form.horaVisita)}` : "Ya visitó el salón"}\n` +
     `\u{1F389} *Evento:* ${form.evento} · ${form.personas} personas\n` +
     `\u{1F4CB} *Paquete:* ${form.paquete}\n` +
-    (form.degustacion ? `\u{1F37D}\u{FE0F} *Degustación:* Sí, quiero incluir una degustación sin costo en mi visita\n` : "") +
     `\u{1F4C5} *Fecha deseada:* ${formatFecha(form.fecha)}`;
 
-  /* guarda la cita de primera visita en el panel (no bloquea el envío si falla) */
+  /* Guarda la cita de primera visita en el panel.
+     Se llama al ENTRAR a la vista previa, no al pulsar WhatsApp, por dos razones:
+     1. Así conocemos el resultado a tiempo para avisar en el resumen.
+     2. El window.open de WhatsApp sigue siendo un gesto directo del usuario. Si lo
+        lanzáramos después de un await, el bloqueador de ventanas emergentes lo cancelaría. */
   const guardarCita = async () => {
     if (sentRef.current || form.primeraVez !== "no") return;
     sentRef.current = true;
     try {
       const { supabase } = await import("@/lib/supabase");
-      await supabase.from("citas").insert({
+      const { error } = await supabase.from("citas").insert({
         nombre: form.nombre,
         telefono: form.telefono,
         evento: form.evento || null,
@@ -259,16 +260,24 @@ export default function BookingForm({ paqueteInicial }: { paqueteInicial: string
         fecha_evento: form.fecha || null,
         fecha_visita: form.fechaVisita || null,
         hora_visita: form.horaVisita || null,
-        degustacion: form.degustacion,
+        /* La degustación ya no se pide desde el sitio: es un beneficio posterior a apartar la
+           fecha y se coordina por WhatsApp. Mandamos false explícito porque el esquema de
+           `citas` no está versionado y no sabemos si la columna es NOT NULL sin DEFAULT. */
+        degustacion: false,
         estado: "pendiente",
       });
+      if (!error) { setSaveState("ok"); return; }
+      /* P0001 = el trigger citas_limite_quincenal (ver supabase/01-limite-citas.sql) */
+      const limitado = error.code === "P0001" || error.message.includes("LIMITE_QUINCENAL");
+      if (!limitado) sentRef.current = false; /* fallo pasajero: permitimos reintentar */
+      setSaveState(limitado ? "limite" : "error");
     } catch {
-      /* si Supabase no responde, igual dejamos continuar con WhatsApp */
+      sentRef.current = false;
+      setSaveState("error");
     }
   };
 
   const sendWhatsApp = () => {
-    guardarCita();
     const url = `https://wa.me/${PHONE.whatsapp}?text=${encodeURIComponent(whatsappMsg())}`;
     window.open(url, "_blank");
   };
@@ -276,13 +285,13 @@ export default function BookingForm({ paqueteInicial }: { paqueteInicial: string
   const inputBase = "w-full bg-transparent px-4 py-3 text-sm font-light focus:outline-none border";
 
   if (preview) return (
-    <PreviewPanel message={whatsappMsg()} onSend={sendWhatsApp} onBack={() => setPreview(false)} />
+    <PreviewPanel message={whatsappMsg()} aviso={AVISOS[saveState]} onSend={sendWhatsApp} onBack={() => setPreview(false)} />
   );
 
   return (
     <Stepper
       validateStep={validateStep}
-      onFinalStepCompleted={() => setPreview(true)}
+      onFinalStepCompleted={() => { setPreview(true); guardarCita(); }}
       backButtonText="Atrás"
       nextButtonText="Continuar"
       completeButtonText="Ver resumen"

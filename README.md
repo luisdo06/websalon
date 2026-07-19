@@ -56,6 +56,37 @@ create policy "blocked_dates escritura admin"
   to authenticated using (true) with check (true);
 ```
 
+### Tabla `citas`
+
+Guarda las solicitudes de **primera visita** que llegan del formulario. Columnas: `nombre`,
+`telefono`, `evento`, `personas`, `paquete`, `fecha_evento`, `fecha_visita`, `hora_visita`,
+`degustacion`, `estado` (`pendiente` | `aceptada` | `borrada`) y `deleted_at`. El tipo
+TypeScript está en `lib/supabase.ts`.
+
+Sus políticas RLS se crearon directamente en el panel de Supabase y no están versionadas aquí.
+Este es el comportamiento **verificado** con la clave `anon` desde el navegador:
+
+| Operación | `anon` | Por qué |
+| --- | --- | --- |
+| `SELECT` | ❌ bloqueado | Los nombres y teléfonos de los clientes no son públicos. |
+| `INSERT` | ✅ permitido | El formulario público lo necesita. Tiene un `with check` que exige los campos completos. |
+| `UPDATE` | ❌ bloqueado | Solo el panel `/admin`, ya autenticado. |
+| `DELETE` | ❌ bloqueado | Solo el panel `/admin`, ya autenticado. |
+
+> Al comprobarlo, ten en cuenta que un `DELETE` bloqueado por RLS devuelve **204** igual que uno
+> exitoso: solo cambia el número de filas afectadas. Usa `Prefer: return=representation` para
+> distinguirlos, o concluirás que se borró algo que sigue ahí.
+
+### Límite de solicitudes (`supabase/01-limite-citas.sql`)
+
+Como `anon` puede insertar, cualquiera podría llenar el panel de solicitudes falsas con un script,
+sin pasar por el sitio. Un trigger limita a **una solicitud cada 14 días por teléfono**
+(comparando solo los dígitos, para que un espacio de más no lo esquive). Las citas en estado
+`borrada` no cuentan, así que si rechazas una solicitud esa persona puede volver a pedir enseguida.
+
+Aplícalo en **Supabase → SQL Editor** pegando el contenido de
+[`supabase/01-limite-citas.sql`](./supabase/01-limite-citas.sql). Es idempotente.
+
 ### Usuario administrador
 
 El panel `/admin` usa **Supabase Auth** (correo + contraseña), no una contraseña en el código.
