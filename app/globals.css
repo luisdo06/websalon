@@ -142,7 +142,17 @@ body {
 .section-blend::after { bottom: 0; background: linear-gradient(to top, var(--bg), transparent); }
 
 /* ── hojas cayendo (hero) ── */
-@keyframes leaf-fall { from { transform: translateY(-15vh); } to { transform: translateY(115vh); } }
+/* La hoja se desvanece durante la segunda mitad de la caída. Sin esto, el
+   overflow-hidden del contenedor la recortaba de golpe contra el borde inferior.
+   La opacidad va aquí, en el elemento exterior, y no en .leaf-spin, que lleva
+   la suya en línea: al multiplicarse, cada hoja conserva su intensidad propia. */
+@keyframes leaf-fall {
+  0%   { transform: translateY(-15vh); opacity: 0; }
+  10%  { opacity: 1; }
+  50%  { opacity: 1; }
+  85%  { opacity: 0; }
+  100% { transform: translateY(115vh); opacity: 0; }
+}
 @keyframes leaf-sway { from { transform: translateX(-16px); } to { transform: translateX(16px); } }
 @keyframes leaf-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
@@ -152,7 +162,7 @@ body {
   animation-name: leaf-fall;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
-  will-change: transform;
+  will-change: transform, opacity;
 }
 .leaf-sway {
   display: block;
