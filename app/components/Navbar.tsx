@@ -138,11 +138,16 @@ export default function Navbar() {
           backdropFilter: `blur(${scrolled ? 14 : 0}px)`,
           WebkitBackdropFilter: `blur(${scrolled ? 14 : 0}px)`,
           borderBottom: `1px solid ${C.accent}${scrolled ? "14" : "00"}`,
-          /* lista explícita en vez de transition-all, que animaba también el grosor
-             del borde y el padding */
+          /* Lista explícita en vez de transition-all, que animaba también el grosor
+             del borde y el padding.
+             Va `translate` y no `transform`: Tailwind v4 implementa -translate-y-full
+             con la propiedad `translate` independiente. Al declarar solo `transform`,
+             la barra saltaba fuera de pantalla en un fotograma y el fundido ocurría
+             después, ya invisible: parecía desaparecer de golpe. */
           transition:
             "background-color 350ms ease, backdrop-filter 350ms ease, " +
-            "border-color 350ms ease, transform 350ms ease, opacity 350ms ease",
+            "border-color 350ms ease, opacity 320ms ease, " +
+            "translate 380ms cubic-bezier(0.4, 0, 0.2, 1)",
         }}>
         <a href="#hero" aria-label="Ir al inicio" className="forest-text text-xl md:text-2xl tracking-[0.28em] uppercase font-semibold cursor-pointer" style={{ fontFamily: "var(--font-display,serif)" }}>Salón del Bosque</a>
         <div className="hidden md:flex gap-10 text-xs tracking-[0.2em] uppercase">
