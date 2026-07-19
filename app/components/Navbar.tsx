@@ -20,6 +20,13 @@ const LABELS: Record<string, string> = {
 /* secciones que aparecen en los enlaces del navbar (orden de aparición) */
 const links = ["nosotros", "cotizaciones", "ubicacion", "galeria"];
 
+/* Dock: a partir de qué scroll puede aparecer, y cuánto recorrido seguido en una
+   dirección hace falta para alternarlo. Un golpe de rueda son ~90 px, así que con
+   estos valores sale durante el segundo golpe. Subir DOCK_RECORRIDO lo hace más
+   perezoso; bajarlo, más sensible al rebote del scroll por inercia. */
+const DOCK_DESDE = 150;
+const DOCK_RECORRIDO = 24;
+
 /* ─── íconos de línea para el Dock ─── */
 const svgProps = {
   width: 24, height: 24, viewBox: "0 0 24 24", fill: "none",
@@ -49,6 +56,7 @@ export default function Navbar() {
   const [activeSection, setActiveSection] = useState("");
   const [showDock, setShowDock]           = useState(false);
   const lastY = useRef(0);
+  const dirAccum = useRef(0); /* recorrido acumulado en la dirección actual */
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
   useEffect(() => {
@@ -62,15 +70,30 @@ export default function Navbar() {
         const el = document.getElementById(id);
         if (el && el.getBoundingClientRect().top <= 120) { setActiveSection(id); break; }
       }
-      /* dirección del scroll: bajando muestra el Dock, subiendo vuelve el menú original */
-      if (y < 300) {
-        setShowDock(false);
-      } else {
-        const dy = y - lastY.current;
-        if (dy > 6) setShowDock(true);
-        else if (dy < -6) setShowDock(false);
-      }
+      /* Dirección del scroll: bajando muestra el Dock, subiendo vuelve el menú original.
+         Se acumula el recorrido en la dirección actual en vez de mirar el delta de un
+         solo evento. Con Lenis (duration 1.4) un golpe de rueda son ~90 px repartidos
+         en unos 36 eventos de 1-7 px: comparar evento a evento contra un umbral fallaba
+         casi siempre, porque el evento que cruzaba el límite solía ser de los pequeños,
+         y con un trackpad el pico ni siquiera llegaba al umbral. */
+      const dy = y - lastY.current;
       lastY.current = y;
+
+      if (y < DOCK_DESDE) {
+        setShowDock(false);
+        dirAccum.current = 0;
+      } else if (dy !== 0) {
+        /* al cambiar de sentido se reinicia el acumulador */
+        if (dy > 0 !== dirAccum.current > 0) dirAccum.current = 0;
+        dirAccum.current += dy;
+        if (dirAccum.current >= DOCK_RECORRIDO) {
+          setShowDock(true);
+          dirAccum.current = 0;
+        } else if (dirAccum.current <= -DOCK_RECORRIDO) {
+          setShowDock(false);
+          dirAccum.current = 0;
+        }
+      }
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
