@@ -97,8 +97,30 @@ export default function Navbar() {
     <>
       <div className="fixed top-0 left-0 right-0 h-px z-[60] origin-left"
         style={{ background: `linear-gradient(90deg, ${C.accent}, ${C.amber})`, transform: `scaleX(${progress})`, transition: "transform 0.1s linear" }} />
-      <nav className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-5 md:px-16 transition-all duration-500 ${showDock ? "md:-translate-y-full md:opacity-0 md:pointer-events-none" : ""}`}
-        style={{ background: scrolled ? `${C.bg}fc` : `linear-gradient(to bottom, ${C.bg}f0 0%, ${C.bg}00 100%)`, backdropFilter: scrolled ? "blur(14px)" : "none", borderBottom: scrolled ? `1px solid ${C.accent}14` : "none" }}>
+      <nav className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-5 md:px-16 ${showDock ? "md:-translate-y-full md:opacity-0 md:pointer-events-none" : ""}`}
+        style={{
+          /* El borde y el desenfoque se declaran SIEMPRE y solo varía su intensidad.
+             Alternarlos con "none" hacía que el borde se interpolara desde currentColor
+             (#0e1508, casi negro): durante los primeros ~200 ms de cada scroll aparecía
+             una franja negra de 2 px cruzando la pantalla, y la barra cambiaba de alto
+             (72→74→73 px) porque también se animaba el grosor del borde. */
+          backgroundColor: scrolled ? `${C.bg}fc` : `${C.bg}00`,
+          backgroundImage: `linear-gradient(to bottom, ${C.bg}f0 0%, ${C.bg}00 100%)`,
+          /* El degradado debe cubrir también la franja del borde. Por defecto
+             background-origin es padding-box mientras background-clip es border-box:
+             el navegador rellenaba esa fila de 1 px repitiendo el degradado, y lo que
+             asomaba era su color inicial (crema al 94 %) — una línea clara bajo el menú. */
+          backgroundOrigin: "border-box",
+          backgroundRepeat: "no-repeat",
+          backdropFilter: `blur(${scrolled ? 14 : 0}px)`,
+          WebkitBackdropFilter: `blur(${scrolled ? 14 : 0}px)`,
+          borderBottom: `1px solid ${C.accent}${scrolled ? "14" : "00"}`,
+          /* lista explícita en vez de transition-all, que animaba también el grosor
+             del borde y el padding */
+          transition:
+            "background-color 350ms ease, backdrop-filter 350ms ease, " +
+            "border-color 350ms ease, transform 350ms ease, opacity 350ms ease",
+        }}>
         <a href="#hero" aria-label="Ir al inicio" className="forest-text text-xl md:text-2xl tracking-[0.28em] uppercase font-semibold cursor-pointer" style={{ fontFamily: "var(--font-display,serif)" }}>Salón del Bosque</a>
         <div className="hidden md:flex gap-10 text-xs tracking-[0.2em] uppercase">
           {links.map((id) => (

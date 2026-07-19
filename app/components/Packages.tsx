@@ -11,7 +11,7 @@ function PackageCard({ pkg, onElegir }: { pkg: Package; onElegir: (nombre: strin
   const isAccent = pkg.color === C.accent;
 
   return (
-    <div className="relative overflow-hidden transition-all duration-500 h-full flex flex-col"
+    <div className="relative overflow-hidden h-full flex flex-col"
       style={{ border: `1px solid ${pkg.color}25`, background: C.surface }}>
       {/* franja superior de color */}
       <div className="h-1 w-full" style={{ background: `linear-gradient(90deg, ${pkg.color}80, ${pkg.color}30)` }} />
@@ -49,15 +49,20 @@ function PackageCard({ pkg, onElegir }: { pkg: Package; onElegir: (nombre: strin
               <span className="transition-transform duration-300" style={{ transform: open ? "rotate(90deg)" : "rotate(0deg)" }}>▶</span>
               {open ? "Ocultar menú" : "Ver menú completo"}
             </button>
-            <div className="overflow-hidden transition-all duration-500"
-              style={{ maxHeight: open ? "400px" : "0px", opacity: open ? 1 : 0 }}>
-              <div className="mt-4 space-y-3 pl-3" style={{ borderLeft: `2px solid ${pkg.color}20` }}>
-                {pkg.menu.map((m) => (
-                  <div key={m.curso}>
-                    <p className="text-[9px] tracking-[0.3em] uppercase mb-1" style={{ color: `${pkg.color}99` }}>{m.curso}</p>
-                    <p className="text-xs font-light leading-relaxed" style={{ color: `${C.text}bb` }}>{m.detalle}</p>
-                  </div>
-                ))}
+            {/* Acordeón por grid-template-rows (0fr → 1fr) en vez de max-height con un
+                tope fijo: se anima hasta la altura real del contenido, así que no puede
+                recortarlo en pantallas estrechas o con la fuente del sistema ampliada. */}
+            <div className="grid transition-[grid-template-rows,opacity] duration-500"
+              style={{ gridTemplateRows: open ? "1fr" : "0fr", opacity: open ? 1 : 0 }}>
+              <div className="overflow-hidden">
+                <div className="mt-4 space-y-3 pl-3" style={{ borderLeft: `2px solid ${pkg.color}20` }}>
+                  {pkg.menu.map((m) => (
+                    <div key={m.curso}>
+                      <p className="text-[9px] tracking-[0.3em] uppercase mb-1" style={{ color: `${pkg.color}99` }}>{m.curso}</p>
+                      <p className="text-xs font-light leading-relaxed" style={{ color: `${C.text}bb` }}>{m.detalle}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>

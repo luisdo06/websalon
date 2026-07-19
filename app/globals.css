@@ -121,6 +121,9 @@ body {
 .section-reveal.visible {
   opacity: 1;
   transform: translateY(0);
+  /* el reveal ocurre una sola vez (el observer deja de observar), así que se libera
+     la capa de GPU al terminar en vez de mantenerla viva en cada sección */
+  will-change: auto;
 }
 
 /* ── bandas de fundido entre secciones (continuidad al hacer scroll) ── */
