@@ -3,12 +3,11 @@
 import { useState } from "react";
 import Image from "next/image";
 import { C } from "@/lib/theme";
-import { STATS, GALLERY } from "@/lib/content";
+import { GALLERY } from "@/lib/content";
 import { SITE } from "@/lib/site";
 import { useReveal, usePrefersReducedMotion, useFinePointer, useMediaQuery } from "./hooks";
 import Navbar from "./components/Navbar";
 import CustomCursor from "./components/CustomCursor";
-import AnimatedStat from "./components/AnimatedStat";
 import QuoteCalculator from "./components/Packages";
 import BookingForm from "./components/BookingForm";
 import Amenities from "./components/Amenities";
@@ -129,7 +128,7 @@ function NosotrosSection({ addReveal, bounce }: { addReveal: RevealRef; bounce: 
           <LeafAccent />
           <p className="text-xs tracking-[0.4em] uppercase mb-3" style={{ color: C.accent }}>Nuestra historia</p>
           <h2 className="text-4xl md:text-5xl font-semibold leading-tight" style={{ fontFamily: "var(--font-display,serif)" }}>
-            Más de 20 años creando<br /><span className="forest-text">momentos especiales</span>
+            15 años creando<br /><span className="forest-text">momentos especiales</span>
           </h2>
           <p className="text-base font-light leading-relaxed max-w-2xl mx-auto mt-6" style={{ color: `${C.text}cc` }}>
             Desde 2011, hemos sido el lugar
@@ -163,9 +162,6 @@ function NosotrosSection({ addReveal, bounce }: { addReveal: RevealRef; bounce: 
                 {tag}
               </span>
             ))}
-          </div>
-          <div className="flex items-center justify-center gap-10 mt-12">
-            {STATS.map((s) => <AnimatedStat key={s.label} {...s} />)}
           </div>
         </div>
 

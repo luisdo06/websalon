@@ -1,40 +1,60 @@
 # Contenido pendiente de reemplazar
 
-El sitio tiene datos de ejemplo (placeholder) marcados en el código. Antes de promocionarlo fuerte,
-reemplázalos con información real. Aquí está la lista con su ubicación exacta.
+Lista de datos placeholder o sin confirmar que siguen en el sitio, con su ubicación exacta.
+Revisada el 2026-07-18.
 
-## 1. Fotos reales
-Sube las imágenes a `public/fotos/` y actualiza las rutas donde corresponda.
-- **Galería de eventos** (`lib/content.ts` → `GALLERY`): faltan **Terraza exterior** y **Sala VIP**
-  (hoy son marcadores). Las otras 4 ya usan fotos reales.
-- **Equipo culinario** (`app/page.tsx`, sección Nosotros): **Chef Román Hernández** (retrato),
-  **Equipo de cocina**, **Preparación**, y la **foto grupal** del equipo.
-- **Ubicación**: **vista exterior / aérea del salón** (panel izquierdo de esa sección).
-- **Imagen para redes (Open Graph)**: hoy se usa `salon-noche.jpg`; idealmente una 1200×630 px con
-  logo/nombre.
+## 1. Fotos
 
-## 2. Estadísticas — `lib/content.ts` → `STATS`
-- "Años": **20** — ✅ (desde 2005).
-- "Clientes": **2000+** — confirmar cifra real.
-- "Satisfacción": **98%** — confirmar o quitar.
+- **Equipo culinario** (`app/page.tsx` → `CULINARIA_FOTOS`): hay **3 huecos** marcados con
+  `{ placeholder: true }`. Se ven como recuadros vacíos en el bento. Ideas: retrato del
+  Chef Román Hernández, equipo de cocina trabajando, foto grupal del equipo.
+- **Imagen para redes (Open Graph)**: hoy se reusa `salon-noche.jpg` (`app/layout.tsx`).
+  Idealmente una imagen dedicada de 1200×630 px con logo/nombre.
 
-## 3. Amenidades — `lib/content.ts` → `AMENITIES`
-Confirmar/precisar los que dicen "(confirmar)": **aforo exacto**, si hay **aire acondicionado**,
-y el nivel de **accesibilidad** (rampas, baño accesible, etc.).
+La galería (`lib/content.ts` → `GALLERY`, 20 fotos) y las fotos de "Nuestra historia" y
+"Ubicación" ya son todas reales — no falta nada ahí.
 
-## 4. Preguntas frecuentes — `lib/content.ts` → `FAQ`
-Definir las respuestas marcadas con "(definir)":
-- **Anticipo**: porcentaje y monto para apartar la fecha.
-- **Política de cancelación** y reembolso.
-- Reglas para **proveedores externos** (catering, música).
+## 2. Aforo — `lib/site.ts` → `SITE.capacity`
 
-## 5. Redes sociales — `lib/site.ts` → `SITE.social`
-Pegar las URLs reales de **Instagram** y **Facebook** (hoy están vacías, por eso no se muestran los
-íconos en navbar/footer). Al completarlas aparecen solas y se añaden al SEO (`sameAs`).
+Dice **200** y ese número se muestra en tres lugares: el límite del formulario de reserva,
+la tarjeta "Espacio & entorno" (`lib/content.ts` → `SERVICE_CARDS`) y el JSON-LD.
+Confirmar que el aforo real es ése.
 
-## 6. Datos de contacto y ubicación — `lib/site.ts` y `app/page.tsx`
-- **Dirección exacta**: hoy solo dice "Toluca, Estado de México"; añadir calle y número.
-- **Coordenadas** (`SITE.geo`) y el `iframe` del mapa: verificar que apuntan al lugar real.
-- **Horarios** (JSON-LD en `app/layout.tsx` y sección Ubicación): confirmar.
-- **Dominio**: `SITE.url` ya apunta a `https://websalon.vercel.app`; cambiarlo si conectas un
-  dominio propio.
+## 3. Dirección — `lib/site.ts` y `app/layout.tsx`
+
+- **Dirección exacta**: hoy solo se dice "Toluca, Estado de México". Falta calle y número.
+  Al tenerla, agregar también `streetAddress` al `PostalAddress` del JSON-LD
+  (`app/layout.tsx`), que hoy solo lleva ciudad/estado/país.
+- **Coordenadas** (`SITE.geo`) y el `iframe` del mapa en la sección Ubicación: verificar que
+  apuntan al lugar correcto.
+
+## 4. Horarios de atención — `app/layout.tsx` → `openingHoursSpecification`
+
+Hoy declara lunes a viernes 9:00–19:00 y sábado 9:00–17:00, sin domingo. Confirmar que son
+los horarios reales de atención a clientes (no los del evento).
+
+## 5. Dominio — `lib/site.ts` → `SITE.url`
+
+Apunta a `https://websalon.vercel.app`. Cambiarlo si se conecta un dominio propio.
+
+## 6. Mantenimiento anual — `lib/content.ts` → `STATS`
+
+El stat de años está en **15** (el salón abrió en 2011). Hay que subirlo cada año, junto con
+el título de la sección "Nuestra historia" en `app/page.tsx`.
+
+---
+
+## Resuelto
+
+- ~~Estadísticas de "2000+ clientes" y "98% satisfacción"~~ — eran cifras inventadas, se quitaron.
+- ~~Años de operación inconsistentes~~ — el título decía "20 años", el párrafo "desde 2011" y el
+  stat 20 (desde 2005). Unificado a 2011 → 15 años.
+- ~~Instagram~~ — el salón no tiene cuenta. `SITE.social.instagram` queda vacío a propósito y el
+  ícono no se muestra. Facebook sí está puesto.
+- ~~Fotos de galería (Terraza / Sala VIP)~~ — reemplazadas por fotos reales.
+
+## Ideas, no pendientes
+
+- **Preguntas frecuentes**: el sitio **no tiene** sección de FAQ. Si se quiere agregar, los temas
+  que faltarían definir son el anticipo para apartar fecha, la política de cancelación/reembolso
+  y las reglas para proveedores externos (catering, música).

@@ -14,9 +14,9 @@ export const SITE = {
   capacity: 200, // ⚠️ aforo a confirmar
   geo: { lat: 19.2779057, lng: -99.619061 },
   maps: "https://maps.app.goo.gl/YZwtrZ7VSL3aCEz88",
-  // ⚠️ Redes sociales — pegar las URLs reales (déjalas vacías si no hay).
+  // Redes sociales. Las vacías no se muestran en navbar/footer ni entran al SEO (sameAs).
   social: {
-    instagram: "", // ej: https://instagram.com/salondelbosque
+    instagram: "", // el salón no tiene cuenta de Instagram
     facebook: "https://www.facebook.com/profile.php?id=100065608868207",
   },
 } as const;

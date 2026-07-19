@@ -2,12 +2,10 @@ import { C } from "./theme";
 
 /* ════════════════════════════════════════════════════════════════
    CONTENIDO DEL SITIO
-   ⚠️  Los bloques marcados con "EJEMPLO" contienen datos ficticios
-       (placeholder). Reemplázalos con información real del salón.
-       Ver CONTENIDO-PENDIENTE.md.
+   Los datos de aquí son reales. Lo que queda por confirmar o
+   completar está listado en CONTENIDO-PENDIENTE.md.
 ════════════════════════════════════════════════════════════════ */
 
-export interface Stat { value: number; suffix: string; label: string; }
 export interface MenuItem { curso: string; detalle: string; }
 export interface Package {
   id: string;
@@ -21,13 +19,6 @@ export interface Package {
   menu: MenuItem[];
   color: string;
 }
-
-/* ⚠️ EJEMPLO PARCIAL — "Años" = 20 (desde 2005); Clientes/Satisfacción son cifras a confirmar. */
-export const STATS: Stat[] = [
-  { value: 20,   suffix: "",  label: "Años"        },
-  { value: 2000, suffix: "+", label: "Clientes"    },
-  { value: 98,   suffix: "%", label: "Satisfacción"},
-];
 
 /* Paquetes y precios — datos reales del salón. */
 export const PACKAGES: Package[] = [
@@ -78,7 +69,7 @@ export const PACKAGES: Package[] = [
   },
 ];
 
-/* ⚠️ EJEMPLO — galería de eventos. Reemplazar por fotos reales en /public/fotos. */
+/* Galería de eventos — todas las fotos son reales, en /public/fotos. */
 export interface GalleryItem { label: string; hint: string; src?: string; }
 export const GALLERY: GalleryItem[] = [
   { label: "Salón principal",   hint: "Montaje para 200 personas",      src: "/fotos/salon-dia.jpg" },

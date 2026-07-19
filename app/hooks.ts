@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback, useSyncExternalStore } from "react";
+import { useEffect, useRef, useCallback, useSyncExternalStore } from "react";
 
 /* ─── hook: media query reactiva (SSR-safe) ─── */
 export function useMediaQuery(query: string) {
@@ -47,29 +47,3 @@ export function useReveal() {
   }, []);
 }
 
-/* ─── hook: contador animado ─── */
-export function useCounter(target: number, duration = 1800) {
-  const [count, setCount] = useState(0);
-  const started = useRef(false);
-  const ref = useRef<HTMLDivElement | null>(null);
-  useEffect(() => {
-    const el = ref.current; if (!el) return;
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const io = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting && !started.current) {
-        started.current = true;
-        if (reduced) { setCount(target); return; } // sin animación de conteo
-        const t0 = performance.now();
-        const tick = (now: number) => {
-          const t = Math.min((now - t0) / duration, 1);
-          setCount(Math.floor((1 - Math.pow(1 - t, 3)) * target));
-          if (t < 1) requestAnimationFrame(tick); else setCount(target);
-        };
-        requestAnimationFrame(tick);
-      }
-    }, { threshold: 0.5 });
-    io.observe(el);
-    return () => io.disconnect();
-  }, [target, duration]);
-  return { count, ref };
-}
