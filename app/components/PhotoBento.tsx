@@ -12,6 +12,9 @@ export interface BentoItem {
   alt?: string;
   label?: string;
   placeholder?: boolean;
+  /* ocupa dos filas en la columna izquierda; pensado para fotos verticales.
+     Debe ser el primer elemento del array para que la rejilla cuadre. */
+  featured?: boolean;
 }
 
 const createParticleElement = (x: number, y: number, color = DEFAULT_GLOW_COLOR) => {
@@ -263,7 +266,7 @@ export default function PhotoBento({
         {items.map((item, i) => (
           <CardShell
             key={item.src ?? item.label ?? `slot-${i}`}
-            className={`bento-card--glow ${item.placeholder ? "bento-card--placeholder" : ""}`}
+            className={`bento-card--glow ${item.placeholder ? "bento-card--placeholder" : ""} ${item.featured ? "bento-card--featured" : ""}`}
             style={{ ["--glow-color" as string]: glowColor } as CSSProperties}
             disableAnimations={disableAnimations}
             particleCount={particleCount}

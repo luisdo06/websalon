@@ -92,11 +92,12 @@ export const GALLERY: GalleryItem[] = [
   { label: "Ambiente de fiesta",   hint: "Terraza decorada",               src: "/fotos/IMG_4502.JPG.jpeg" },
   { label: "Pista de baile",       hint: "Salón listo para bailar",        src: "/fotos/IMG_4503.JPG.jpeg" },
   { label: "Salón iluminado",      hint: "Ambiente nocturno",              src: "/fotos/IMG_4504.JPG.jpeg" },
+  { label: "Montaje con globos",   hint: "Salón listo para una celebración", src: "/fotos/salon-evento-globos.jpg" },
 ];
 
 /* Servicios y amenidades, agrupados por tema (tarjetas del CardSwap).
    'icon' mapea a un SVG en el componente Amenities.
-   ⚠️ Los valores con "(confirmar)" son placeholders a precisar por el dueño. */
+   ⚠️ El aforo de 200 sigue sin confirmar (ver CONTENIDO-PENDIENTE.md). */
 export interface ServiceCard { icon: string; title: string; items: string[]; }
 export const SERVICE_CARDS: ServiceCard[] = [
   {

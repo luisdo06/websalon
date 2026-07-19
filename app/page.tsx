@@ -26,12 +26,12 @@ const HISTORIA_FOTOS: BentoItem[] = [
   { src: "/fotos/salon-fuera-4.jpeg", alt: "Jardín y patio del salón", label: "Jardín" },
 ];
 
-/* bento de "Equipo culinario": banquete + espacios para futuras fotos */
+/* bento de "Equipo culinario": el retrato del chef va destacado (ocupa la columna
+   izquierda completa) y a su derecha se apilan el equipo y el banquete */
 const CULINARIA_FOTOS: BentoItem[] = [
+  { src: "/fotos/chef-roman.jpg", alt: "Retrato del Chef Román Hernández", label: "Chef Román Hernández", featured: true },
+  { src: "/fotos/equipo-grupo.jpg", alt: "Parte del equipo del salón en la barra", label: "Nuestro equipo" },
   { src: "/fotos/comida-menu.jpg", alt: "Banquete del salón", label: "Banquete" },
-  { placeholder: true },
-  { placeholder: true },
-  { placeholder: true },
 ];
 
 /* acento botánico sutil para encabezados centrados */

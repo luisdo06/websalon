@@ -39,6 +39,26 @@
   --glow-radius: 200px;
 }
 
+/* tarjeta destacada (retrato del chef): en 2 columnas ocupa las dos filas de la
+   izquierda, así queda vertical y la cara no se recorta. En móvil, donde la rejilla
+   es de una sola columna, basta con darle proporción de retrato. */
+.bento-card--featured {
+  aspect-ratio: 3 / 4;
+}
+
+@media (min-width: 640px) {
+  .bento-card--featured {
+    grid-row: span 2;
+    aspect-ratio: auto; /* la altura la marcan las dos filas vecinas */
+  }
+}
+
+/* la etiqueta del destacado pesa un poco más, para que lea como el título del bloque */
+.bento-card--featured .bento-label {
+  font-size: 0.8rem;
+  padding-bottom: 1.05rem;
+}
+
 /* foto que llena la tarjeta */
 .bento-photo {
   position: absolute;
