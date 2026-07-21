@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useCallback } from "react";
+import { useEffect, useMemo, useRef, useCallback, useState } from "react";
+import { createPortal } from "react-dom";
 import { useGesture } from "@use-gesture/react";
 import { getLenis } from "@/lib/lenisStore";
+import { usePrefersReducedMotion } from "../hooks";
 import "./DomeGallery.css";
 
 type ImageInput = string | { src: string; alt?: string };
@@ -86,6 +88,10 @@ export interface DomeGalleryProps {
   imageBorderRadius?: string;
   openedImageBorderRadius?: string;
   grayscale?: boolean;
+  /* En celular la ruta de ampliado de la esfera (pensada para escritorio) abre la foto a un
+     cuadrado fijo dentro de la caja de la galería, con un slab del scrim encima. Cuando
+     `mobile` es true se usa en su lugar un lightbox de pantalla completa (ver más abajo). */
+  mobile?: boolean;
 }
 
 /* Componente 3D vendido (galería esférica): su lógica de arrastre, inercia y
@@ -110,6 +116,7 @@ export default function DomeGallery({
   imageBorderRadius = "24px",
   openedImageBorderRadius = "24px",
   grayscale = false,
+  mobile = false,
 }: DomeGalleryProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const mainRef = useRef<HTMLElement>(null);
@@ -146,6 +153,46 @@ export default function DomeGallery({
   }, []);
 
   const items = useMemo(() => buildItems(images, segments), [images, segments]);
+
+  /* ─── Lightbox de celular ───
+     Lista de fotos únicas (las mismas que en la esfera, pero sin repetir) para navegar
+     con el carrusel; y el índice abierto (null = cerrado). */
+  const lightboxPhotos = useMemo(
+    () =>
+      images.map((img) => (typeof img === "string" ? { src: img, alt: "" } : { src: img.src || "", alt: img.alt || "" })),
+    [images],
+  );
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const reducedMotion = usePrefersReducedMotion();
+  const swipeStartX = useRef<number | null>(null);
+  const didSwipeRef = useRef(false); /* evita que el click posterior a un swipe cierre el lightbox */
+
+  const openLightbox = useCallback((src: string) => {
+    const i = lightboxPhotos.findIndex((ph) => ph.src === src);
+    setLightboxIndex(i < 0 ? 0 : i);
+    lockScroll();
+  }, [lightboxPhotos, lockScroll]);
+
+  const closeLightbox = useCallback(() => {
+    setLightboxIndex(null);
+    unlockScroll();
+  }, [unlockScroll]);
+
+  const stepLightbox = useCallback((dir: number) => {
+    setLightboxIndex((i) => (i === null ? i : (i + dir + lightboxPhotos.length) % lightboxPhotos.length));
+  }, [lightboxPhotos.length]);
+
+  /* teclado: ← → para navegar, Esc para cerrar */
+  useEffect(() => {
+    if (lightboxIndex === null) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeLightbox();
+      else if (e.key === "ArrowRight") stepLightbox(1);
+      else if (e.key === "ArrowLeft") stepLightbox(-1);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [lightboxIndex, closeLightbox, stepLightbox]);
 
   const applyTransform = (xDeg: number, yDeg: number) => {
     const el = sphereRef.current;
@@ -476,20 +523,30 @@ export default function DomeGallery({
     }
   }, [enlargeTransitionMs, lockScroll, openedImageHeight, openedImageWidth, segments, unlockScroll]);
 
+  /* En celular abre el lightbox de pantalla completa; en escritorio, el ampliado de la esfera. */
+  const openTile = useCallback((el: HTMLElement) => {
+    if (mobile) {
+      const src = (el.parentElement as HTMLElement)?.dataset.src || el.querySelector("img")?.getAttribute("src") || "";
+      if (src) openLightbox(src);
+      return;
+    }
+    openItemFromElement(el);
+  }, [mobile, openLightbox, openItemFromElement]);
+
   const onTileClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
     if (draggingRef.current || movedRef.current) return;
     if (performance.now() - lastDragEndAt.current < 80) return;
     if (openingRef.current) return;
-    openItemFromElement(e.currentTarget);
-  }, [openItemFromElement]);
+    openTile(e.currentTarget);
+  }, [openTile]);
 
   const onTilePointerUp = useCallback((e: React.PointerEvent<HTMLButtonElement>) => {
     if (e.pointerType !== "touch") return;
     if (draggingRef.current || movedRef.current) return;
     if (performance.now() - lastDragEndAt.current < 80) return;
     if (openingRef.current) return;
-    openItemFromElement(e.currentTarget);
-  }, [openItemFromElement]);
+    openTile(e.currentTarget);
+  }, [openTile]);
 
   useEffect(() => () => { document.body.classList.remove("dg-scroll-lock"); getLenis()?.start(); }, []);
 
@@ -553,6 +610,59 @@ export default function DomeGallery({
           <div ref={frameRef} className="frame" />
         </div>
       </main>
+
+      {/* Lightbox de celular: pantalla completa, foto entera (contain) y deslizable.
+          Reemplaza la ruta de ampliado de la esfera solo en móvil.
+          Se monta con portal en <body> porque un ancestro de la galería crea un bloque
+          contenedor (transform/perspective) que hacía que `position: fixed` se anclara a la
+          caja de la galería y no a la pantalla. Fuera de ese subárbol sí cubre el viewport. */}
+      {mobile && lightboxIndex !== null && createPortal(
+        <div
+          className={`dg-lightbox ${reducedMotion ? "" : "dg-lightbox--anim"}`}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Foto ampliada"
+          onClick={() => { if (didSwipeRef.current) { didSwipeRef.current = false; return; } closeLightbox(); }}
+          onTouchStart={(e) => { didSwipeRef.current = false; swipeStartX.current = e.touches[0].clientX; }}
+          onTouchEnd={(e) => {
+            if (swipeStartX.current === null) return;
+            const dx = e.changedTouches[0].clientX - swipeStartX.current;
+            swipeStartX.current = null;
+            if (Math.abs(dx) > 45) { didSwipeRef.current = true; stepLightbox(dx < 0 ? 1 : -1); }
+          }}
+        >
+          <button type="button" className="dg-lightbox__close" aria-label="Cerrar" onClick={closeLightbox}>×</button>
+
+          {lightboxPhotos.length > 1 && (
+            <>
+              <button type="button" className="dg-lightbox__nav dg-lightbox__nav--prev" aria-label="Anterior"
+                onClick={(e) => { e.stopPropagation(); stepLightbox(-1); }}>‹</button>
+              <button type="button" className="dg-lightbox__nav dg-lightbox__nav--next" aria-label="Siguiente"
+                onClick={(e) => { e.stopPropagation(); stepLightbox(1); }}>›</button>
+            </>
+          )}
+
+          {/* la foto no cierra al tocarla (solo el fondo) */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            key={lightboxIndex}
+            className="dg-lightbox__img"
+            src={lightboxPhotos[lightboxIndex].src}
+            alt={lightboxPhotos[lightboxIndex].alt}
+            draggable={false}
+            onClick={(e) => e.stopPropagation()}
+          /> {/* react-doctor-disable-line react-doctor/nextjs-no-img-element */}
+
+          {lightboxPhotos.length > 1 && (
+            <div className="dg-lightbox__dots" aria-hidden="true">
+              {lightboxPhotos.map((ph, i) => (
+                <span key={ph.src} className={`dg-lightbox__dot ${i === lightboxIndex ? "is-active" : ""}`} />
+              ))}
+            </div>
+          )}
+        </div>,
+        document.body,
+      )}
     </div>
   );
 }

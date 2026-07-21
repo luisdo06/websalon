@@ -212,3 +212,120 @@ main.sphere-main {
 .edge-fade--bottom {
   bottom: 0;
 }
+
+/* ─── Lightbox de celular ───
+   Pantalla completa, por encima de la barra CTA fija y del botón de WhatsApp. */
+.dg-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: env(safe-area-inset-top, 0) 0 env(safe-area-inset-bottom, 0);
+  background: rgba(14, 21, 8, 0.92);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  touch-action: pan-y;
+}
+
+.dg-lightbox--anim {
+  animation: dg-lightbox-in 200ms ease-out;
+}
+
+@keyframes dg-lightbox-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.dg-lightbox__img {
+  max-width: 92vw;
+  max-height: 82vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 14px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.dg-lightbox--anim .dg-lightbox__img {
+  animation: dg-lightbox-img-in 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes dg-lightbox-img-in {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* botón cerrar */
+.dg-lightbox__close {
+  position: absolute;
+  top: max(12px, env(safe-area-inset-top, 0));
+  right: 14px;
+  z-index: 2;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  line-height: 1;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* flechas prev/next */
+.dg-lightbox__nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  line-height: 1;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.dg-lightbox__nav--prev { left: 10px; }
+.dg-lightbox__nav--next { right: 10px; }
+
+/* puntos indicadores */
+.dg-lightbox__dots {
+  position: absolute;
+  bottom: max(18px, env(safe-area-inset-bottom, 0));
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 7px;
+  padding: 0 16px;
+  flex-wrap: wrap;
+}
+
+.dg-lightbox__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.35);
+  transition: background 200ms ease, transform 200ms ease;
+}
+
+.dg-lightbox__dot.is-active {
+  background: #fff;
+  transform: scale(1.35);
+}

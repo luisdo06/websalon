@@ -360,6 +360,7 @@ export default function Home() {
               overlayBlurColor={C.bg}
               fit={0.5}
               minRadius={380}
+              mobile={!isDesktop}
             />
           </div>
         </div>
