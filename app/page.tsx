@@ -19,12 +19,29 @@ import PhotoBento, { type BentoItem } from "./components/PhotoBento";
 import BounceCards from "./components/BounceCards";
 import HistoriaSlideshow from "./components/HistoriaSlideshow";
 
-/* fotos del salón para el bento de "Nuestra historia" */
+/* fotos del salón para el abanico (BounceCards) de "Nuestra historia" en ESCRITORIO.
+   El abanico está diseñado para 4 cartas (transformStyles tiene 4 entradas), así que se
+   mantiene en 4. El slideshow de celular usa su propia lista, más amplia (abajo). */
 const HISTORIA_FOTOS: BentoItem[] = [
   { src: "/fotos/salon-dia.jpg", alt: "Salón montado para un evento", label: "Salón principal" },
   { src: "/fotos/salon-noche.jpg", alt: "Ambiente nocturno con pista de baile", label: "Ambiente nocturno" },
   { src: "/fotos/salon-mesa.jpg", alt: "Mesa montada con mantelería", label: "Mesa montada" },
   { src: "/fotos/salon-fuera-4.jpeg", alt: "Jardín y patio del salón", label: "Jardín" },
+];
+
+/* Fotos clave para el slideshow cinematográfico de "Nuestra historia" en CELULAR.
+   Curadas para lucir el salón y los eventos, en orden de historia: el espacio → montajes
+   → detalles → celebración → XV → noche → jardín. Agregar más aquí es solo sumar objetos. */
+const HISTORIA_SLIDESHOW = [
+  { src: "/fotos/salon-dia.jpg",           alt: "Salón del Bosque montado de día",             label: "Nuestro salón" },
+  { src: "/fotos/salon-mesa.jpg",          alt: "Mesa montada con mantelería",                 label: "Mesa montada" },
+  { src: "/fotos/IMG_4494.JPG.jpeg",       alt: "Mesa de gala con centro floral",              label: "Montaje de gala" },
+  { src: "/fotos/IMG_4495.JPG.jpeg",       alt: "Montaje en rosa para un evento",              label: "Todo listo para la fiesta" },
+  { src: "/fotos/IMG_4501.JPG.jpeg",       alt: "Centro de mesa floral con iluminación",       label: "Detalles que enamoran" },
+  { src: "/fotos/salon-evento-globos.jpg", alt: "Salón montado con arco de globos",            label: "Listo para celebrar" },
+  { src: "/fotos/IMG_4497.JPG.jpeg",       alt: "Letras iluminadas de XV años en el jardín",   label: "Fiestas de XV años" },
+  { src: "/fotos/salon-noche.jpg",         alt: "Ambiente nocturno del salón",                 label: "Ambiente nocturno" },
+  { src: "/fotos/salon-fuera-4.jpeg",      alt: "Jardín y patio del salón",                    label: "Nuestro jardín" },
 ];
 
 /* bento de "Equipo culinario": el retrato del chef va destacado (ocupa la columna
@@ -147,7 +164,7 @@ function NosotrosSection({ addReveal, bounce, isMobile }: { addReveal: RevealRef
         <div ref={addReveal} className="section-reveal">
           <div className="flex justify-center">
             {isMobile ? (
-              <HistoriaSlideshow photos={HISTORIA_FOTOS.map((f) => ({ src: f.src as string, alt: f.alt, label: f.label }))} />
+              <HistoriaSlideshow photos={HISTORIA_SLIDESHOW} />
             ) : (
               <BounceCards
                 images={HISTORIA_FOTOS.map((f) => f.src as string)}
