@@ -31,11 +31,6 @@ html {
   }
 }
 
-/* compensa el navbar fijo al saltar a una sección (scroll nativo / reduced-motion) */
-section[id] {
-  scroll-margin-top: 80px;
-}
-
 body {
   background: var(--bg);
   color: var(--text);
