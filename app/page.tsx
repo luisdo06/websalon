@@ -17,6 +17,7 @@ import FallingLeaves from "./components/FallingLeaves";
 import DomeGallery from "./components/DomeGallery";
 import PhotoBento, { type BentoItem } from "./components/PhotoBento";
 import BounceCards from "./components/BounceCards";
+import HistoriaSlideshow from "./components/HistoriaSlideshow";
 
 /* fotos del salón para el bento de "Nuestra historia" */
 const HISTORIA_FOTOS: BentoItem[] = [
@@ -119,7 +120,7 @@ function HeroSection() {
 }
 
 /* ── NOSOTROS ── */
-function NosotrosSection({ addReveal, bounce }: { addReveal: RevealRef; bounce: BounceConfig }) {
+function NosotrosSection({ addReveal, bounce, isMobile }: { addReveal: RevealRef; bounce: BounceConfig; isMobile: boolean }) {
   return (
     <section id="nosotros" className="py-24 px-6 md:px-16 section-blend" style={{ background: C.bg }}>
       <div className="max-w-3xl mx-auto">
@@ -141,19 +142,24 @@ function NosotrosSection({ addReveal, bounce }: { addReveal: RevealRef; bounce: 
           </p>
         </div>
 
-        {/* abanico de fotos del salón (BounceCards) */}
+        {/* Fotos del salón: en celular un slideshow cinematográfico (una foto grande a la
+            vez, cambia sola con fundido + zoom lento); en escritorio el abanico (BounceCards). */}
         <div ref={addReveal} className="section-reveal">
           <div className="flex justify-center">
-            <BounceCards
-              images={HISTORIA_FOTOS.map((f) => f.src as string)}
-              containerWidth={bounce.containerWidth}
-              containerHeight={bounce.containerHeight}
-              cardSize={bounce.cardSize}
-              transformStyles={bounce.transformStyles}
-              enableHover={bounce.enableHover}
-              animationDelay={0.3}
-              animationStagger={0.09}
-            />
+            {isMobile ? (
+              <HistoriaSlideshow photos={HISTORIA_FOTOS.map((f) => ({ src: f.src as string, alt: f.alt, label: f.label }))} />
+            ) : (
+              <BounceCards
+                images={HISTORIA_FOTOS.map((f) => f.src as string)}
+                containerWidth={bounce.containerWidth}
+                containerHeight={bounce.containerHeight}
+                cardSize={bounce.cardSize}
+                transformStyles={bounce.transformStyles}
+                enableHover={bounce.enableHover}
+                animationDelay={0.3}
+                animationStagger={0.09}
+              />
+            )}
           </div>
           <div className="flex flex-wrap gap-2 mt-10 justify-center">
             {["Bodas","XV Años","Cumpleaños","Bautizos","Comuniones","Graduaciones","Corporativos","Baby Shower"].map((tag) => (
@@ -316,7 +322,7 @@ export default function Home() {
       </section>
 
       {/* ══ NOSOTROS ══ */}
-      <NosotrosSection addReveal={addReveal} bounce={bounce} />
+      <NosotrosSection addReveal={addReveal} bounce={bounce} isMobile={!isDesktop} />
 
       {/* ══ COTIZACIONES ══ */}
       <section id="cotizaciones" className="py-24 px-6 md:px-16 section-blend" style={{ background: C.bg }}>

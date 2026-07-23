@@ -1,0 +1,106 @@
+/* HistoriaSlideshow: slideshow cinematográfico de "Nuestra historia" (solo celular).
+   Mismo lenguaje visual que BounceCards.css (marco crema, esquinas redondeadas, sombra). */
+
+.hs-frame {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+  aspect-ratio: 4 / 5;
+  border: 5px solid var(--bg);
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: 0 10px 28px rgba(14, 21, 8, 0.2);
+  background: var(--surface);
+  touch-action: pan-y;
+  user-select: none;
+}
+
+/* cada foto ocupa todo el marco; solo la activa es visible (crossfade por opacidad) */
+.hs-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  z-index: 1;
+  transition: opacity 900ms ease;
+}
+
+.hs-slide.is-active {
+  opacity: 1;
+  z-index: 2;
+}
+
+.hs-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  -webkit-user-drag: none;
+  transform-origin: center;
+}
+
+/* Ken Burns: la foto activa hace un zoom lento mientras está visible. Al perder
+   .is-active la animación se retira; como el slide se está desvaneciendo, no se nota.
+   La duración (6s) es mayor que el intervalo (4.5s), así que nunca se "congela". */
+.hs-slide--anim.is-active .hs-img {
+  animation: hs-kenburns 6000ms ease-out both;
+}
+
+@keyframes hs-kenburns {
+  from { transform: scale(1) translate(0, 0); }
+  to { transform: scale(1.08) translate(-1.5%, -1%); }
+}
+
+/* etiqueta de la foto (arriba-izquierda, tipo tag de ubicación) */
+.hs-caption {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 3;
+  padding: 0.85rem 1rem 1.6rem;
+  pointer-events: none;
+  background: linear-gradient(to bottom, rgba(14, 21, 8, 0.55) 0%, transparent 100%);
+  animation: hs-caption-in 500ms ease-out both;
+}
+
+.hs-caption span {
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #fff;
+  font-weight: 500;
+}
+
+@keyframes hs-caption-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* puntos indicadores (abajo-centro) */
+.hs-dots {
+  position: absolute;
+  bottom: 12px;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.hs-dot {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: none;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow: 0 1px 3px rgba(14, 21, 8, 0.35);
+  cursor: pointer;
+  transition: transform 250ms ease, background 250ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.hs-dot.is-active {
+  transform: scale(1.35);
+}
