@@ -31,17 +31,18 @@ const HISTORIA_FOTOS: BentoItem[] = [
 
 /* Fotos clave para el slideshow cinematográfico de "Nuestra historia" en CELULAR.
    Curadas para lucir el salón y los eventos, en orden de historia: el espacio → montajes
-   → detalles → celebración → XV → noche → jardín. Agregar más aquí es solo sumar objetos. */
+   → detalles → celebración → XV → noche → jardín. Agregar más aquí es solo sumar objetos.
+   Sin `label` a propósito: las fotos van sin texto encima (solo el `alt` para accesibilidad). */
 const HISTORIA_SLIDESHOW = [
-  { src: "/fotos/salon-dia.jpg",           alt: "Salón del Bosque montado de día",             label: "Nuestro salón" },
-  { src: "/fotos/salon-mesa.jpg",          alt: "Mesa montada con mantelería",                 label: "Mesa montada" },
-  { src: "/fotos/IMG_4494.JPG.jpeg",       alt: "Mesa de gala con centro floral",              label: "Montaje de gala" },
-  { src: "/fotos/IMG_4495.JPG.jpeg",       alt: "Montaje en rosa para un evento",              label: "Todo listo para la fiesta" },
-  { src: "/fotos/IMG_4501.JPG.jpeg",       alt: "Centro de mesa floral con iluminación",       label: "Detalles que enamoran" },
-  { src: "/fotos/salon-evento-globos.jpg", alt: "Salón montado con arco de globos",            label: "Listo para celebrar" },
-  { src: "/fotos/IMG_4497.JPG.jpeg",       alt: "Letras iluminadas de XV años en el jardín",   label: "Fiestas de XV años" },
-  { src: "/fotos/salon-noche.jpg",         alt: "Ambiente nocturno del salón",                 label: "Ambiente nocturno" },
-  { src: "/fotos/salon-fuera-4.jpeg",      alt: "Jardín y patio del salón",                    label: "Nuestro jardín" },
+  { src: "/fotos/salon-dia.jpg",           alt: "Salón del Bosque montado de día" },
+  { src: "/fotos/salon-mesa.jpg",          alt: "Mesa montada con mantelería" },
+  { src: "/fotos/IMG_4494.JPG.jpeg",       alt: "Mesa de gala con centro floral" },
+  { src: "/fotos/IMG_4495.JPG.jpeg",       alt: "Montaje en rosa para un evento" },
+  { src: "/fotos/IMG_4501.JPG.jpeg",       alt: "Centro de mesa floral con iluminación" },
+  { src: "/fotos/salon-evento-globos.jpg", alt: "Salón montado con arco de globos" },
+  { src: "/fotos/IMG_4497.JPG.jpeg",       alt: "Letras iluminadas de XV años en el jardín" },
+  { src: "/fotos/salon-noche.jpg",         alt: "Ambiente nocturno del salón" },
+  { src: "/fotos/salon-fuera-4.jpeg",      alt: "Jardín y patio del salón" },
 ];
 
 /* bento de "Equipo culinario": el retrato del chef va destacado (ocupa la columna
