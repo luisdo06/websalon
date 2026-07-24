@@ -113,16 +113,16 @@ export const SERVICE_CARDS: ServiceCard[] = [
     icon: "chair",
     title: "Mobiliario & montaje",
     items: [
-      "Mesas redondas + sillas Tiffany",
+      "Mesas redondas y sillas Tiffany",
       "Mantelería completa",
-      "Loza y cristalería completas",
+      "Loza hasta en 3 tiempos",
     ],
   },
   {
     icon: "waiter",
     title: "Servicio",
     items: [
-      "Meseros durante todo el evento",
+      "Meseros 6 horas del evento",
       "Estacionamiento con personal",
       "Atención personalizada",
     ],

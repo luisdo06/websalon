@@ -199,7 +199,7 @@ function NosotrosSection({ addReveal, bounce, isMobile }: { addReveal: RevealRef
         <div ref={addReveal} className="section-reveal max-w-2xl mx-auto mt-6">
           <p className="text-sm font-light leading-relaxed mb-4" style={{ color: `${C.text}cc` }}>
             Al frente está el <strong style={{ color: C.text, fontWeight: 400 }}>Chef Román Hernández</strong>,
-            con más de <strong style={{ color: C.text, fontWeight: 400 }}>40 años de experiencia</strong> en
+            con más de <strong style={{ color: C.text, fontWeight: 400 }}>20 años de experiencia</strong> en
             La Finca de Adobe. Domina todo tipo de cocinas, desde la tradicional mexicana hasta la alta cocina
             internacional, con ingredientes frescos seleccionados cada día.
           </p>
