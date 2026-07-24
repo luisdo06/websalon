@@ -80,7 +80,7 @@ function HeroSection() {
   return (
     <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* foto de fondo */}
-      <Image src="/fotos/salon-dia.jpg" alt="Salón del Bosque" fill priority sizes="100vw"
+      <Image src="/fotos/salon-hero.jpg" alt="Fachada y jardín del Salón del Bosque" fill priority sizes="100vw"
         style={{ objectFit: "cover", objectPosition: "center" }} />
       {/* velo crema que desvanece la foto (texto oscuro legible) */}
       <div className="absolute inset-0 pointer-events-none" style={{ background: `${C.bg}8c` }} />

@@ -93,6 +93,7 @@ export const GALLERY: GalleryItem[] = [
   { label: "Pista de baile",       hint: "Salón listo para bailar",        src: "/fotos/IMG_4503.JPG.jpeg" },
   { label: "Salón iluminado",      hint: "Ambiente nocturno",              src: "/fotos/IMG_4504.JPG.jpeg" },
   { label: "Montaje con globos",   hint: "Salón listo para una celebración", src: "/fotos/salon-evento-globos.jpg" },
+  { label: "Fachada del salón",    hint: "Entrada y jardín",                src: "/fotos/salon-hero.jpg" },
 ];
 
 /* Servicios y amenidades, agrupados por tema (tarjetas del CardSwap).
