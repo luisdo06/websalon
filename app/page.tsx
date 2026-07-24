@@ -125,9 +125,11 @@ function HeroSection() {
         </div>
       </div>
 
-      {/* indicador de scroll (en móvil, por encima de la barra fija "Reservar") */}
+      {/* Indicador de scroll. En móvil va más abajo (bottom-20), en el hueco entre los botones
+          y la barra fija "Reservar", para no encimarse con "Conócenos". En pantallas muy bajas,
+          donde el contenido llena el alto y no hay hueco, se oculta. */}
       <a href="#nosotros" aria-label="Desliza para ver más"
-        className="anim-fade d-800 absolute bottom-28 md:bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2">
+        className="anim-fade d-800 absolute bottom-20 md:bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 [@media(max-width:767px)_and_(max-height:780px)]:hidden">
         <span className="text-[9px] tracking-[0.3em] uppercase" style={{ color: `${C.text}88` }}>Desliza</span>
         <span className="anim-float" style={{ color: C.accent }}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14M6 13l6 6 6-6" /></svg>
